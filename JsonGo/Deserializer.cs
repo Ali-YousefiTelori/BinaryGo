@@ -11,6 +11,9 @@ namespace JsonGo
     /// </summary>
     public enum JsonType : byte
     {
+        /// <summary>
+        /// none
+        /// </summary>
         None = 0,
         /// <summary>
         /// object value
@@ -33,22 +36,45 @@ namespace JsonGo
             SingleIntance = new Deserializer();
         }
 
+        /// <summary>
+        /// cache variable to access faster, methods,fields and properties
+        /// </summary>
         internal static ConcurrentDictionary<Type, ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>>> CacheNameVariables { get; set; } = new ConcurrentDictionary<Type, ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>>>();
-
+        /// <summary>
+        /// single instance of deserialize to access faster
+        /// </summary>
         public static Deserializer SingleIntance { get; set; }
-
+        /// <summary>
+        /// deserialize a json to a type
+        /// </summary>
+        /// <typeparam name="T">type of deserialize</typeparam>
+        /// <param name="json">json to deserialize</param>
+        /// <returns>deserialized type</returns>
         public T Dersialize<T>(string json)
         {
             int indexOf = 0;
             return (T)Desialize(ref json, typeof(T), ref indexOf);
         }
 
+        /// <summary>
+        /// deserialize a json to a type
+        /// </summary>
+        /// <param name="type">type of deserialize</param>
+        /// <param name="json">json to deserialize</param>
+        /// <returns>deserialized type</returns>
         public object Dersialize(string json, Type type)
         {
             int indexOf = 0;
             return Desialize(ref json, type, ref indexOf);
         }
 
+        /// <summary>
+        /// deserialize json
+        /// </summary>
+        /// <param name="json">json value</param>
+        /// <param name="type">type to deserialize</param>
+        /// <param name="indexOf">index of start string</param>
+        /// <returns>value deserialized</returns>
         internal object Desialize(ref string json, Type type, ref int indexOf)
         {
             object currentObject = Activator.CreateInstance(type);
@@ -169,6 +195,12 @@ namespace JsonGo
             return currentObject;
         }
 
+        /// <summary>
+        /// get type of a json parameter name
+        /// </summary>
+        /// <param name="obj">object</param>
+        /// <param name="key">json parameter name</param>
+        /// <returns>type of json parameter</returns>
         private Type GetKeyType(object obj, string key)
         {
             key = key.Trim('\"');
@@ -187,6 +219,12 @@ namespace JsonGo
             }
         }
 
+        /// <summary>
+        /// set value of json parameter key to an instance of object
+        /// </summary>
+        /// <param name="obj">object to change parameter</param>
+        /// <param name="value">value to set</param>
+        /// <param name="key">parameter name of object</param>
         private void SetValue(object obj, object value, string key)
         {
             key = key.Trim('\"');
@@ -218,11 +256,22 @@ namespace JsonGo
 
         }
 
+        /// <summary>
+        /// check if a character is whitespace or empty
+        /// </summary>
+        /// <param name="value">character to check</param>
+        /// <returns>is char is white space</returns>
         private bool IsWhiteSpace(ref char value)
         {
             return value == '\b' || value == '\f' || value == '\n' || value == '\r' || value == '\t' || value == ' ';
         }
-
+        /// <summary>
+        /// find parameter or metod or field name from cached
+        /// </summary>
+        /// <typeparam name="T">type of memberinfo like method,field,property</typeparam>
+        /// <param name="type">type of object to research</param>
+        /// <param name="name">name of parameter</param>
+        /// <returns>member like method,field,property thet found</returns>
         private T FindCachedMember<T>(Type type, string name) where T : class
         {
             Type tType = typeof(T);

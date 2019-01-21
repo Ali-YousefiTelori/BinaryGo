@@ -5,6 +5,9 @@ using System.Text;
 
 namespace JsonGo
 {
+    /// <summary>
+    /// serialize json to an object
+    /// </summary>
     public class Serializer
     {
         static Serializer()
@@ -12,8 +15,16 @@ namespace JsonGo
             SingleIntance = new Serializer();
         }
 
+        /// <summary>
+        /// single instance of serializer to accesss faster
+        /// </summary>
         public static Serializer SingleIntance { get; set; }
 
+        /// <summary>
+        /// serialize an object to a json string
+        /// </summary>
+        /// <param name="data">any object to serialize</param>
+        /// <returns>json that serialized from you object</returns>
         public string Serialize(object data)
         {
             Type dataType = data.GetType();
