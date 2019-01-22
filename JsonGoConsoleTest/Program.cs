@@ -110,9 +110,9 @@ namespace JsonGoConsoleTest
                 //string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[]},{\"$ref\":\"2\"}]}";
                 var json = Serializer.SingleIntance.Serialize(fullProducts);
                 //string json = " [{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" },{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" }] ";
-                var dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
-                //RunNewtonJsonDeserialize(json, typeof(Product));
-                //RunJsonGoDeserialize(json, typeof(Product));
+                //var dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
+                RunNewtonJsonDeserialize(json, typeof(List<List<Product>>));
+                RunJsonGoDeserialize(json, typeof(List<List<Product>>));
             }
             catch (Exception ex)
             {

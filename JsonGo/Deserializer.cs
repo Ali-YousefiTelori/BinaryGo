@@ -63,6 +63,7 @@ namespace JsonGo
         public T Dersialize<T>(string json)
         {
             int indexOf = 0;
+            DeSerializedObjects.Clear();
             return (T)Desialize(ref json, typeof(T), ref indexOf);
         }
 
@@ -75,6 +76,7 @@ namespace JsonGo
         public object Dersialize(string json, Type type)
         {
             int indexOf = 0;
+            DeSerializedObjects.Clear();
             return Desialize(ref json, type, ref indexOf);
         }
 
