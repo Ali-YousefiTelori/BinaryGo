@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JsonGo</name>
+    </assembly>
+    <members>
+        <member name="T:JsonGo.JsonType">
+            <summary>
+            json type of all values
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonType.None">
+            <summary>
+            none
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonType.Object">
+            <summary>
+            object value
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonType.Array">
+            <summary>
+            array value
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonType.Value">
+            <summary>
+            strin or int simple value
+            </summary>
+        </member>
+        <member name="P:JsonGo.Deserializer.DeSerializedObjects">
+            <summary>
+            save deserialized objects for referenced type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Deserializer.CacheNameVariables">
+            <summary>
+            cache variable to access faster, methods,fields and properties
+            </summary>
+        </member>
+        <member name="P:JsonGo.Deserializer.SingleIntance">
+            <summary>
+            single instance of deserialize to access faster
+            </summary>
+        </member>
+        <member name="P:JsonGo.Deserializer.Setting">
+            <summary>
+            default setting of serializer
+            </summary>
+        </member>
+        <member name="M:JsonGo.Deserializer.Dersialize``1(System.String)">
+            <summary>
+            deserialize a json to a type
+            </summary>
+            <typeparam name="T">type of deserialize</typeparam>
+            <param name="json">json to deserialize</param>
+            <returns>deserialized type</returns>
+        </member>
+        <member name="M:JsonGo.Deserializer.Dersialize(System.String,System.Type)">
+            <summary>
+            deserialize a json to a type
+            </summary>
+            <param name="type">type of deserialize</param>
+            <param name="json">json to deserialize</param>
+            <returns>deserialized type</returns>
+        </member>
+        <member name="M:JsonGo.Deserializer.Desialize(System.String@,System.Type,System.Int32@)">
+            <summary>
+            deserialize json
+            </summary>
+            <param name="json">json value</param>
+            <param name="type">type to deserialize</param>
+            <param name="indexOf">index of start string</param>
+            <returns>value deserialized</returns>
+        </member>
+        <member name="M:JsonGo.Deserializer.GetKeyType(System.Object,System.String)">
+            <summary>
+            get type of a json parameter name
+            </summary>
+            <param name="obj">object</param>
+            <param name="key">json parameter name</param>
+            <returns>type of json parameter</returns>
+        </member>
+        <member name="M:JsonGo.Deserializer.SetValue(System.Object,System.Object,System.String)">
+            <summary>
+            set value of json parameter key to an instance of object
+            </summary>
+            <param name="obj">object to change parameter</param>
+            <param name="value">value to set</param>
+            <param name="key">parameter name of object</param>
+        </member>
+        <member name="M:JsonGo.Deserializer.IsWhiteSpace(System.Char@)">
+            <summary>
+            check if a character is whitespace or empty
+            </summary>
+            <param name="value">character to check</param>
+            <returns>is char is white space</returns>
+        </member>
+        <member name="M:JsonGo.Deserializer.FindCachedMember``1(System.Type,System.String)">
+            <summary>
+            find parameter or metod or field name from cached
+            </summary>
+            <typeparam name="T">type of memberinfo like method,field,property</typeparam>
+            <param name="type">type of object to research</param>
+            <param name="name">name of parameter</param>
+            <returns>member like method,field,property thet found</returns>
+        </member>
+        <member name="T:JsonGo.JsonSettingInfo">
+            <summary>
+            default setting of json serialize and deserialier
+            </summary>
+        </member>
+        <member name="P:JsonGo.JsonSettingInfo.IdRefrencedTypeName">
+            <summary>
+            $Id refrenced type name
+            </summary>
+        </member>
+        <member name="P:JsonGo.JsonSettingInfo.RefRefrencedTypeName">
+            <summary>
+            $Ref refrenced type name
+            </summary>
+        </member>
+        <member name="P:JsonGo.JsonSettingInfo.ValuesRefrencedTypeName">
+            <summary>
+            $Values refrenced type name
+            </summary>
+        </member>
+        <member name="P:JsonGo.JsonSettingInfo.HasGenerateRefrencedTypes">
+            <summary>
+            support for $id,$ref,$values for serialization
+            </summary>
+        </member>
+        <member name="T:JsonGo.Serializer">
+            <summary>
+            serialize json to an object
+            </summary>
+        </member>
+        <member name="P:JsonGo.Serializer.SerializedObjects">
+            <summary>
+            save serialized objects to skip stackoverflow exception and for referenced type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Serializer.Setting">
+            <summary>
+            default setting of serializer
+            </summary>
+        </member>
+        <member name="P:JsonGo.Serializer.ReferencedIndex">
+            <summary>
+            start of referenced index
+            </summary>
+        </member>
+        <member name="P:JsonGo.Serializer.SingleIntance">
+            <summary>
+            single instance of serializer to accesss faster
+            </summary>
+        </member>
+        <member name="M:JsonGo.Serializer.Serialize(System.Object)">
+            <summary>
+            serialize an object to a json string
+            </summary>
+            <param name="data">any object to serialize</param>
+            <returns>json that serialized from you object</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object)">
+            <summary>
+            serialize an object to a json string
+            </summary>
+            <param name="data">any object to serialize</param>
+            <returns>json that serialized from you object</returns>
+        </member>
+    </members>
+</doc>

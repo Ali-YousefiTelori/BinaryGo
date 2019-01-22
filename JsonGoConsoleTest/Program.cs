@@ -13,6 +13,7 @@ namespace JsonGoConsoleTest
         public string Name { get; set; }
         public int Age { get; set; }
         public Profile Profile { get; set; }
+        public List<Address> Addresses { get; set; }
     }
 
     public class Profile
@@ -26,6 +27,7 @@ namespace JsonGoConsoleTest
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }
         public AddressType Type { get; set; }
+        public Profile Parent { get; set; }
     }
 
     public enum AddressType : byte
@@ -41,6 +43,7 @@ namespace JsonGoConsoleTest
         {
             try
             {
+                List<List<Product>> fullProducts = new List<List<Product>>();
                 List<Product> products = new List<Product>();
                 Product product = new Product()
                 {
@@ -66,12 +69,48 @@ namespace JsonGoConsoleTest
                         }
                     }
                 };
+                Product product2 = new Product()
+                {
+                    Age = 22,
+                    Name = "asus rog",
+                    Profile = new Profile()
+                    {
+                        FullName = "amin mardani",
+                        Addresses = new List<Address>()
+                        {
+                            new Address ()
+                            {
+                                 Content = "آدرس نوکنده",
+                                 CreatedDate = DateTime.Now,
+                                 Type = AddressType.Home
+                            },
+                            new Address ()
+                            {
+                                 Content = "آدرس جنگل گلستان",
+                                 CreatedDate = DateTime.Now.AddYears(1),
+                                 Type = AddressType.Work
+                            }
+                        }
+                    }
+                };
 
+                foreach (var item in product.Profile.Addresses)
+                {
+                    item.Parent = product.Profile;
+                }
+                product.Profile.Addresses.AddRange(product.Profile.Addresses);
+                product.Addresses = product.Profile.Addresses;
                 products.Add(product);
                 products.Add(product);
-                string json = Serializer.SingleIntance.Serialize(products);
+                products.Add(product2);
+
+                fullProducts.Add(products);
+                fullProducts.Add(products);
+                Serializer.SingleIntance.Setting.HasGenerateRefrencedTypes = true;
+                //string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[]},{\"$ref\":\"2\"}]}";
+                var json = Serializer.SingleIntance.Serialize(fullProducts);
                 //string json = " [{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" },{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" }] ";
-                List<Product> dPoduct = Deserializer.SingleIntance.Dersialize<List<Product>>(json);
+                var dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
                 //RunNewtonJsonDeserialize(json, typeof(Product));
                 //RunJsonGoDeserialize(json, typeof(Product));
             }

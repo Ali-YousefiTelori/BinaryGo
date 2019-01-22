@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -37,6 +39,10 @@ namespace JsonGo
         }
 
         /// <summary>
+        /// save deserialized objects for referenced type
+        /// </summary>
+        internal Dictionary<string, object> DeSerializedObjects { get; set; } = new Dictionary<string, object>();
+        /// <summary>
         /// cache variable to access faster, methods,fields and properties
         /// </summary>
         internal static ConcurrentDictionary<Type, ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>>> CacheNameVariables { get; set; } = new ConcurrentDictionary<Type, ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>>>();
@@ -44,6 +50,10 @@ namespace JsonGo
         /// single instance of deserialize to access faster
         /// </summary>
         public static Deserializer SingleIntance { get; set; }
+        /// <summary>
+        /// default setting of serializer
+        /// </summary>
+        public JsonSettingInfo Setting { get; set; } = new JsonSettingInfo();
         /// <summary>
         /// deserialize a json to a type
         /// </summary>
@@ -77,13 +87,14 @@ namespace JsonGo
         /// <returns>value deserialized</returns>
         internal object Desialize(ref string json, Type type, ref int indexOf)
         {
-            object currentObject = Activator.CreateInstance(type);
+            object currentObject = null;
             JsonType objectType = JsonType.None;
             bool canSkip = true;
             bool findingStartOfKey = false;
             bool findingKey = true;
             bool findingStartOfValue = false;
             bool findingValue = false;
+            bool hasValuesReferenced = false;
             char previousCharacter = default(char);
             StringBuilder keyBuilder = new StringBuilder();
             StringBuilder valueBuilder = new StringBuilder();
@@ -97,6 +108,8 @@ namespace JsonGo
                     objectType = JsonType.Object;
                 else if (character == '[' && objectType == JsonType.None)
                     objectType = JsonType.Array;
+                else if (canSkip && objectType == JsonType.None && (character == ']' || character == ']'))
+                    break;
                 else if (canSkip && objectType == JsonType.None)
                     throw new Exception($"unexpected character '{character}' index {i}");
                 else
@@ -109,8 +122,10 @@ namespace JsonGo
                             findingKey = true;
                             findingStartOfKey = false;
                         }
-                        else if (character == '}' || character == ']')
+                        else if ((character == '}' || character == ']') && !hasValuesReferenced)
                             break;
+                        else if ((character == '}' || character == ']') && hasValuesReferenced)
+                            hasValuesReferenced = false;
                     }
                     else if (findingKey)
                     {
@@ -119,7 +134,7 @@ namespace JsonGo
                             findingKey = false;
                             findingStartOfValue = true;
                         }
-                        else if (objectType == JsonType.Array && character == '{')
+                        else if (objectType == JsonType.Array && (character == '{' || character == '['))
                         {
                             string key = keyBuilder.ToString();
                             keyBuilder.Clear();
@@ -130,21 +145,36 @@ namespace JsonGo
                             MethodInfo addMethod = FindCachedMember<MethodInfo>(type, "Add");
                             Array array = null;
                             Type elementType = null;
+                            if (key == Setting.RefRefrencedTypeName)
+                            {
+                                throw new NotSupportedException(json);
+                            }
+                            else if (key == Setting.ValuesRefrencedTypeName)
+                            {
+                                hasValuesReferenced = true;
+                                objectType = JsonType.Array;
+                            }
+                            else if (key == Setting.IdRefrencedTypeName)
+                            {
+                                throw new NotSupportedException(json);
+                            }
+                            if (currentObject == null)
+                                currentObject = Activator.CreateInstance(type);
                             if (type.IsArray)
                             {
                                 array = (Array)currentObject;
                                 elementType = array.GetType().GetElementType();
                             }
-                            else
+                            else if (addMethod != null)
                             {
-                                if (addMethod == null)
-                                    throw new Exception($"Add method not found on type {type.FullName}");
                                 elementType = addMethod.GetParameters().FirstOrDefault().ParameterType;
                             }
-
-                            object value = Desialize(ref json, elementType, ref indexOf);
-                            addMethod.Invoke(currentObject, new object[] { value });
-                            i = indexOf;
+                            if (elementType != null)
+                            {
+                                object value = Desialize(ref json, elementType, ref indexOf);
+                                addMethod.Invoke(currentObject, new object[] { value });
+                                i = indexOf;
+                            }
                         }
                         keyBuilder.Append(character);
                     }
@@ -164,9 +194,55 @@ namespace JsonGo
                             findingValue = false;
                             findingStartOfKey = true;
                             canSkip = true;
-                            object value = Desialize(ref json, GetKeyType(currentObject, key), ref indexOf);
-                            SetValue(currentObject, value, key);
-                            i = indexOf;
+                            Type typeOfParameter = null;
+                            if (key == Setting.RefRefrencedTypeName)
+                            {
+                                throw new NotSupportedException(json);
+                            }
+                            else if (key == Setting.ValuesRefrencedTypeName)
+                            {
+                                hasValuesReferenced = true;
+                                objectType = JsonType.Array;
+                            }
+                            else if (key == Setting.IdRefrencedTypeName)
+                            {
+                                throw new NotSupportedException(json);
+                            }
+                            if (currentObject == null)
+                                currentObject = Activator.CreateInstance(type);
+                            if (currentObject is IEnumerable ilist)
+                            {
+                                MethodInfo addMethod = FindCachedMember<MethodInfo>(type, "Add");
+                                if (type.IsArray)
+                                {
+                                    Array array = (Array)currentObject;
+                                    typeOfParameter = array.GetType().GetElementType();
+                                }
+                                else
+                                {
+                                    if (addMethod == null)
+                                        throw new Exception($"Add method not found on type {type.FullName}");
+                                    typeOfParameter = addMethod.GetParameters().FirstOrDefault().ParameterType;
+                                }
+                                if (typeOfParameter != null)
+                                {
+                                    indexOf++;
+                                    object value = Desialize(ref json, typeOfParameter, ref indexOf);
+                                    if (value != null)
+                                        addMethod.Invoke(currentObject, new object[] { value });
+                                    i = indexOf;
+                                }
+                            }
+                            else
+                            {
+                                typeOfParameter = GetKeyType(currentObject, key);
+                                if (typeOfParameter != null)
+                                {
+                                    object value = Desialize(ref json, typeOfParameter, ref indexOf);
+                                    SetValue(currentObject, value, key);
+                                    i = indexOf;
+                                }
+                            }
                         }
                     }
                     else if (findingValue)
@@ -182,8 +258,25 @@ namespace JsonGo
                             string value = valueBuilder.ToString().Trim('\"');
                             keyBuilder.Clear();
                             valueBuilder.Clear();
-
-                            SetValue(currentObject, value, key);
+                            if (key == Setting.RefRefrencedTypeName)
+                            {
+                                var findIndex = json.IndexOf('}', indexOf);
+                                if (findIndex < 0)
+                                    throw new Exception("index not found is json valid?");
+                                indexOf = findIndex;
+                                return DeSerializedObjects[value];
+                            }
+                            else
+                            {
+                                if (currentObject == null)
+                                    currentObject = Activator.CreateInstance(type);
+                                if (key == Setting.IdRefrencedTypeName)
+                                {
+                                    DeSerializedObjects.Add(value, currentObject);
+                                }
+                                else
+                                    SetValue(currentObject, value, key);
+                            }
                         }
 
                     }
@@ -233,14 +326,17 @@ namespace JsonGo
             if (propertyInfo == null)
             {
                 FieldInfo fieldInfo = FindCachedMember<FieldInfo>(type, key);
-                if (fieldInfo.FieldType.IsEnum)
+                if (fieldInfo != null)
                 {
-                    value = Convert.ChangeType(value, typeof(int));
-                    value = Enum.ToObject(fieldInfo.FieldType, (int)value);
+                    if (fieldInfo.FieldType.IsEnum)
+                    {
+                        value = Convert.ChangeType(value, typeof(int));
+                        value = Enum.ToObject(fieldInfo.FieldType, (int)value);
+                    }
+                    else
+                        value = Convert.ChangeType(value, fieldInfo.FieldType);
+                    fieldInfo.SetValue(obj, value);
                 }
-                else
-                    value = Convert.ChangeType(value, fieldInfo.FieldType);
-                fieldInfo.SetValue(obj, value);
             }
             else
             {
