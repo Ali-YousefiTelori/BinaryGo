@@ -1,4 +1,5 @@
 ﻿using JsonGo;
+using JsonGo.Deserialize;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace JsonGoConsoleTest
         public int Age { get; set; }
         public Profile Profile { get; set; }
         public List<Address> Addresses { get; set; }
+        public bool IsEnabled { get; set; }
     }
 
     public class Profile
@@ -67,7 +69,8 @@ namespace JsonGoConsoleTest
                                  Type = AddressType.Work
                             }
                         }
-                    }
+                    },
+                    IsEnabled = true
                 };
                 Product product2 = new Product()
                 {
@@ -91,10 +94,11 @@ namespace JsonGoConsoleTest
                                  Type = AddressType.Work
                             }
                         }
-                    }
+                    },
+                    IsEnabled = false
                 };
 
-                foreach (var item in product.Profile.Addresses)
+                foreach (Address item in product.Profile.Addresses)
                 {
                     item.Parent = product.Profile;
                 }
@@ -107,12 +111,12 @@ namespace JsonGoConsoleTest
                 fullProducts.Add(products);
                 fullProducts.Add(products);
                 Serializer.SingleIntance.Setting.HasGenerateRefrencedTypes = true;
-                //string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[]},{\"$ref\":\"2\"}]}";
-                var json = Serializer.SingleIntance.Serialize(fullProducts);
+                string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"Name\":\"gl502vm\",\"Age\":\"27\",\"Profile\":{\"$id\":\"4\",\"FullName\":\"ali yousefi\",\"Addresses\":{\"$id\":\"5\",\"$values\":[{\"$id\":\"6\",\"Content\":\"آدرس تلور\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\",\"Parent\":{\"$ref\":\"4\"}},{\"$id\":\"7\",\"Content\":\"آدرس مشهد خیابان علی عصر\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\",\"Parent\":{\"$ref\":\"4\"}},{\"$ref\":\"6\"},{\"$ref\":\"7\"}]}},\"Addresses\":{\"$ref\":\"5\"},\"IsEnabled\":True},{\"$ref\":\"3\"},{\"$id\":\"8\",\"Name\":\"asus rog\",\"Age\":\"22\",\"Profile\":{\"$id\":\"9\",\"FullName\":\"amin mardani\",\"Addresses\":{\"$id\":\"10\",\"$values\":[{\"$id\":\"11\",\"Content\":\"آدرس نوکنده\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\"},{\"$id\":\"12\",\"Content\":\"آدرس جنگل گلستان\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\"}]}},\"IsEnabled\":\"False\"}]},{\"$ref\":\"2\"}]}";
+                //string json = Serializer.SingleIntance.Serialize(fullProducts);
                 //string json = " [{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" },{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" }] ";
-                //var dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
-                RunNewtonJsonDeserialize(json, typeof(List<List<Product>>));
-                RunJsonGoDeserialize(json, typeof(List<List<Product>>));
+                List<List<Product>> dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
+                //RunNewtonJsonDeserialize(json, typeof(List<List<Product>>));
+                //RunJsonGoDeserialize(json, typeof(List<List<Product>>));
             }
             catch (Exception ex)
             {

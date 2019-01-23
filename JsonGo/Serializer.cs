@@ -70,6 +70,7 @@ namespace JsonGo
                 dataType == typeof(decimal) ||
                 dataType == typeof(sbyte) ||
                 dataType == typeof(ulong) ||
+                dataType == typeof(bool) ||
                 dataType == typeof(ushort))
             {
                 return string.Concat('\"', data.ToString(), '\"');
