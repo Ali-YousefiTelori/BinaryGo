@@ -268,13 +268,24 @@ namespace JsonGo.Deserialize
         {
             StringBuilder result = new StringBuilder();
             bool started = false;
+            bool canSkipOneTime = false;
             for (int i = indexOf; i < json.Length; i++)
             {
                 indexOf = i;
                 char character = json[i];
+                if (started && character == '\\' && json.Length > i + 1 && json[i + 1] == '"')
+                {
+                    canSkipOneTime = true;
+                    continue;
+                }
                 result.Append(character);
                 if (character == '\"')
                 {
+                    if (canSkipOneTime)
+                    {
+                        canSkipOneTime = false;
+                        continue;
+                    }
                     if (!started)
                         started = true;
                     else

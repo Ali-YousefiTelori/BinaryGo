@@ -24,10 +24,11 @@ namespace JsonGo
         /// default setting of serializer
         /// </summary>
         public JsonSettingInfo Setting { get; set; } = new JsonSettingInfo();
+
         /// <summary>
         /// start of referenced index
         /// </summary>
-        int ReferencedIndex { get; set; } = 1;
+        private int ReferencedIndex { get; set; } = 1;
         /// <summary>
         /// single instance of serializer to accesss faster
         /// </summary>
@@ -59,7 +60,6 @@ namespace JsonGo
             Type dataType = data.GetType();
 
             if (dataType == typeof(int) ||
-                dataType == typeof(string) ||
                 dataType == typeof(DateTime) ||
                 dataType == typeof(uint) ||
                 dataType == typeof(long) ||
@@ -74,6 +74,10 @@ namespace JsonGo
                 dataType == typeof(ushort))
             {
                 return string.Concat('\"', data.ToString(), '\"');
+            }
+            else if (dataType == typeof(string))
+            {
+                return string.Concat('\"', SerializeString(data as string), '\"');
             }
             else if (dataType.IsEnum)
                 return string.Concat('\"', Convert.ToInt32(data).ToString(), '\"');
@@ -106,7 +110,7 @@ namespace JsonGo
                 {
                     if (item != null)
                     {
-                        var serialized = SerializeObject(item);
+                        string serialized = SerializeObject(item);
                         if (serialized != null)
                         {
                             stringBuilder.Append(serialized);
@@ -134,10 +138,10 @@ namespace JsonGo
                 for (int i = 0; i < properties.Length; i++)
                 {
                     System.Reflection.PropertyInfo property = properties[i];
-                    var propertyValue = property.GetValue(data);
+                    object propertyValue = property.GetValue(data);
                     if (propertyValue != null)
                     {
-                        var serializedValue = SerializeObject(propertyValue);
+                        string serializedValue = SerializeObject(propertyValue);
                         if (serializedValue != null)
                         {
                             stringBuilder.Append('\"');
@@ -154,6 +158,18 @@ namespace JsonGo
                 stringBuilder.Append('}');
                 return stringBuilder.ToString();
             }
+        }
+
+        internal string SerializeString(string value)
+        {
+            StringBuilder result = new StringBuilder();
+            foreach (char ch in value)
+            {
+                if (ch == '"')
+                    result.Append('\\');
+                result.Append(ch);
+            }
+            return result.ToString();
         }
     }
 }

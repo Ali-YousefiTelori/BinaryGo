@@ -110,6 +110,12 @@ namespace JsonGoConsoleTest
 
                 fullProducts.Add(products);
                 fullProducts.Add(products);
+                Serializer serializer = new Serializer();
+                string jsonsss = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                string json2 = serializer.Serialize(jsonsss);
+                var realGood = JsonConvert.DeserializeObject<string>(json2);
+                var myjson = Deserializer.SingleIntance.Dersialize<string>(json2);
+
                 Serializer.SingleIntance.Setting.HasGenerateRefrencedTypes = true;
                 string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"Name\":\"gl502vm\",\"Age\":\"27\",\"Profile\":{\"$id\":\"4\",\"FullName\":\"ali yousefi\",\"Addresses\":{\"$id\":\"5\",\"$values\":[{\"$id\":\"6\",\"Content\":\"آدرس تلور\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\",\"Parent\":{\"$ref\":\"4\"}},{\"$id\":\"7\",\"Content\":\"آدرس مشهد خیابان علی عصر\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\",\"Parent\":{\"$ref\":\"4\"}},{\"$ref\":\"6\"},{\"$ref\":\"7\"}]}},\"Addresses\":{\"$ref\":\"5\"},\"IsEnabled\":True},{\"$ref\":\"3\"},{\"$id\":\"8\",\"Name\":\"asus rog\",\"Age\":\"22\",\"Profile\":{\"$id\":\"9\",\"FullName\":\"amin mardani\",\"Addresses\":{\"$id\":\"10\",\"$values\":[{\"$id\":\"11\",\"Content\":\"آدرس نوکنده\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\"},{\"$id\":\"12\",\"Content\":\"آدرس جنگل گلستان\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\"}]}},\"IsEnabled\":\"False\"}]},{\"$ref\":\"2\"}]}";
                 //string json = Serializer.SingleIntance.Serialize(fullProducts);
@@ -144,6 +150,19 @@ namespace JsonGoConsoleTest
             //RunJsonGo(product);
 
             Console.ReadLine();
+        }
+
+        private static string Trim(string text, string textTrim)
+        {
+            while (text.StartsWith(textTrim))
+            {
+                text = text.Substring(textTrim.Length);
+            }
+            while (text.EndsWith(textTrim))
+            {
+                text = text.Substring(0, text.Length - textTrim.Length);
+            }
+            return text;
         }
 
         private static void RunNewtonJson(object data)
