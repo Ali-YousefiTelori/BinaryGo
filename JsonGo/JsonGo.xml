@@ -4,6 +4,11 @@
         <name>JsonGo</name>
     </assembly>
     <members>
+        <member name="T:JsonGo.Deserialize.Deserializer">
+            <summary>
+            deserializer of json
+            </summary>
+        </member>
         <member name="P:JsonGo.Deserialize.Deserializer.DeSerializedObjects">
             <summary>
             save deserialized objects for referenced type
@@ -45,7 +50,6 @@
             deserialize json
             </summary>
             <param name="json">json value</param>
-            <param name="type">type to deserialize</param>
             <param name="indexOf">index of start string</param>
             <returns>value deserialized</returns>
         </member>
@@ -141,6 +145,58 @@
             <summary>
             support for $id,$ref,$values for serialization
             </summary>
+        </member>
+        <member name="T:JsonGo.Runtime.PropertyGoInfo">
+            <summary>
+            generate type details on memory
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.Name">
+            <summary>
+            name of property
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.GetValue">
+            <summary>
+            get value of property
+            </summary>
+        </member>
+        <member name="T:JsonGo.Runtime.TypeGoInfo">
+            <summary>
+            generate type details on memory
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Type">
+            <summary>
+            type of data
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.IsSimpleType">
+            <summary>
+            is simple type like int,string,double,enum etc
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Serialize">
+            <summary>
+            serialize action
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Properties">
+            <summary>
+            properties of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.SerializeStringFunction">
+            <summary>
+            serialize string
+            </summary>
+        </member>
+        <member name="M:JsonGo.Runtime.TypeGoInfo.Generate(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
         </member>
         <member name="T:JsonGo.Serializer">
             <summary>

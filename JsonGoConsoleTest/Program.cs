@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -111,18 +112,50 @@ namespace JsonGoConsoleTest
                 fullProducts.Add(products);
                 fullProducts.Add(products);
                 Serializer serializer = new Serializer();
-                string jsonsss = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-                string json2 = serializer.Serialize(jsonsss);
-                var realGood = JsonConvert.DeserializeObject<string>(json2);
-                var myjson = Deserializer.SingleIntance.Dersialize<string>(json2);
+                string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                string jsonGoJson = serializer.Serialize(fullProducts);
 
-                Serializer.SingleIntance.Setting.HasGenerateRefrencedTypes = true;
-                string json = "{\"$id\":\"1\",\"$values\":[{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"Name\":\"gl502vm\",\"Age\":\"27\",\"Profile\":{\"$id\":\"4\",\"FullName\":\"ali yousefi\",\"Addresses\":{\"$id\":\"5\",\"$values\":[{\"$id\":\"6\",\"Content\":\"آدرس تلور\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\",\"Parent\":{\"$ref\":\"4\"}},{\"$id\":\"7\",\"Content\":\"آدرس مشهد خیابان علی عصر\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\",\"Parent\":{\"$ref\":\"4\"}},{\"$ref\":\"6\"},{\"$ref\":\"7\"}]}},\"Addresses\":{\"$ref\":\"5\"},\"IsEnabled\":True},{\"$ref\":\"3\"},{\"$id\":\"8\",\"Name\":\"asus rog\",\"Age\":\"22\",\"Profile\":{\"$id\":\"9\",\"FullName\":\"amin mardani\",\"Addresses\":{\"$id\":\"10\",\"$values\":[{\"$id\":\"11\",\"Content\":\"آدرس نوکنده\",\"CreatedDate\":\"1/23/2019 5:37:56 PM\",\"Type\":\"1\"},{\"$id\":\"12\",\"Content\":\"آدرس جنگل گلستان\",\"CreatedDate\":\"1/23/2020 5:37:56 PM\",\"Type\":\"2\"}]}},\"IsEnabled\":\"False\"}]},{\"$ref\":\"2\"}]}";
-                //string json = Serializer.SingleIntance.Serialize(fullProducts);
-                //string json = " [{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" },{ \"Name\" : \"computer\",\"profile\" : {\"fullname\":\"ali yousefi\",\"Addresses\":[{\"Content\":\"خیابان ولی عصر\",\"CreatedDate\":\"2017/10/5 12:20\"},{\"Content\":\"خیابان گلشهر\",\"CreatedDate\":\"2018/10/5 12:21\"}]},\"Age\":\"123456\" }] ";
-                List<List<Product>> dPoduct = Deserializer.SingleIntance.Dersialize<List<List<Product>>>(json);
-                //RunNewtonJsonDeserialize(json, typeof(List<List<Product>>));
-                //RunJsonGoDeserialize(json, typeof(List<List<Product>>));
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    string js = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                }
+
+                stopwatch.Stop();
+                Console.WriteLine("Newtonsoft.Json serialize: " + stopwatch.Elapsed);
+                stopwatch.Reset();
+
+                stopwatch.Start();
+                for (int i = 0; i < 10000; i++)
+                {
+                    string js = serializer.Serialize(fullProducts);
+                }
+                stopwatch.Stop();
+                Console.WriteLine("JsonGo serialize: " + stopwatch.Elapsed);
+
+                stopwatch.Reset();
+                stopwatch.Start();
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    var value = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<Product>>>(newtonJson);
+                }
+
+                stopwatch.Stop();
+                Console.WriteLine("Newtonsoft.Json deserialize: " + stopwatch.Elapsed);
+                stopwatch.Reset();
+                Deserializer deserializer = new Deserializer();
+
+                stopwatch.Start();
+                for (int i = 0; i < 10000; i++)
+                {
+                    var js = deserializer.Dersialize<List<List<Product>>>(jsonGoJson);
+                }
+                stopwatch.Stop();
+                Console.WriteLine("JsonGo deserialize: " + stopwatch.Elapsed);
+
             }
             catch (Exception ex)
             {

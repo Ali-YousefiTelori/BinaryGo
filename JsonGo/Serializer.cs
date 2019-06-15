@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsonGo.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,8 +15,10 @@ namespace JsonGo
         static Serializer()
         {
             SingleIntance = new Serializer();
+            TypeGoInfo.SerializeStringFunction = SerializeString;
         }
 
+        internal static Dictionary<Type, TypeGoInfo> Types = new Dictionary<Type, TypeGoInfo>();
         /// <summary>
         /// save serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>
@@ -59,29 +62,15 @@ namespace JsonGo
             }
             Type dataType = data.GetType();
 
-            if (dataType == typeof(int) ||
-                dataType == typeof(DateTime) ||
-                dataType == typeof(uint) ||
-                dataType == typeof(long) ||
-                dataType == typeof(short) ||
-                dataType == typeof(byte) ||
-                dataType == typeof(double) ||
-                dataType == typeof(float) ||
-                dataType == typeof(decimal) ||
-                dataType == typeof(sbyte) ||
-                dataType == typeof(ulong) ||
-                dataType == typeof(bool) ||
-                dataType == typeof(ushort))
+            if (!Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
             {
-                return string.Concat('\"', data.ToString(), '\"');
+                Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            else if (dataType == typeof(string))
+            if (typeGoInfo.IsSimpleType)
             {
-                return string.Concat('\"', SerializeString(data as string), '\"');
+                return typeGoInfo.Serialize(data);
             }
-            else if (dataType.IsEnum)
-                return string.Concat('\"', Convert.ToInt32(data).ToString(), '\"');
-
+           
             if (!SerializedObjects.TryGetValue(data, out string refrencedId))
             {
                 refrencedId = ReferencedIndex.ToString();
@@ -118,6 +107,7 @@ namespace JsonGo
                         }
                     }
                 }
+
                 if (stringBuilder[stringBuilder.Length - 1] == ',')
                     stringBuilder.Length--;
                 stringBuilder.Append(']');
@@ -127,17 +117,15 @@ namespace JsonGo
             }
             else
             {
-
                 StringBuilder stringBuilder = new StringBuilder();
-                PropertyInfo[] properties = dataType.GetProperties();
 
                 stringBuilder.Append('{');
                 if (Setting.HasGenerateRefrencedTypes)
                     stringBuilder.Append($"{Setting.IdRefrencedTypeName}:\"{refrencedId}\",");
 
-                for (int i = 0; i < properties.Length; i++)
+                foreach (var item in typeGoInfo.Properties)
                 {
-                    System.Reflection.PropertyInfo property = properties[i];
+                    var property = item.Value;
                     object propertyValue = property.GetValue(data);
                     if (propertyValue != null)
                     {
@@ -160,7 +148,7 @@ namespace JsonGo
             }
         }
 
-        internal string SerializeString(string value)
+        internal static string SerializeString(string value)
         {
             StringBuilder result = new StringBuilder();
             foreach (char ch in value)

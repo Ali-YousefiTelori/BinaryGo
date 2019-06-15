@@ -7,6 +7,9 @@ using System.Text;
 
 namespace JsonGo.Deserialize
 {
+    /// <summary>
+    /// deserializer of json
+    /// </summary>
     public class Deserializer
     {
         static Deserializer()
@@ -14,7 +17,7 @@ namespace JsonGo.Deserialize
             SingleIntance = new Deserializer();
         }
 
-        private const string SupportedValue = "0123456789.truefalsTRUEFALS";
+        private const string SupportedValue = "0123456789.truefalsTRUEFALS-";
         /// <summary>
         /// save deserialized objects for referenced type
         /// </summary>
@@ -64,7 +67,6 @@ namespace JsonGo.Deserialize
         /// deserialize json
         /// </summary>
         /// <param name="json">json value</param>
-        /// <param name="type">type to deserialize</param>
         /// <param name="indexOf">index of start string</param>
         /// <returns>value deserialized</returns>
         internal IJsonGoModel Extract(ref string json, ref int indexOf)
@@ -153,6 +155,13 @@ namespace JsonGo.Deserialize
                 else if (character == ']')
                 {
                     break;
+                }
+                else if (character == '"')
+                {
+                    var resultString = ExtractString(ref json, ref indexOf);
+                    ValueModel valueModel = new ValueModel(resultString);
+                    result.Add(valueModel);
+                    i = indexOf;
                 }
                 else
                     throw new Exception($"end of character not support '{character}' index of {i} i think i must find '}}' character");
