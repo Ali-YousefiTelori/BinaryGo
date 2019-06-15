@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsonGo.Runtime;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -253,19 +254,16 @@ namespace JsonGo.Deserialize
             if (obj == null)
                 return null;
             key = key.Trim('\"');
-            Type type = obj.GetType();
-            PropertyInfo propertyInfo = FindCachedMember<PropertyInfo>(type, key);
-            if (propertyInfo == null)
+            Type dataType = obj.GetType();
+            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
             {
-                FieldInfo fieldInfo = FindCachedMember<FieldInfo>(type, key);
-                if (fieldInfo == null)
-                    return null;
-                return fieldInfo.FieldType;
+                TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            else
+            if (typeGoInfo.Properties.TryGetValue(key, out PropertyGoInfo propertyGo))
             {
-                return propertyInfo.PropertyType;
+                return propertyGo.Type;
             }
+            return null;
         }
         /// <summary>
         /// extract string from inside of double " char
@@ -336,19 +334,14 @@ namespace JsonGo.Deserialize
             if (obj == null)
                 return;
             key = key.Trim('\"');
-            Type type = obj.GetType();
-            PropertyInfo propertyInfo = FindCachedMember<PropertyInfo>(type, key);
-            if (propertyInfo == null)
+            Type dataType = obj.GetType();
+            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
             {
-                FieldInfo fieldInfo = FindCachedMember<FieldInfo>(type, key);
-                if (fieldInfo != null)
-                {
-                    fieldInfo.SetValue(obj, value);
-                }
+                TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            else
+            if (typeGoInfo.Properties.TryGetValue(key, out PropertyGoInfo propertyGo))
             {
-                propertyInfo.SetValue(obj, value);
+                propertyGo.SetValue(obj, value);
             }
         }
 
@@ -374,71 +367,6 @@ namespace JsonGo.Deserialize
         private bool IsWhiteSpace(ref char value)
         {
             return value == '\b' || value == '\f' || value == '\n' || value == '\r' || value == '\t' || value == ' ';
-        }
-        /// <summary>
-        /// find parameter or metod or field name from cached
-        /// </summary>
-        /// <typeparam name="T">type of memberinfo like method,field,property</typeparam>
-        /// <param name="type">type of object to research</param>
-        /// <param name="name">name of parameter</param>
-        /// <returns>member like method,field,property thet found</returns>
-        internal T FindCachedMember<T>(Type type, string name) where T : class
-        {
-            Type tType = typeof(T);
-            bool exist = CacheNameVariables.TryGetValue(type, out ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>> members);
-            if (!exist)
-            {
-                members = new ConcurrentDictionary<Type, ConcurrentDictionary<string, MemberInfo>>();
-                CacheNameVariables.TryAdd(type, members);
-            }
-
-            exist = members.TryGetValue(tType, out ConcurrentDictionary<string, MemberInfo> values);
-
-            if (!exist)
-            {
-                values = new ConcurrentDictionary<string, MemberInfo>();
-                members.TryAdd(tType, values);
-            }
-            name = name.ToLower();
-            if (values.TryGetValue(name, out MemberInfo value))
-                return value as T;
-            else
-            {
-                if (tType == typeof(MethodInfo))
-                {
-                    MethodInfo find = type.GetMethods().FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    if (find != null)
-                    {
-                        values.TryAdd(name, find);
-                        return find as T;
-                    }
-                    else
-                        return null;
-                }
-                else if (tType == typeof(PropertyInfo))
-                {
-                    PropertyInfo find = type.GetProperties().FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    if (find != null)
-                    {
-                        values.TryAdd(name, find);
-                        return find as T;
-                    }
-                    else
-                        return null;
-                }
-                else if (tType == typeof(FieldInfo))
-                {
-                    FieldInfo find = type.GetFields().FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    if (find != null)
-                    {
-                        values.TryAdd(name, find);
-                        return find as T;
-                    }
-                    else
-                        return null;
-                }
-            }
-            return null;
         }
     }
 }

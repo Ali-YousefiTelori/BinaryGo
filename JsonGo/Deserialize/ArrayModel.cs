@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsonGo.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -17,9 +18,14 @@ namespace JsonGo.Deserialize
         public object Generate(Type type, Deserializer deserializer)
         {
             object obj = Activator.CreateInstance(type);
+            //Type dataType = obj.GetType();
+            //if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+            //{
+            //    TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
+            //}
             foreach (var item in Items)
             {
-                MethodInfo addMethod = type == null ? null : deserializer.FindCachedMember<MethodInfo>(type, "Add");
+                MethodInfo addMethod = type.GetMethod("Add");
                 Array array = null;
                 Type elementType = null;
                 if (type != null && type.IsArray)

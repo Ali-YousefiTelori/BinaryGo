@@ -10,6 +10,10 @@ namespace JsonGo.Runtime
     public class TypeGoInfo
     {
         /// <summary>
+        /// chached types
+        /// </summary>
+        internal static Dictionary<Type, TypeGoInfo> Types = new Dictionary<Type, TypeGoInfo>();
+        /// <summary>
         /// type of data
         /// </summary>
         public Type Type { get; set; }
@@ -80,12 +84,24 @@ namespace JsonGo.Runtime
                 {
                     typeGoInfo.Properties[item.Name] = new PropertyGoInfo()
                     {
+                        Type = item.PropertyType,
                         Name = item.Name,
-                        GetValue = item.GetValue
+                        GetValue = item.GetValue,
+                        SetValue = item.SetValue
+                    };
+                }
+                foreach (var item in type.GetFields())
+                {
+                    typeGoInfo.Properties[item.Name] = new PropertyGoInfo()
+                    {
+                        Type = item.FieldType,
+                        Name = item.Name,
+                        GetValue = item.GetValue,
+                        SetValue = item.SetValue
                     };
                 }
             }
-            
+
             return typeGoInfo;
         }
 

@@ -18,7 +18,6 @@ namespace JsonGo
             TypeGoInfo.SerializeStringFunction = SerializeString;
         }
 
-        internal static Dictionary<Type, TypeGoInfo> Types = new Dictionary<Type, TypeGoInfo>();
         /// <summary>
         /// save serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>
@@ -62,9 +61,9 @@ namespace JsonGo
             }
             Type dataType = data.GetType();
 
-            if (!Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
             {
-                Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
+                TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
             if (typeGoInfo.IsSimpleType)
             {

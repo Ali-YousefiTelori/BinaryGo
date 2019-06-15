@@ -113,6 +113,7 @@ namespace JsonGoConsoleTest
                 fullProducts.Add(products);
                 Serializer serializer = new Serializer();
                 string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                
                 string jsonGoJson = serializer.Serialize(fullProducts);
 
                 Stopwatch stopwatch = new Stopwatch();

@@ -92,15 +92,6 @@
             <param name="value">character to check</param>
             <returns>is char is white space</returns>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.FindCachedMember``1(System.Type,System.String)">
-            <summary>
-            find parameter or metod or field name from cached
-            </summary>
-            <typeparam name="T">type of memberinfo like method,field,property</typeparam>
-            <param name="type">type of object to research</param>
-            <param name="name">name of parameter</param>
-            <returns>member like method,field,property thet found</returns>
-        </member>
         <member name="T:JsonGo.Deserialize.IJsonGoModel">
             <summary>
             json go model before deserialize
@@ -151,6 +142,11 @@
             generate type details on memory
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.Type">
+            <summary>
+            type of property
+            </summary>
+        </member>
         <member name="P:JsonGo.Runtime.PropertyGoInfo.Name">
             <summary>
             name of property
@@ -164,6 +160,11 @@
         <member name="T:JsonGo.Runtime.TypeGoInfo">
             <summary>
             generate type details on memory
+            </summary>
+        </member>
+        <member name="F:JsonGo.Runtime.TypeGoInfo.Types">
+            <summary>
+            chached types
             </summary>
         </member>
         <member name="P:JsonGo.Runtime.TypeGoInfo.Type">
