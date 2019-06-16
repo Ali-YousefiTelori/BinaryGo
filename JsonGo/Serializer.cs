@@ -34,7 +34,10 @@ namespace JsonGo
         /// single instance of serializer to accesss faster
         /// </summary>
         public static Serializer SingleIntance { get; set; }
-
+        /// <summary>
+        /// string builder of json serialization
+        /// </summary>
+        public StringBuilder Builder { get; set; } = new StringBuilder();
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
@@ -43,8 +46,9 @@ namespace JsonGo
         public string Serialize(object data)
         {
             ReferencedIndex = 1;
+            Builder.Clear();
             SerializedObjects.Clear();
-            return SerializeObject(data, this);
+            return SerializeObject(Builder, data, this).ToString();
         }
 
         /// <summary>
@@ -53,7 +57,7 @@ namespace JsonGo
         /// <param name="data">any object to serialize</param>
         /// <param name="serializer"></param>
         /// <returns>json that serialized from you object</returns>
-        internal static string SerializeObject(object data, Serializer serializer)
+        internal static StringBuilder SerializeObject(StringBuilder stringBuilder, object data, Serializer serializer)
         {
             if (data == null)
             {
@@ -71,7 +75,7 @@ namespace JsonGo
             {
                 TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            return typeGoInfo.Serialize(serializer, data);
+            return typeGoInfo.Serialize(serializer, stringBuilder, data);
         }
 
         //internal static string SerializeArray(IEnumerable list, Serializer serializer)
@@ -97,9 +101,8 @@ namespace JsonGo
         //    return stringBuilder.ToString();
         //}
 
-        internal static string SerializeArrayReference(IEnumerable list, ref string refrencedId, Serializer serializer)
+        internal static StringBuilder SerializeArrayReference(StringBuilder stringBuilder, IEnumerable list, ref string refrencedId, Serializer serializer)
         {
-            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"{{{JsonSettingInfo.IdRefrencedTypeName}:\"{refrencedId}\",{JsonSettingInfo.ValuesRefrencedTypeName}:");
 
             stringBuilder.Append('[');
@@ -107,12 +110,8 @@ namespace JsonGo
             {
                 if (item != null)
                 {
-                    string serialized = SerializeObject(item, serializer);
-                    if (serialized != null)
-                    {
-                        stringBuilder.Append(serialized);
-                        stringBuilder.Append(',');
-                    }
+                    SerializeObject(stringBuilder, item, serializer);
+                    stringBuilder.Append(',');
                 }
             }
 
@@ -120,13 +119,11 @@ namespace JsonGo
                 stringBuilder.Length--;
             stringBuilder.Append(']');
             stringBuilder.Append('}');
-            return stringBuilder.ToString();
+            return stringBuilder;
         }
 
-        internal static string SerializeObjectReference(object data, ref string refrencedId, TypeGoInfo typeGoInfo, Serializer serializer)
+        internal static StringBuilder SerializeObjectReference(StringBuilder stringBuilder, object data, ref string refrencedId, TypeGoInfo typeGoInfo, Serializer serializer)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-
             stringBuilder.Append('{');
             stringBuilder.Append($"{JsonSettingInfo.IdRefrencedTypeName}:\"{refrencedId}\",");
 
@@ -136,22 +133,18 @@ namespace JsonGo
                 object propertyValue = property.GetValue(data);
                 if (propertyValue != null)
                 {
-                    string serializedValue = SerializeObject(propertyValue, serializer);
-                    if (serializedValue != null)
-                    {
-                        stringBuilder.Append('\"');
-                        stringBuilder.Append(property.Name);
-                        stringBuilder.Append('\"');
-                        stringBuilder.Append(':');
-                        stringBuilder.Append(serializedValue);
-                        stringBuilder.Append(',');
-                    }
+                    stringBuilder.Append('\"');
+                    stringBuilder.Append(property.Name);
+                    stringBuilder.Append('\"');
+                    stringBuilder.Append(':');
+                    SerializeObject(stringBuilder, propertyValue, serializer);
+                    stringBuilder.Append(',');
                 }
             }
             if (stringBuilder[stringBuilder.Length - 1] == ',')
                 stringBuilder.Length--;
             stringBuilder.Append('}');
-            return stringBuilder.ToString();
+            return stringBuilder;
         }
 
         //internal static string SerializeObject(object data, TypeGoInfo typeGoInfo, Serializer serializer)
@@ -183,16 +176,15 @@ namespace JsonGo
         //    return stringBuilder.ToString();
         //}
 
-        internal static string SerializeString(string value)
+        internal static StringBuilder SerializeString(StringBuilder stringBuilder, string value)
         {
-            StringBuilder result = new StringBuilder();
             foreach (char ch in value)
             {
                 if (ch == '"')
-                    result.Append('\\');
-                result.Append(ch);
+                    stringBuilder.Append('\\');
+                stringBuilder.Append(ch);
             }
-            return result.ToString();
+            return stringBuilder;
         }
     }
 }

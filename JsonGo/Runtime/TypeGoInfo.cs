@@ -25,7 +25,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// serialize action
         /// </summary>
-        public Func<Serializer, object, string> Serialize { get; set; }
+        public Func<Serializer, StringBuilder, object, StringBuilder> Serialize { get; set; }
 
         /// <summary>
         /// properties of type
@@ -57,36 +57,45 @@ namespace JsonGo.Runtime
                 type == typeof(ushort))
             {
                 typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, data) =>
+                typeGoInfo.Serialize = (serializer, builder, data) =>
                 {
-                    return string.Concat('\"', data, '\"');
+                    builder.Append('\"');
+                    builder.Append(data);
+                    builder.Append('\"');
+                    return builder;
                 };
             }
             else if (type == typeof(string))
             {
                 typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, data) =>
+                typeGoInfo.Serialize = (serializer, builder, data) =>
                 {
-                    return string.Concat('\"', Serializer.SerializeString(data as string), '\"');
+                    builder.Append('\"');
+                    Serializer.SerializeString(builder, data as string);
+                    builder.Append('\"');
+                    return builder;
                 };
             }
             else if (type.IsEnum)
             {
                 typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, data) =>
+                typeGoInfo.Serialize = (serializer, builder, data) =>
                 {
-                    return string.Concat('\"', Convert.ToInt32(data), '\"');
+                    builder.Append('\"');
+                    builder.Append(Convert.ToInt32(data)); 
+                    builder.Append('\"');
+                    return builder;
                 };
             }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 //if (serializer.Setting.HasGenerateRefrencedTypes)
                 //{
-                typeGoInfo.Serialize = (serializer, data) =>
+                typeGoInfo.Serialize = (serializer, builder, data) =>
                 {
-                    if (GenerateReference(serializer, data, out string refrencedId, out string result))
-                        return result;
-                    return Serializer.SerializeArrayReference((IEnumerable)data, ref refrencedId, serializer);
+                    if (GenerateReference(serializer, data, builder, out string refrencedId))
+                        return builder;
+                    return Serializer.SerializeArrayReference(builder, (IEnumerable)data, ref refrencedId, serializer);
                 };
                 //}
                 //else
@@ -119,20 +128,19 @@ namespace JsonGo.Runtime
                         SetValue = item.SetValue
                     };
                 }
-                typeGoInfo.Serialize = (serializer, data) =>
+                typeGoInfo.Serialize = (serializer, builder, data) =>
                 {
-                    if (GenerateReference(serializer, data, out string refrencedId, out string result))
-                        return result;
-                    return Serializer.SerializeObjectReference(data, ref refrencedId, typeGoInfo, serializer);
+                    if (GenerateReference(serializer, data, builder, out string refrencedId))
+                        return builder;
+                    return Serializer.SerializeObjectReference(builder, data, ref refrencedId, typeGoInfo, serializer);
                 };
             }
 
             return typeGoInfo;
         }
 
-       static  bool GenerateReference(Serializer serializer, object data, out string refrencedId, out string result)
+       static  bool GenerateReference(Serializer serializer, object data,StringBuilder builder, out string refrencedId)
         {
-            result = null;
             if (!serializer.SerializedObjects.TryGetValue(data, out refrencedId))
             {
                 refrencedId = serializer.ReferencedIndex.ToString();
@@ -142,11 +150,9 @@ namespace JsonGo.Runtime
             }
             else
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.Append("{");
-                stringBuilder.Append($"{JsonSettingInfo.RefRefrencedTypeName}:\"{refrencedId}\"");
-                stringBuilder.Append("}");
-                result = stringBuilder.ToString();
+                builder.Append("{");
+                builder.Append($"{JsonSettingInfo.RefRefrencedTypeName}:\"{refrencedId}\"");
+                builder.Append("}");
                 return true;
             }
         }
