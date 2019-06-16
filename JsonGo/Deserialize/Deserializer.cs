@@ -42,7 +42,7 @@ namespace JsonGo.Deserialize
         /// <typeparam name="T">type of deserialize</typeparam>
         /// <param name="json">json to deserialize</param>
         /// <returns>deserialized type</returns>
-        public T Dersialize<T>(string json)
+        public T Deserialize<T>(string json)
         {
             int indexOf = 0;
             DeSerializedObjects.Clear();
@@ -56,7 +56,7 @@ namespace JsonGo.Deserialize
         /// <param name="type">type of deserialize</param>
         /// <param name="json">json to deserialize</param>
         /// <returns>deserialized type</returns>
-        public object Dersialize(string json, Type type)
+        public object Deserialize(string json, Type type)
         {
             int indexOf = 0;
             DeSerializedObjects.Clear();

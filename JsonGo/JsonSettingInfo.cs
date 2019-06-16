@@ -8,15 +8,18 @@
         /// <summary>
         /// $Id refrenced type name
         /// </summary>
-        internal string IdRefrencedTypeName { get; set; } = "\"$id\"";
+        internal const string IdRefrencedTypeName = "\"$id\"";
+        internal const string IdRefrencedTypeNameNoQuotes = "$id";
         /// <summary>
         /// $Ref refrenced type name
         /// </summary>
-        internal string RefRefrencedTypeName { get; set; } = "\"$ref\"";
+        internal const string RefRefrencedTypeName = "\"$ref\"";
+        internal const string RefRefrencedTypeNameNoQuotes = "$ref";
         /// <summary>
         /// $Values refrenced type name
         /// </summary>
-        internal string ValuesRefrencedTypeName { get; set; } = "\"$values\"";
+        internal const string ValuesRefrencedTypeName = "\"$values\"";
+        internal const string ValuesRefrencedTypeNameNoQuotes = "$values";
         /// <summary>
         /// support for $id,$ref,$values for serialization
         /// </summary>

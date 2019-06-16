@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoConsoleTest", "JsonGoConsoleTest\JsonGoConsoleTest.csproj", "{FD0A70E3-031D-416B-B793-EA46F8545DE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGo", "JsonGo\JsonGo.csproj", "{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonGo", "JsonGo\JsonGo.csproj", "{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoCoreConsoleTest", "JsonGoCoreConsoleTest\JsonGoCoreConsoleTest.csproj", "{86C544BD-303D-4ECF-9F22-52205480B319}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86C544BD-303D-4ECF-9F22-52205480B319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C544BD-303D-4ECF-9F22-52205480B319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C544BD-303D-4ECF-9F22-52205480B319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C544BD-303D-4ECF-9F22-52205480B319}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

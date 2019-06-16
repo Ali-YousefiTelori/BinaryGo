@@ -14,9 +14,9 @@ namespace JsonGo.Deserialize
 
         public object Generate(Type type, Deserializer deserializer)
         {
-            string idName = deserializer.Setting.IdRefrencedTypeName.Trim('\"');
-            string referenceName = deserializer.Setting.RefRefrencedTypeName.Trim('\"');
-            string valuesName = deserializer.Setting.ValuesRefrencedTypeName.Trim('\"');
+            string idName = JsonSettingInfo.IdRefrencedTypeNameNoQuotes;
+            string referenceName = JsonSettingInfo.RefRefrencedTypeNameNoQuotes;
+            string valuesName = JsonSettingInfo.ValuesRefrencedTypeNameNoQuotes;
             if (Properties.ContainsKey(referenceName))
             {
                 return deserializer.DeSerializedObjects[(string)Properties[referenceName].Generate(typeof(string), deserializer)];

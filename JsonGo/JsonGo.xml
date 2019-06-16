@@ -29,7 +29,7 @@
             default setting of serializer
             </summary>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.Dersialize``1(System.String)">
+        <member name="M:JsonGo.Deserialize.Deserializer.Deserialize``1(System.String)">
             <summary>
             deserialize a json to a type
             </summary>
@@ -37,7 +37,7 @@
             <param name="json">json to deserialize</param>
             <returns>deserialized type</returns>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.Dersialize(System.String,System.Type)">
+        <member name="M:JsonGo.Deserialize.Deserializer.Deserialize(System.String,System.Type)">
             <summary>
             deserialize a json to a type
             </summary>
@@ -117,17 +117,17 @@
             default setting of json serialize and deserialier
             </summary>
         </member>
-        <member name="P:JsonGo.JsonSettingInfo.IdRefrencedTypeName">
+        <member name="F:JsonGo.JsonSettingInfo.IdRefrencedTypeName">
             <summary>
             $Id refrenced type name
             </summary>
         </member>
-        <member name="P:JsonGo.JsonSettingInfo.RefRefrencedTypeName">
+        <member name="F:JsonGo.JsonSettingInfo.RefRefrencedTypeName">
             <summary>
             $Ref refrenced type name
             </summary>
         </member>
-        <member name="P:JsonGo.JsonSettingInfo.ValuesRefrencedTypeName">
+        <member name="F:JsonGo.JsonSettingInfo.ValuesRefrencedTypeName">
             <summary>
             $Values refrenced type name
             </summary>
@@ -187,16 +187,14 @@
             properties of type
             </summary>
         </member>
-        <member name="P:JsonGo.Runtime.TypeGoInfo.SerializeStringFunction">
-            <summary>
-            serialize string
-            </summary>
-        </member>
         <member name="M:JsonGo.Runtime.TypeGoInfo.Generate(System.Type)">
             <summary>
             
             </summary>
             <param name="type"></param>
+            <param name="data"></param>
+            <param name="refrencedId"></param>
+            <param name="serializer"></param>
             <returns></returns>
         </member>
         <member name="T:JsonGo.Serializer">
@@ -231,11 +229,12 @@
             <param name="data">any object to serialize</param>
             <returns>json that serialized from you object</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Object)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object,JsonGo.Serializer)">
             <summary>
             serialize an object to a json string
             </summary>
             <param name="data">any object to serialize</param>
+            <param name="serializer"></param>
             <returns>json that serialized from you object</returns>
         </member>
     </members>
