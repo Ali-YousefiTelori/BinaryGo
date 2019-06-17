@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JsonGo.Runtime
 {
+    public delegate StringBuilder FunctionGo(Serializer serializer, StringBuilder stringBuilder, ref object data);
     /// <summary>
     /// generate type details on memory
     /// </summary>
@@ -19,25 +21,19 @@ namespace JsonGo.Runtime
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// is simple type like int,string,double,enum etc
-        /// </summary>
-        public bool IsSimpleType { get; set; }
-        /// <summary>
         /// serialize action
         /// </summary>
-        public Func<Serializer, StringBuilder, object, StringBuilder> Serialize { get; set; }
+        public FunctionGo Serialize { get; set; }
 
         /// <summary>
         /// properties of type
         /// </summary>
         public Dictionary<string, PropertyGoInfo> Properties { get; set; } = new Dictionary<string, PropertyGoInfo>();
+        public PropertyGoInfo[] ArrayProperties { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <param name="refrencedId"></param>
-        /// <param name="serializer"></param>
         /// <returns></returns>
         public static TypeGoInfo Generate(Type type)
         {
@@ -56,34 +52,31 @@ namespace JsonGo.Runtime
                 type == typeof(bool) ||
                 type == typeof(ushort))
             {
-                typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, builder, data) =>
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    builder.Append('\"');
+                    builder.Append(JsonSettingInfo.Quotes);
                     builder.Append(data);
-                    builder.Append('\"');
+                    builder.Append(JsonSettingInfo.Quotes);
                     return builder;
                 };
             }
             else if (type == typeof(string))
             {
-                typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, builder, data) =>
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    builder.Append('\"');
-                    Serializer.SerializeString(builder, data as string);
-                    builder.Append('\"');
+                    builder.Append(JsonSettingInfo.Quotes); ;
+                    builder.Append((data as string).Replace("\"", "\\\""));
+                    builder.Append(JsonSettingInfo.Quotes);
                     return builder;
                 };
             }
             else if (type.IsEnum)
             {
-                typeGoInfo.IsSimpleType = true;
-                typeGoInfo.Serialize = (serializer, builder, data) =>
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    builder.Append('\"');
-                    builder.Append(Convert.ToInt32(data)); 
-                    builder.Append('\"');
+                    builder.Append(JsonSettingInfo.Quotes);
+                    builder.Append(Convert.ToInt32(data));
+                    builder.Append(JsonSettingInfo.Quotes);
                     return builder;
                 };
             }
@@ -91,11 +84,11 @@ namespace JsonGo.Runtime
             {
                 //if (serializer.Setting.HasGenerateRefrencedTypes)
                 //{
-                typeGoInfo.Serialize = (serializer, builder, data) =>
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    if (GenerateReference(serializer, data, builder, out string refrencedId))
+                    if (GenerateReference(serializer, ref data, builder, out object refrencedId))
                         return builder;
-                    return Serializer.SerializeArrayReference(builder, (IEnumerable)data, ref refrencedId, serializer);
+                    return Serializer.SerializeArrayReference(builder, (IEnumerable)data, ref  refrencedId, serializer);
                 };
                 //}
                 //else
@@ -128,9 +121,10 @@ namespace JsonGo.Runtime
                         SetValue = item.SetValue
                     };
                 }
-                typeGoInfo.Serialize = (serializer, builder, data) =>
+                typeGoInfo.ArrayProperties = typeGoInfo.Properties.Values.ToArray();
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    if (GenerateReference(serializer, data, builder, out string refrencedId))
+                    if (GenerateReference(serializer, ref data, builder, out object refrencedId))
                         return builder;
                     return Serializer.SerializeObjectReference(builder, data, ref refrencedId, typeGoInfo, serializer);
                 };
@@ -139,20 +133,23 @@ namespace JsonGo.Runtime
             return typeGoInfo;
         }
 
-       static  bool GenerateReference(Serializer serializer, object data,StringBuilder builder, out string refrencedId)
+        static bool GenerateReference(Serializer serializer, ref object data, StringBuilder builder, out object refrencedId)
         {
             if (!serializer.SerializedObjects.TryGetValue(data, out refrencedId))
             {
-                refrencedId = serializer.ReferencedIndex.ToString();
+                refrencedId = serializer.ReferencedIndex;
                 serializer.SerializedObjects.Add(data, refrencedId);
                 serializer.ReferencedIndex++;
                 return false;
             }
             else
             {
-                builder.Append("{");
-                builder.Append($"{JsonSettingInfo.RefRefrencedTypeName}:\"{refrencedId}\"");
-                builder.Append("}");
+                builder.Append(JsonSettingInfo.OpenBraket);
+                builder.Append(JsonSettingInfo.RefRefrencedTypeName);
+                builder.Append(JsonSettingInfo.ColonQuotes);
+                builder.Append(refrencedId);
+                builder.Append(JsonSettingInfo.Quotes);
+                builder.Append(JsonSettingInfo.CloseBracket);
                 return true;
             }
         }

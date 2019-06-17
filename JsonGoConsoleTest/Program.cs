@@ -1,5 +1,6 @@
 ﻿using JsonGo;
 using JsonGo.Deserialize;
+using MessagePack;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,27 +13,40 @@ namespace JsonGoConsoleTest
 {
 
 
-
+    [MessagePackObject]
     public class Product
     {
+        [Key(0)]
         public string Name { get; set; }
+        [Key(1)]
         public int Age { get; set; }
+        [Key(2)]
         public Profile Profile { get; set; }
+        [Key(3)]
         public List<Address> Addresses { get; set; }
+        [Key(4)]
         public bool IsEnabled { get; set; }
     }
 
+    [MessagePackObject]
     public class Profile
     {
+        [Key(0)]
         public string FullName { get; set; }
+        [Key(1)]
         public List<Address> Addresses { get; set; }
     }
 
+    [MessagePackObject]
     public class Address
     {
+        [Key(0)]
         public string Content { get; set; }
+        [Key(1)]
         public DateTime CreatedDate { get; set; }
+        [Key(2)]
         public AddressType Type { get; set; }
+        [Key(3)]
         public Profile Parent { get; set; }
     }
 
@@ -110,23 +124,16 @@ namespace JsonGoConsoleTest
                     IsEnabled = false
                 };
 
-                foreach (Address item in product.Profile.Addresses)
-                {
-                    item.Parent = product.Profile;
-                }
-                product.Profile.Addresses.AddRange(product.Profile.Addresses);
-                product.Addresses = product.Profile.Addresses;
-                products.Add(product);
                 products.Add(product);
                 products.Add(product2);
 
-                fullProducts.Add(products);
                 fullProducts.Add(products);
                 Serializer serializer = new Serializer();
                 string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
                 string jsonGoJson = serializer.Serialize(fullProducts);
 
+                //var value222 = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<Product>>>(jsonGoJson);
 
                 Console.WriteLine($"***  SERIALIZE {CYCLES} items ***");
 
@@ -146,11 +153,26 @@ namespace JsonGoConsoleTest
                 Console.WriteLine("Newtonsoft.Json: \t " + stopwatch.Elapsed);
                 stopwatch.Reset();
 
+                stopwatch.Start();
+
+
+
+                // MessagePack serialize
+                for (int i = 0; i < CYCLES; i++)
+                {
+                    var data = Serialize(fullProducts);
+                }
+                stopwatch.Stop();
+                //JsonNetRes = stopwatch.ElapsedTicks;
+
+                Console.WriteLine("MessagePack: \t " + stopwatch.Elapsed);
+                stopwatch.Reset();
+
                 //JSONGO SERIALIZE
                 stopwatch.Start();
                 for (int i = 0; i < CYCLES; i++)
                 {
-                    string js = serializer.Serialize(fullProducts);
+                    string js = new Serializer().Serialize(fullProducts);
                 }
                 stopwatch.Stop();
                 JsonGoRes = stopwatch.ElapsedTicks;
@@ -252,169 +274,15 @@ namespace JsonGoConsoleTest
                 Environment.Exit(0);
             }
         }
-
-        private static string Trim(string text, string textTrim)
+        static byte[] Serialize<T>(T thisObj)
         {
-            while (text.StartsWith(textTrim))
-            {
-                text = text.Substring(textTrim.Length);
-            }
-            while (text.EndsWith(textTrim))
-            {
-                text = text.Substring(0, text.Length - textTrim.Length);
-            }
-            return text;
+            return MessagePackSerializer.Serialize<T>(thisObj);
         }
 
-        private static void RunNewtonJson(object data)
+        static T Deserialize<T>(byte[] bytes)
         {
-            List<TimeSpan> all = new List<TimeSpan>();
-            for (int i = 0; i < 100000; i++)
-            {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                string serialize = JsonConvert.SerializeObject(data);
-                stopwatch.Stop();
-                all.Add(stopwatch.Elapsed);
-            }
-            Console.WriteLine("newton min:" + all.Min() + " ticks: " + all.Min().Ticks);
-            Console.WriteLine("newton max:" + all.Max() + " ticks: " + all.Max().Ticks);
-            Console.WriteLine("newton avg:" + all.Average(x => x.Ticks));
+            return MessagePackSerializer.Deserialize<T>(bytes);
         }
 
-
-        private static void RunJsonGo(object data)
-        {
-            List<TimeSpan> all = new List<TimeSpan>();
-            for (int i = 0; i < 100000; i++)
-            {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                string serialize2 = JsonGo.Serialize(data);
-                stopwatch.Stop();
-                all.Add(stopwatch.Elapsed);
-                //Console.WriteLine("json go:" + stopwatch.Elapsed.ToString());
-            }
-            Console.WriteLine("jsonGo min:" + all.Min() + " ticks: " + all.Min().Ticks);
-            Console.WriteLine("jsonGo max:" + all.Max() + " ticks: " + all.Max().Ticks);
-            Console.WriteLine("jsonGo avg:" + all.Average(x => x.Ticks));
-
-        }
-
-
-        private static void RunNewtonJsonDeserialize(string json, Type type)
-        {
-            List<TimeSpan> all = new List<TimeSpan>();
-            for (int i = 0; i < 100000; i++)
-            {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                JsonConvert.DeserializeObject(json, type);
-                stopwatch.Stop();
-                all.Add(stopwatch.Elapsed);
-            }
-            Console.WriteLine("newton min:" + all.Min() + " ticks: " + all.Min().Ticks);
-            Console.WriteLine("newton max:" + all.Max() + " ticks: " + all.Max().Ticks);
-            Console.WriteLine("newton avg:" + all.Average(x => x.Ticks));
-        }
-        private static void RunJsonGoDeserialize(string json, Type type)
-        {
-            List<TimeSpan> all = new List<TimeSpan>();
-            for (int i = 0; i < 100000; i++)
-            {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                Deserializer.SingleIntance.Deserialize(json, type);
-                stopwatch.Stop();
-                all.Add(stopwatch.Elapsed);
-                //Console.WriteLine("json go:" + stopwatch.Elapsed.ToString());
-            }
-            Console.WriteLine("jsonGo min:" + all.Min() + " ticks: " + all.Min().Ticks);
-            Console.WriteLine("jsonGo max:" + all.Max() + " ticks: " + all.Max().Ticks);
-            Console.WriteLine("jsonGo avg:" + all.Average(x => x.Ticks));
-
-        }
-    }
-
-    public class JsonGo
-    {
-        public static readonly Dictionary<object, WeakReference> References = new Dictionary<object, WeakReference>();
-        public static string Serialize(object data)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            System.Reflection.PropertyInfo[] properties = data.GetType().GetProperties();
-            WeakObject chache = null;
-            if (!References.TryGetValue(data, out WeakReference weakReference))
-            {
-                chache = new WeakObject();
-                JsonGo.References.Add(data, new WeakReference(chache));
-            }
-            else
-            {
-                if (weakReference.Target is WeakObject weakObject)
-                {
-                    return weakObject.Data;
-                }
-                else
-                {
-                    chache = new WeakObject();
-                    JsonGo.References[data] = new WeakReference(chache);
-                }
-            }
-
-            stringBuilder.AppendLine("{");
-            for (int i = 0; i < properties.Length; i++)
-            {
-                System.Reflection.PropertyInfo property = properties[i];
-                stringBuilder.Append("\t");
-                stringBuilder.Append("\"");
-                stringBuilder.Append(property.Name);
-                stringBuilder.Append("\"");
-                stringBuilder.Append(":");
-                stringBuilder.Append("\"");
-                stringBuilder.Append(property.GetValue(data).ToString());
-                stringBuilder.Append("\"");
-                stringBuilder.AppendLine(",");
-            }
-
-            stringBuilder.AppendLine("}");
-            chache.Data = stringBuilder.ToString();
-            return chache.Data;
-        }
-    }
-
-    public class WeakObject : IDisposable
-    {
-        public string Data { get; set; }
-
-        ~WeakObject()
-        {
-            JsonGo.References.Remove(Data);
-            Console.WriteLine("Destructor");
-        }
-
-        public void Dispose()
-        {
-            Console.WriteLine("Dispose");
-        }
-    }
-
-    public class FastStringBuilder
-    {
-        private string result = "";
-        public void Append(string data)
-        {
-            result = String.Join(string.Empty, result, data);
-        }
-
-        public void AppendLine(string data)
-        {
-            result = String.Join(string.Empty, result, data);
-        }
-
-        public override string ToString()
-        {
-            return result;
-        }
     }
 }

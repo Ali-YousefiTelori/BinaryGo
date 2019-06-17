@@ -20,7 +20,7 @@ namespace JsonGo
         /// <summary>
         /// save serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>
-        internal Dictionary<object, string> SerializedObjects { get; set; } = new Dictionary<object, string>();
+        internal Dictionary<object, object> SerializedObjects { get; set; } = new Dictionary<object, object>();
         /// <summary>
         /// default setting of serializer
         /// </summary>
@@ -48,7 +48,7 @@ namespace JsonGo
             ReferencedIndex = 1;
             Builder.Clear();
             SerializedObjects.Clear();
-            return SerializeObject(Builder, data, this).ToString();
+            return SerializeObject(Builder, ref data, this).ToString();
         }
 
         /// <summary>
@@ -57,25 +57,14 @@ namespace JsonGo
         /// <param name="data">any object to serialize</param>
         /// <param name="serializer"></param>
         /// <returns>json that serialized from you object</returns>
-        internal static StringBuilder SerializeObject(StringBuilder stringBuilder, object data, Serializer serializer)
+        internal static StringBuilder SerializeObject(StringBuilder stringBuilder, ref object data, Serializer serializer)
         {
-            if (data == null)
-            {
-                throw new Exception("data is null to serialize");
-            }
             Type dataType = data.GetType();
-
-            //else if (Setting.HasGenerateRefrencedTypes)
-            //{
-
-            //}
-            //else
-            //    return null;
             if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
             {
                 TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            return typeGoInfo.Serialize(serializer, stringBuilder, data);
+            return typeGoInfo.Serialize(serializer, stringBuilder, ref data);
         }
 
         //internal static string SerializeArray(IEnumerable list, Serializer serializer)
@@ -101,49 +90,48 @@ namespace JsonGo
         //    return stringBuilder.ToString();
         //}
 
-        internal static StringBuilder SerializeArrayReference(StringBuilder stringBuilder, IEnumerable list, ref string refrencedId, Serializer serializer)
+        internal static StringBuilder SerializeArrayReference(StringBuilder stringBuilder, IEnumerable list, ref object refrencedId, Serializer serializer)
         {
-            stringBuilder.Append($"{{{JsonSettingInfo.IdRefrencedTypeName}:\"{refrencedId}\",{JsonSettingInfo.ValuesRefrencedTypeName}:");
-
-            stringBuilder.Append('[');
+            stringBuilder.Append(JsonSettingInfo.BeforeObject);
+            stringBuilder.Append(refrencedId);
+            stringBuilder.Append(JsonSettingInfo.AfterArrayObject);
             foreach (object item in list)
             {
-                if (item != null)
-                {
-                    SerializeObject(stringBuilder, item, serializer);
-                    stringBuilder.Append(',');
-                }
+                var value = item;
+                SerializeObject(stringBuilder, ref value, serializer);
+                stringBuilder.Append(JsonSettingInfo.Comma);
             }
 
-            if (stringBuilder[stringBuilder.Length - 1] == ',')
+            if (stringBuilder[stringBuilder.Length - 1] == JsonSettingInfo.Comma)
                 stringBuilder.Length--;
-            stringBuilder.Append(']');
-            stringBuilder.Append('}');
+            stringBuilder.Append(JsonSettingInfo.CloseSquareBrackets);
+            stringBuilder.Append(JsonSettingInfo.CloseBracket);
             return stringBuilder;
         }
 
-        internal static StringBuilder SerializeObjectReference(StringBuilder stringBuilder, object data, ref string refrencedId, TypeGoInfo typeGoInfo, Serializer serializer)
+        internal static StringBuilder SerializeObjectReference(StringBuilder stringBuilder, object data, ref object refrencedId, TypeGoInfo typeGoInfo, Serializer serializer)
         {
-            stringBuilder.Append('{');
-            stringBuilder.Append($"{JsonSettingInfo.IdRefrencedTypeName}:\"{refrencedId}\",");
+            stringBuilder.Append(JsonSettingInfo.BeforeObject);
+            stringBuilder.Append(refrencedId);
+            stringBuilder.Append(JsonSettingInfo.CommaQuotes);
 
-            foreach (var item in typeGoInfo.Properties)
+            var array = typeGoInfo.ArrayProperties;
+            for (int i = 0; i < array.Length; i++)
             {
-                var property = item.Value;
+                var property = array[i];
                 object propertyValue = property.GetValue(data);
                 if (propertyValue != null)
                 {
-                    stringBuilder.Append('\"');
+                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append(property.Name);
-                    stringBuilder.Append('\"');
-                    stringBuilder.Append(':');
-                    SerializeObject(stringBuilder, propertyValue, serializer);
-                    stringBuilder.Append(',');
+                    stringBuilder.Append(JsonSettingInfo.QuotesColon);
+                    SerializeObject(stringBuilder, ref propertyValue, serializer);
+                    stringBuilder.Append(JsonSettingInfo.Comma);
                 }
             }
-            if (stringBuilder[stringBuilder.Length - 1] == ',')
+            if (stringBuilder[stringBuilder.Length - 1] == JsonSettingInfo.Comma)
                 stringBuilder.Length--;
-            stringBuilder.Append('}');
+            stringBuilder.Append(JsonSettingInfo.CloseBracket);
             return stringBuilder;
         }
 
@@ -175,16 +163,5 @@ namespace JsonGo
         //    stringBuilder.Append('}');
         //    return stringBuilder.ToString();
         //}
-
-        internal static StringBuilder SerializeString(StringBuilder stringBuilder, string value)
-        {
-            foreach (char ch in value)
-            {
-                if (ch == '"')
-                    stringBuilder.Append('\\');
-                stringBuilder.Append(ch);
-            }
-            return stringBuilder;
-        }
     }
 }

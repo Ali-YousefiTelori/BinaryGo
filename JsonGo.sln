@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonGo", "JsonGo\JsonGo.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoCoreConsoleTest", "JsonGoCoreConsoleTest\JsonGoCoreConsoleTest.csproj", "{86C544BD-303D-4ECF-9F22-52205480B319}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoTest", "JsonGoTest\JsonGoTest.csproj", "{22A0B21A-0077-4F88-8088-4BC2E2D634D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{86C544BD-303D-4ECF-9F22-52205480B319}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86C544BD-303D-4ECF-9F22-52205480B319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86C544BD-303D-4ECF-9F22-52205480B319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A0B21A-0077-4F88-8088-4BC2E2D634D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A0B21A-0077-4F88-8088-4BC2E2D634D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A0B21A-0077-4F88-8088-4BC2E2D634D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A0B21A-0077-4F88-8088-4BC2E2D634D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

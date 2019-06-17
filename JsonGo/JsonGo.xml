@@ -172,11 +172,6 @@
             type of data
             </summary>
         </member>
-        <member name="P:JsonGo.Runtime.TypeGoInfo.IsSimpleType">
-            <summary>
-            is simple type like int,string,double,enum etc
-            </summary>
-        </member>
         <member name="P:JsonGo.Runtime.TypeGoInfo.Serialize">
             <summary>
             serialize action
@@ -192,9 +187,6 @@
             
             </summary>
             <param name="type"></param>
-            <param name="data"></param>
-            <param name="refrencedId"></param>
-            <param name="serializer"></param>
             <returns></returns>
         </member>
         <member name="T:JsonGo.Serializer">
@@ -234,7 +226,7 @@
             <param name="data">any object to serialize</param>
             <returns>json that serialized from you object</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Text.StringBuilder,System.Object,JsonGo.Serializer)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Text.StringBuilder,System.Object@,JsonGo.Serializer)">
             <summary>
             serialize an object to a json string
             </summary>
