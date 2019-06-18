@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text;
 
@@ -35,9 +36,19 @@ namespace JsonGo
         /// </summary>
         public static Serializer SingleIntance { get; set; }
         /// <summary>
+        /// serialize object function
+        /// </summary>
+        public FunctionTypeGo SerializeFunction { get; set; }
+        /// <summary>
+        /// serialize array function
+        /// </summary>
+        public FunctionTypeGo SerializeArrayFunction { get; set; }
+
+        /// <summary>
         /// string builder of json serialization
         /// </summary>
-        public StringBuilder Builder { get; set; } = new StringBuilder();
+        public StringBuilder Builder { get; set; } = new StringBuilder(256);
+
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
@@ -45,123 +56,214 @@ namespace JsonGo
         /// <returns>json that serialized from you object</returns>
         public string Serialize(object data)
         {
+            if (Setting.HasGenerateRefrencedTypes)
+            {
+                SerializeFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
+                {
+                    SerializeFunctionWithReference(typeGoInfo, ref dataRef);
+                };
+                SerializeArrayFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
+                {
+                    SerializeArrayFunctionWithReference(typeGoInfo, ref dataRef);
+                };
+            }
+            else
+            {
+                SerializeFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
+                {
+                    SerializeFunctionWithoutReference(typeGoInfo, ref dataRef);
+                };
+                SerializeArrayFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
+                {
+                    SerializeArrayFunctionWithoutReference(typeGoInfo, ref dataRef);
+                };
+            }
             ReferencedIndex = 1;
             Builder.Clear();
             SerializedObjects.Clear();
-            return SerializeObject(Builder, ref data, this).ToString();
+            SerializeObject(ref data, null);
+            return Builder.ToString();
         }
 
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
         /// <param name="data">any object to serialize</param>
-        /// <param name="serializer"></param>
-        /// <returns>json that serialized from you object</returns>
-        internal static StringBuilder SerializeObject(StringBuilder stringBuilder, ref object data, Serializer serializer)
+        /// <param name="typeGoInfo"></param>
+        /// <returns>json that serialized</returns>
+        internal void SerializeObject(ref object data, TypeGoInfo typeGoInfo)
         {
+            if (data == null)
+            {
+                Builder.Append(JsonSettingInfo.Null);
+                return;
+            }
             Type dataType = data.GetType();
-            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+            if (typeGoInfo == null && !TypeGoInfo.Types.TryGetValue(dataType, out typeGoInfo))
             {
                 TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             }
-            return typeGoInfo.Serialize(serializer, stringBuilder, ref data);
+            typeGoInfo.Serialize(this, Builder, ref data);
         }
 
-        //internal static string SerializeArray(IEnumerable list, Serializer serializer)
-        //{
-        //    StringBuilder stringBuilder = new StringBuilder();
-        //    stringBuilder.Append('[');
-        //    foreach (object item in list)
-        //    {
-        //        if (item != null)
-        //        {
-        //            string serialized = SerializeObject(item, serializer);
-        //            if (serialized != null)
-        //            {
-        //                stringBuilder.Append(serialized);
-        //                stringBuilder.Append(',');
-        //            }
-        //        }
-        //    }
-
-        //    if (stringBuilder[stringBuilder.Length - 1] == ',')
-        //        stringBuilder.Length--;
-        //    stringBuilder.Append(']');
-        //    return stringBuilder.ToString();
-        //}
-
-        internal static StringBuilder SerializeArrayReference(StringBuilder stringBuilder, IEnumerable list, ref object refrencedId, Serializer serializer)
+        /// <summary>
+        /// serialize an array to a json string
+        /// </summary>
+        /// <param name="list">array list</param>
+        /// <param name="refrencedId">referenceId</param>
+        /// <returns>json that serialized</returns>
+        internal void SerializeArrayReference(IEnumerable list, ref object refrencedId)
         {
-            stringBuilder.Append(JsonSettingInfo.BeforeObject);
-            stringBuilder.Append(refrencedId);
-            stringBuilder.Append(JsonSettingInfo.AfterArrayObject);
+            Builder.Append(JsonSettingInfo.BeforeObject);
+            Builder.Append(refrencedId);
+            Builder.Append(JsonSettingInfo.AfterArrayObject);
             foreach (object item in list)
             {
                 var value = item;
-                SerializeObject(stringBuilder, ref value, serializer);
-                stringBuilder.Append(JsonSettingInfo.Comma);
+                SerializeObject(ref value, null);
+                Builder.Append(JsonSettingInfo.Comma);
             }
-
-            if (stringBuilder[stringBuilder.Length - 1] == JsonSettingInfo.Comma)
-                stringBuilder.Length--;
-            stringBuilder.Append(JsonSettingInfo.CloseSquareBrackets);
-            stringBuilder.Append(JsonSettingInfo.CloseBracket);
-            return stringBuilder;
+            if (Builder[Builder.Length - 1] == JsonSettingInfo.Comma)
+                Builder.Length--;
+            Builder.Append(JsonSettingInfo.CloseSquareBracketsWithBrackets);
         }
 
-        internal static StringBuilder SerializeObjectReference(StringBuilder stringBuilder, object data, ref object refrencedId, TypeGoInfo typeGoInfo, Serializer serializer)
+        /// <summary>
+        /// serialize an object to a json string with reference
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="refrencedId">referenceId</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        internal void SerializeObjectReference(object data, ref object refrencedId, TypeGoInfo typeGoInfo)
         {
-            stringBuilder.Append(JsonSettingInfo.BeforeObject);
-            stringBuilder.Append(refrencedId);
-            stringBuilder.Append(JsonSettingInfo.CommaQuotes);
+            Builder.Append(JsonSettingInfo.BeforeObject);
+            Builder.Append(refrencedId);
+            Builder.Append(JsonSettingInfo.CommaQuotes);
 
-            var array = typeGoInfo.ArrayProperties;
-            for (int i = 0; i < array.Length; i++)
+            var properties = typeGoInfo.ArrayProperties;
+            foreach (var property in properties)
             {
-                var property = array[i];
+                object propertyValue = property.GetValue(data);
+                Builder.Append(JsonSettingInfo.Quotes);
+                Builder.Append(property.Name);
+                Builder.Append(JsonSettingInfo.QuotesColon);
+                SerializeObject(ref propertyValue, property.TypeGoInfo);
+                Builder.Append(JsonSettingInfo.Comma);
+            }
+            if (Builder[Builder.Length - 1] == JsonSettingInfo.Comma)
+                Builder.Length--;
+            Builder.Append(JsonSettingInfo.CloseBracket);
+        }
+        /// <summary>
+        /// serialize an array to a json string
+        /// </summary>
+        /// <param name="list">array list</param>
+        /// <returns>json that serialized</returns>
+        internal void SerializeArray(IEnumerable list)
+        {
+            Builder.Append(JsonSettingInfo.OpenSquareBrackets);
+            foreach (object item in list)
+            {
+                var value = item;
+                SerializeObject(ref value, null);
+                Builder.Append(JsonSettingInfo.Comma);
+            }
+
+            if (Builder[Builder.Length - 1] == JsonSettingInfo.Comma)
+                Builder.Length--;
+            Builder.Append(JsonSettingInfo.CloseSquareBrackets);
+        }
+        /// <summary>
+        /// serialize an object to a json string
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        internal void SerializeObject(object data, TypeGoInfo typeGoInfo)
+        {
+            Builder.Append(JsonSettingInfo.OpenBraket);
+            var properties = typeGoInfo.ArrayProperties;
+            foreach (var property in properties)
+            {
                 object propertyValue = property.GetValue(data);
                 if (propertyValue != null)
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
-                    stringBuilder.Append(property.Name);
-                    stringBuilder.Append(JsonSettingInfo.QuotesColon);
-                    SerializeObject(stringBuilder, ref propertyValue, serializer);
-                    stringBuilder.Append(JsonSettingInfo.Comma);
+                    Builder.Append(JsonSettingInfo.Quotes);
+                    Builder.Append(property.Name);
+                    Builder.Append(JsonSettingInfo.QuotesColon);
+                    SerializeObject(ref propertyValue, property.TypeGoInfo);
+                    Builder.Append(JsonSettingInfo.Comma);
                 }
             }
-            if (stringBuilder[stringBuilder.Length - 1] == JsonSettingInfo.Comma)
-                stringBuilder.Length--;
-            stringBuilder.Append(JsonSettingInfo.CloseBracket);
-            return stringBuilder;
+            if (Builder[Builder.Length - 1] == JsonSettingInfo.Comma)
+                Builder.Length--;
+            Builder.Append(JsonSettingInfo.CloseBracket);
         }
-
-        //internal static string SerializeObject(object data, TypeGoInfo typeGoInfo, Serializer serializer)
-        //{
-        //    StringBuilder stringBuilder = new StringBuilder();
-
-        //    stringBuilder.Append('{');
-        //    foreach (var item in typeGoInfo.Properties)
-        //    {
-        //        var property = item.Value;
-        //        object propertyValue = property.GetValue(data);
-        //        if (propertyValue != null)
-        //        {
-        //            string serializedValue = SerializeObject(propertyValue, serializer);
-        //            if (serializedValue != null)
-        //            {
-        //                stringBuilder.Append('\"');
-        //                stringBuilder.Append(property.Name);
-        //                stringBuilder.Append('\"');
-        //                stringBuilder.Append(':');
-        //                stringBuilder.Append(serializedValue);
-        //                stringBuilder.Append(',');
-        //            }
-        //        }
-        //    }
-        //    if (stringBuilder[stringBuilder.Length - 1] == ',')
-        //        stringBuilder.Length--;
-        //    stringBuilder.Append('}');
-        //    return stringBuilder.ToString();
-        //}
+        /// <summary>
+        /// serialize an object to a json string with detect reference
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        void SerializeFunctionWithReference(TypeGoInfo typeGoInfo, ref object data)
+        {
+            if (GenerateReference(ref data, out object refrencedId))
+                return;
+            SerializeObjectReference(data, ref refrencedId, typeGoInfo);
+        }
+        /// <summary>
+        /// serialize an array to a json string with detect reference
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        void SerializeArrayFunctionWithReference(TypeGoInfo typeGoInfo, ref object data)
+        {
+            if (GenerateReference(ref data, out object refrencedId))
+                return;
+            SerializeArrayReference((IEnumerable)data, ref refrencedId);
+        }
+        /// <summary>
+        /// serialize an object to a json string without detect reference
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        void SerializeFunctionWithoutReference(TypeGoInfo typeGoInfo, ref object data)
+        {
+            SerializeObject(data, typeGoInfo);
+        }
+        /// <summary>
+        /// serialize an object to a json string without detect reference
+        /// </summary>
+        /// <param name="data">object to serialize</param>
+        /// <param name="typeGoInfo">typego of jsongo</param>
+        /// <returns>json that serialized</returns>
+        void SerializeArrayFunctionWithoutReference(TypeGoInfo typeGoInfo, ref object data)
+        {
+            SerializeArray((IEnumerable)data);
+        }
+        /// <summary>
+        /// generate reference id for object
+        /// </summary>
+        /// <param name="data">object to detect reference</param>
+        /// <param name="refrencedId">refrence id created</param>
+        /// <returns>is reference created</returns>
+        bool GenerateReference(ref object data, out object refrencedId)
+        {
+            if (!SerializedObjects.TryGetValue(data, out refrencedId))
+            {
+                refrencedId = ReferencedIndex;
+                SerializedObjects.Add(data, refrencedId);
+                ReferencedIndex++;
+                return false;
+            }
+            else
+            {
+                Builder.Append(JsonSettingInfo.OpenBraketRefColonQuotes + refrencedId + JsonSettingInfo.QuotesCloseBracket);
+                return true;
+            }
+        }
     }
 }

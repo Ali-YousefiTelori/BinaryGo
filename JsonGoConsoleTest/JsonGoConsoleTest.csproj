@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MessagePack, Version=1.7.3.7, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
@@ -80,7 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JsonGo\JsonGo.csproj">
-      <Project>{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}</Project>
+      <Project>{171a0b7c-cb78-475a-9ec9-6da8140ddf72}</Project>
       <Name>JsonGo</Name>
     </ProjectReference>
   </ItemGroup>

@@ -10,4 +10,8 @@
     <DocumentationFile>D:\Github\JsonGo\JsonGo\JsonGo.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>D:\Github\JsonGo\JsonGo\JsonGo.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

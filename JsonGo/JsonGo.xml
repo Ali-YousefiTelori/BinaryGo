@@ -147,6 +147,11 @@
             type of property
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.TypeGoInfo">
+            <summary>
+            current TypeGoInfo of property type
+            </summary>
+        </member>
         <member name="P:JsonGo.Runtime.PropertyGoInfo.Name">
             <summary>
             name of property
@@ -156,6 +161,30 @@
             <summary>
             get value of property
             </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.SetValue">
+            <summary>
+            set value of property
+            </summary>
+        </member>
+        <member name="T:JsonGo.Runtime.FunctionGo">
+            <summary>
+            function for serialize object
+            </summary>
+            <param name="stringBuilder">builder to add newdata</param>
+            <param name="data">any object to serialize</param>
+            <param name="serializer">json serializer</param>
+            <returns>serialized stringbuilder</returns>
+        </member>
+        <member name="T:JsonGo.Runtime.FunctionTypeGo">
+            <summary>
+            function for serialize object
+            </summary>
+            <param name="stringBuilder">builder to add newdata</param>
+            <param name="data">any object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <param name="serializer">json serializer</param>
+            <returns>serialized stringbuilder</returns>
         </member>
         <member name="T:JsonGo.Runtime.TypeGoInfo">
             <summary>
@@ -180,6 +209,11 @@
         <member name="P:JsonGo.Runtime.TypeGoInfo.Properties">
             <summary>
             properties of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.ArrayProperties">
+            <summary>
+            array of all properties
             </summary>
         </member>
         <member name="M:JsonGo.Runtime.TypeGoInfo.Generate(System.Type)">
@@ -214,6 +248,16 @@
             single instance of serializer to accesss faster
             </summary>
         </member>
+        <member name="P:JsonGo.Serializer.SerializeFunction">
+            <summary>
+            serialize object function
+            </summary>
+        </member>
+        <member name="P:JsonGo.Serializer.SerializeArrayFunction">
+            <summary>
+            serialize array function
+            </summary>
+        </member>
         <member name="P:JsonGo.Serializer.Builder">
             <summary>
             string builder of json serialization
@@ -226,13 +270,85 @@
             <param name="data">any object to serialize</param>
             <returns>json that serialized from you object</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Text.StringBuilder,System.Object@,JsonGo.Serializer)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@,JsonGo.Runtime.TypeGoInfo)">
             <summary>
             serialize an object to a json string
             </summary>
             <param name="data">any object to serialize</param>
-            <param name="serializer"></param>
-            <returns>json that serialized from you object</returns>
+            <param name="typeGoInfo"></param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeArrayReference(System.Collections.IEnumerable,System.Object@)">
+            <summary>
+            serialize an array to a json string
+            </summary>
+            <param name="list">array list</param>
+            <param name="refrencedId">referenceId</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeObjectReference(System.Object,System.Object@,JsonGo.Runtime.TypeGoInfo)">
+            <summary>
+            serialize an object to a json string with reference
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="refrencedId">referenceId</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeArray(System.Collections.IEnumerable)">
+            <summary>
+            serialize an array to a json string
+            </summary>
+            <param name="list">array list</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object,JsonGo.Runtime.TypeGoInfo)">
+            <summary>
+            serialize an object to a json string
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeFunctionWithReference(JsonGo.Runtime.TypeGoInfo,System.Object@)">
+            <summary>
+            serialize an object to a json string with detect reference
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeArrayFunctionWithReference(JsonGo.Runtime.TypeGoInfo,System.Object@)">
+            <summary>
+            serialize an array to a json string with detect reference
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeFunctionWithoutReference(JsonGo.Runtime.TypeGoInfo,System.Object@)">
+            <summary>
+            serialize an object to a json string without detect reference
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.SerializeArrayFunctionWithoutReference(JsonGo.Runtime.TypeGoInfo,System.Object@)">
+            <summary>
+            serialize an object to a json string without detect reference
+            </summary>
+            <param name="data">object to serialize</param>
+            <param name="typeGoInfo">typego of jsongo</param>
+            <returns>json that serialized</returns>
+        </member>
+        <member name="M:JsonGo.Serializer.GenerateReference(System.Object@,System.Object@)">
+            <summary>
+            generate reference id for object
+            </summary>
+            <param name="data">object to detect reference</param>
+            <param name="refrencedId">refrence id created</param>
+            <returns>is reference created</returns>
         </member>
     </members>
 </doc>

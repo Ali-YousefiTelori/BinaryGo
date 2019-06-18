@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoConsoleTest", "JsonGo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonGo", "JsonGo\JsonGo.csproj", "{171A0B7C-CB78-475A-9EC9-6DA8140DDF72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoCoreConsoleTest", "JsonGoCoreConsoleTest\JsonGoCoreConsoleTest.csproj", "{86C544BD-303D-4ECF-9F22-52205480B319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonGoCoreConsoleTest", "JsonGoCoreConsoleTest\JsonGoCoreConsoleTest.csproj", "{86C544BD-303D-4ECF-9F22-52205480B319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonGoTest", "JsonGoTest\JsonGoTest.csproj", "{22A0B21A-0077-4F88-8088-4BC2E2D634D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonGoTest", "JsonGoTest\JsonGoTest.csproj", "{22A0B21A-0077-4F88-8088-4BC2E2D634D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

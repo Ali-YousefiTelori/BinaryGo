@@ -14,6 +14,10 @@ namespace JsonGo.Runtime
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
+        /// current TypeGoInfo of property type
+        /// </summary>
+        public TypeGoInfo TypeGoInfo { get; set; }
+        /// <summary>
         /// name of property
         /// </summary>
         public string Name { get; set; }
@@ -21,6 +25,9 @@ namespace JsonGo.Runtime
         /// get value of property
         /// </summary>
         public Func<object, object> GetValue { get; set; }
+        /// <summary>
+        /// set value of property
+        /// </summary>
         public Action<object, object> SetValue { get; set; }
     }
 }

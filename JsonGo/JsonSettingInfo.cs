@@ -5,18 +5,22 @@
     /// </summary>
     public class JsonSettingInfo
     {
+        internal const string Null = "null";
         internal const string BeforeObject = "{\"$id\":\"";
         internal const string AfterArrayObject = "\",\"$values\":[";
         internal const char OpenSquareBrackets = '[';
         internal const char CloseSquareBrackets = ']';
+        internal const string CloseSquareBracketsWithBrackets = "]}";
         internal const char Comma = ',';
         internal const string CommaQuotes = "\",";
         internal const string ColonQuotes = ":\"";
         internal const string QuotesColon = "\":";
         internal const char Colon = ':';
         internal const char OpenBraket = '{';
+        internal const string OpenBraketRefColonQuotes = "{\"$ref\":\"";
         internal const char CloseBracket = '}';
         internal const char Quotes = '"';
+        internal const string QuotesCloseBracket = "\"}";
         /// <summary>
         /// $Id refrenced type name
         /// </summary>

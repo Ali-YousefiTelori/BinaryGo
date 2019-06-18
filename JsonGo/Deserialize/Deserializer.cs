@@ -18,7 +18,7 @@ namespace JsonGo.Deserialize
             SingleIntance = new Deserializer();
         }
 
-        private const string SupportedValue = "0123456789.truefalsTRUEFALS-";
+        private const string SupportedValue = "0123456789.truefalsTRUEFALS-n";
         /// <summary>
         /// save deserialized objects for referenced type
         /// </summary>

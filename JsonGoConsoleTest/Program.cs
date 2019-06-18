@@ -1,4 +1,5 @@
 ﻿using JsonGo;
+using JsonGo.DataTypes;
 using JsonGo.Deserialize;
 using MessagePack;
 using Newtonsoft.Json;
@@ -42,6 +43,8 @@ namespace JsonGoConsoleTest
     {
         [Key(0)]
         public string Content { get; set; }
+        [JsonIgnore]
+        [Ignore]
         [Key(1)]
         public DateTime CreatedDate { get; set; }
         [Key(2)]
@@ -129,7 +132,7 @@ namespace JsonGoConsoleTest
 
                 fullProducts.Add(products);
                 Serializer serializer = new Serializer();
-                string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Arrays });
 
                 string jsonGoJson = serializer.Serialize(fullProducts);
 
@@ -145,7 +148,7 @@ namespace JsonGoConsoleTest
                 // JSONNET serialize
                 for (int i = 0; i < CYCLES; i++)
                 {
-                    string js = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                    string js = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Arrays });
                 }
                 stopwatch.Stop();
                 JsonNetRes = stopwatch.ElapsedTicks;

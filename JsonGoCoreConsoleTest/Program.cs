@@ -118,7 +118,7 @@ namespace JsonGoCoreConsoleTest
                 fullProducts.Add(products);
                 fullProducts.Add(products);
                 Serializer serializer = new Serializer();
-                string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Arrays });
 
                 string jsonGoJson = serializer.Serialize(fullProducts);
 
@@ -133,7 +133,7 @@ namespace JsonGoCoreConsoleTest
                 // JSONNET serialize
                 for (int i = 0; i < CYCLES; i++)
                 {
-                    string js = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                    string js = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Arrays });
                 }
                 stopwatch.Stop();
                 JsonNetRes = stopwatch.ElapsedTicks;

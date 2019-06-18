@@ -10,7 +10,8 @@ namespace JsonGo.Deserialize
         }
         public ValueModel(string value)
         {
-            Value = value;
+            if (value != "null")
+                Value = value;
         }
 
         public string Value { get; set; }
@@ -22,7 +23,7 @@ namespace JsonGo.Deserialize
 
         public object Generate(Type type, Deserializer deserializer)
         {
-            return deserializer.GetValue(type, Value.Trim('\"'));
+            return deserializer.GetValue(type, Value?.Trim('\"'));
         }
     }
 }
