@@ -1,5 +1,6 @@
 ﻿using JsonGo.Runtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -23,24 +24,42 @@ namespace JsonGo.Deserialize
             //{
             //    TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
             //}
-            foreach (var item in Items)
+            if (obj is IDictionary)
             {
-                MethodInfo addMethod = type.GetMethod("Add");
-                Array array = null;
-                Type elementType = null;
-                if (type != null && type.IsArray)
+                Type keyType = type.GetGenericArguments()[0];
+                Type valueType = type.GetGenericArguments()[1];
+                foreach (var item in Items)
                 {
-                    array = (Array)obj;
-                    elementType = array.GetType().GetElementType();
+                    MethodInfo addMethod = type.GetMethod("Add");
+                    if (item is ObjectModel objectModel)
+                    {
+                        var key = objectModel.Properties["Key"].Generate(keyType, deserializer);
+                        var value = objectModel.Properties["Value"].Generate(valueType, deserializer);
+                        addMethod.Invoke(obj, new object[] { key, value });
+                    }
                 }
-                else if (addMethod != null)
+            }
+            else
+            {
+                foreach (var item in Items)
                 {
-                    elementType = addMethod.GetParameters().FirstOrDefault().ParameterType;
-                }
-                if (elementType != null)
-                {
-                    var value = item.Generate(elementType, deserializer);
-                    addMethod.Invoke(obj, new object[] { value });
+                    MethodInfo addMethod = type.GetMethod("Add");
+                    Array array = null;
+                    Type elementType = null;
+                    if (type != null && type.IsArray)
+                    {
+                        array = (Array)obj;
+                        elementType = array.GetType().GetElementType();
+                    }
+                    else if (addMethod != null)
+                    {
+                        elementType = addMethod.GetParameters().FirstOrDefault().ParameterType;
+                    }
+                    if (elementType != null)
+                    {
+                        var value = item.Generate(elementType, deserializer);
+                        addMethod.Invoke(obj, new object[] { value });
+                    }
                 }
             }
             return obj;

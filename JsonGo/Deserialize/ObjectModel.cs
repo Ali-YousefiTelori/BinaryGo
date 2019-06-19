@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace JsonGo.Deserialize
 {
@@ -38,20 +40,35 @@ namespace JsonGo.Deserialize
             else
             {
                 object obj = Activator.CreateInstance(type);
-                foreach (KeyValuePair<string, IJsonGoModel> item in Properties)
+                if (obj is IDictionary)
                 {
-                    if (item.Key == idName)
+                    Type keyType = type.GetGenericArguments()[0];
+                    Type valueType = type.GetGenericArguments()[1];
+                    MethodInfo addMethod = type.GetMethod("Add");
+                    foreach (KeyValuePair<string, IJsonGoModel> item in Properties)
                     {
-                        string value = (string)item.Value.Generate(typeof(string), deserializer);
-                        deserializer.DeSerializedObjects.Add(value, obj);
+                        var key = Convert.ChangeType(item.Key, keyType);
+                        var value = item.Value.Generate(valueType, deserializer);
+                        addMethod.Invoke(obj, new object[] { key, value });
                     }
-                    else
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, IJsonGoModel> item in Properties)
                     {
-                        Type keyType = deserializer.GetKeyType(obj, item.Key);
-                        if (keyType != null)
+                        if (item.Key == idName)
                         {
-                            object value = item.Value.Generate(keyType, deserializer);
-                            deserializer.SetValue(obj, value, item.Key);
+                            string value = (string)item.Value.Generate(typeof(string), deserializer);
+                            deserializer.DeSerializedObjects.Add(value, obj);
+                        }
+                        else
+                        {
+                            Type keyType = deserializer.GetKeyType(obj, item.Key);
+                            if (keyType != null)
+                            {
+                                object value = item.Value.Generate(keyType, deserializer);
+                                deserializer.SetValue(obj, value, item.Key);
+                            }
                         }
                     }
                 }

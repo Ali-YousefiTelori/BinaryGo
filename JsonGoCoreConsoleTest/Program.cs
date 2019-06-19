@@ -45,6 +45,8 @@ namespace JsonGoCoreConsoleTest
             try
             {
                 Console.WriteLine($"Enter number of items: ");
+                Serializer serializer = new Serializer();
+         
                 int CYCLES = int.Parse(Console.ReadLine());
 
 
@@ -117,7 +119,6 @@ namespace JsonGoCoreConsoleTest
 
                 fullProducts.Add(products);
                 fullProducts.Add(products);
-                Serializer serializer = new Serializer();
                 string newtonJson = Newtonsoft.Json.JsonConvert.SerializeObject(fullProducts, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Arrays });
 
                 string jsonGoJson = serializer.Serialize(fullProducts);
