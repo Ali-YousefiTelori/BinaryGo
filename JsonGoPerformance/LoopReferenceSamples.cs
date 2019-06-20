@@ -20,7 +20,7 @@ namespace JsonGoPerformance
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                     PreserveReferencesHandling = PreserveReferencesHandling.Arrays
                 });
-                //System.Text.Json.Serialization.JsonSerializer.ToString(obj);
+                //System.Text.Json.Serialization.JsonSerializer.ToString(obj, new System.Text.Json.Serialization.JsonSerializerOptions() {  });
             }
         }
 
