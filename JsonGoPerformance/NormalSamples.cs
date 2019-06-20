@@ -19,6 +19,7 @@ namespace JsonGoPerformance
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                     PreserveReferencesHandling = PreserveReferencesHandling.Arrays
                 });
+                System.Text.Json.Serialization.JsonSerializer.ToString(obj);
             }
         }
 
@@ -89,6 +90,22 @@ namespace JsonGoPerformance
             stopwatch.Stop();
             double JsonNetRes = stopwatch.ElapsedTicks;
             Console.WriteLine("Newtonsoft.JsonNET: \t " + stopwatch.Elapsed);
+
+            Console.WriteLine("******* System.Text.Json *****");
+
+            Console.WriteLine($"Count {count}");
+
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < count; i++)
+            {
+                System.Text.Json.Serialization.JsonSerializer.ToString(sample);
+            }
+            stopwatch.Stop();
+            double MicrosoftJsonRes = stopwatch.ElapsedTicks;
+
+            Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
+
             Console.WriteLine("******* JsonGo *****");
             Console.WriteLine($"Count {count}");
             Serializer serializer = new Serializer();
@@ -118,6 +135,18 @@ namespace JsonGoPerformance
                 Console.WriteLine($"JsonGo is {res}X FASTER than JsonNET");
             }
 
+            if (JsonGoRes > MicrosoftJsonRes)
+            {
+                double tt = JsonGoRes / MicrosoftJsonRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X SLOWER than System.Text.Json");
+            }
+            else
+            {
+                double tt = MicrosoftJsonRes / JsonGoRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X FASTER than System.Text.Json");
+            }
             Console.WriteLine();
             Console.WriteLine("-------------------------------------------------------------");
             Console.WriteLine();
