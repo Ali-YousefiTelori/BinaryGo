@@ -167,11 +167,6 @@
             set value of property
             </summary>
         </member>
-        <member name="P:JsonGo.Runtime.PropertyGoInfo.IsLast">
-            <summary>
-            is last property
-            </summary>
-        </member>
         <member name="T:JsonGo.Runtime.FunctionGo">
             <summary>
             function for serialize object

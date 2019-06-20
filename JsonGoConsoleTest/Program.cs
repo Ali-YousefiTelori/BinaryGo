@@ -73,14 +73,39 @@ namespace JsonGoConsoleTest
         {
             try
             {
-                Console.WriteLine($"Enter number of items: ");
-                int count = int.Parse(Console.ReadLine());
-                Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
+                Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
+                if (Console.ReadLine() == "1")
+                {
+                    Console.WriteLine($"Enter number of items: ");
+                    int count = int.Parse(Console.ReadLine());
+                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
+                }
+                else
+                {
+                    Console.WriteLine($"Enter number of items: ");
+                    int count = int.Parse(Console.ReadLine());
+                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
+                }
+
+
             }
             catch (Exception ex)
             {

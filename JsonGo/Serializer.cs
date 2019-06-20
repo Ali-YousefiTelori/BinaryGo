@@ -157,9 +157,9 @@ namespace JsonGo
                 Writer.Append(property.Name);
                 Writer.Append(JsonSettingInfo.QuotesColon);
                 property.TypeGoInfo.Serialize(this, Writer, ref propertyValue);
-                if (!property.IsLast)
-                    Writer.Append(JsonSettingInfo.Comma);
+                Writer.Append(JsonSettingInfo.Comma);
             }
+            RemoveLastCama();
             Writer.Append(JsonSettingInfo.CloseBracket);
         }
         /// <summary>
@@ -201,9 +201,9 @@ namespace JsonGo
                 Writer.Append(property.Name);
                 Writer.Append(JsonSettingInfo.QuotesColon);
                 property.TypeGoInfo.Serialize(this, Writer, ref propertyValue);
-                if (!property.IsLast)
-                    Writer.Append(JsonSettingInfo.Comma);
+                Writer.Append(JsonSettingInfo.Comma);
             }
+            RemoveLastCama();
             Writer.Append(JsonSettingInfo.CloseBracket);
         }
         /// <summary>

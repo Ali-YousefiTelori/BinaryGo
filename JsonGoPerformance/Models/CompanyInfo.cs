@@ -9,6 +9,6 @@ namespace JsonGoPerformance.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public List<UserInfo> Users { get; set; }
-        public List<CarInfo> CarInfo { get; set; }
+        public List<CarInfo> Cars { get; set; }
     }
 }

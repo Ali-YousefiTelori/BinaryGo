@@ -29,9 +29,5 @@ namespace JsonGo.Runtime
         /// set value of property
         /// </summary>
         public Action<object, object> SetValue { get; set; }
-        /// <summary>
-        /// is last property
-        /// </summary>
-        public bool IsLast { get; internal set; }
     }
 }

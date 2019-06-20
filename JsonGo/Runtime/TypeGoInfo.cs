@@ -240,10 +240,6 @@ namespace JsonGo.Runtime
                     };
                 }
                 typeGoInfo.ArrayProperties = typeGoInfo.Properties.Values.ToArray();
-                foreach (var item in typeGoInfo.ArrayProperties)
-                {
-                    item.IsLast = typeGoInfo.ArrayProperties.Last() == item;
-                }
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
                     serializer.SerializeFunction(typeGoInfo, serializer, builder, ref data);
