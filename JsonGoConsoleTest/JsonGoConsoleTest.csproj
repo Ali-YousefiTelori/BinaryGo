@@ -80,6 +80,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JsonGoPerformance\JsonGoPerformance.csproj">
+      <Project>{3E41E362-D5A4-45F1-B3DF-63540450E5E1}</Project>
+      <Name>JsonGoPerformance</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JsonGo\JsonGo.csproj">
       <Project>{171a0b7c-cb78-475a-9ec9-6da8140ddf72}</Project>
       <Name>JsonGo</Name>

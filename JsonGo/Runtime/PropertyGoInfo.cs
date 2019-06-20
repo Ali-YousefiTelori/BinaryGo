@@ -24,10 +24,14 @@ namespace JsonGo.Runtime
         /// <summary>
         /// get value of property
         /// </summary>
-        public Func<object, object> GetValue { get; set; }
+        public Func<object,object> GetValue { get; set; }
         /// <summary>
         /// set value of property
         /// </summary>
         public Action<object, object> SetValue { get; set; }
+        /// <summary>
+        /// is last property
+        /// </summary>
+        public bool IsLast { get; internal set; }
     }
 }

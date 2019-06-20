@@ -167,6 +167,11 @@
             set value of property
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.PropertyGoInfo.IsLast">
+            <summary>
+            is last property
+            </summary>
+        </member>
         <member name="T:JsonGo.Runtime.FunctionGo">
             <summary>
             function for serialize object
@@ -258,7 +263,7 @@
             serialize array function
             </summary>
         </member>
-        <member name="P:JsonGo.Serializer.Builder">
+        <member name="P:JsonGo.Serializer.Writer">
             <summary>
             string builder of json serialization
             </summary>
@@ -270,7 +275,7 @@
             <param name="data">any object to serialize</param>
             <returns>json that serialized from you object</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@,JsonGo.Runtime.TypeGoInfo)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@)">
             <summary>
             serialize an object to a json string
             </summary>
