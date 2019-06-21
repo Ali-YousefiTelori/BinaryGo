@@ -74,6 +74,7 @@ namespace JsonGoConsoleTest
             try
             {
                 Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
+                JsonGoModelBuilder.Initialize();
                 if (Console.ReadLine() == "1")
                 {
                     Console.WriteLine($"Enter number of items: ");

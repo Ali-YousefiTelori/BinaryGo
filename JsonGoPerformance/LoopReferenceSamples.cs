@@ -191,19 +191,6 @@ namespace JsonGoPerformance
 
             Console.WriteLine("******* System.Text.Json NOT SUPPORT YET *****");
 
-            //Console.WriteLine($"Count {count}");
-
-            //stopwatch = new Stopwatch();
-            //stopwatch.Start();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    System.Text.Json.Serialization.JsonSerializer.ToString(sample);
-            //}
-            //stopwatch.Stop();
-            //double MicrosoftJsonRes = stopwatch.ElapsedTicks;
-
-            //Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
-
             Serializer serializer = new Serializer();
 
             Console.WriteLine("******* JsonGo *****");
@@ -219,6 +206,21 @@ namespace JsonGoPerformance
             double JsonGoRes = stopwatch.ElapsedTicks;
 
             Console.WriteLine("JsonGo Runtime Time: \t " + stopwatch.Elapsed);
+
+            Console.WriteLine("******* JsonGo Compile Time *****");
+            Console.WriteLine($"Count {count}");
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < count; i++)
+            {
+                serializer.SerializeCompile(sample);
+            }
+            stopwatch.Stop();
+
+            Console.WriteLine("JsonGo Compile Time: \t " + stopwatch.Elapsed);
+            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(JsonNetRes / stopwatch.ElapsedTicks, 2) + "X FASTER than JsonNET");
+            //Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(MicrosoftJsonRes / stopwatch.ElapsedTicks, 2) + "X FASTER than System.Text.Json");
+
 
             if (JsonGoRes > JsonNetRes)
             {

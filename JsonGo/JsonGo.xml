@@ -4,6 +4,143 @@
         <name>JsonGo</name>
     </assembly>
     <members>
+        <member name="T:JsonGo.CompileTime.PropertyInfoBase">
+            <summary>
+            base of property bu
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.PropertyInfoBase.Name">
+            <summary>
+            name of property
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.PropertyInfoBase.GetValue">
+            <summary>
+            get Value
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.PropertyInfoBase.SetValue">
+            <summary>
+            set Value
+            </summary>
+        </member>
+        <member name="T:JsonGo.CompileTime.PropertyInfo">
+            <summary>
+            property info of type
+            </summary>
+            <typeparam name="T">type</typeparam>
+        </member>
+        <member name="P:JsonGo.CompileTime.PropertyInfo.Serialize">
+            <summary>
+            get Value
+            </summary>
+        </member>
+        <member name="T:JsonGo.CompileTime.TypeBuilder`1">
+            <summary>
+            build your types 
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeBuilder`1.CreateInstanceFunction">
+            <summary>
+            created insatnce function
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeBuilder`1.SerializeFunction">
+            <summary>
+            serialize func
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeBuilder`1.Properties">
+            <summary>
+            all of properties of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeBuilder`1.GenericArguments">
+            <summary>
+            all of generic arguments
+            </summary>
+        </member>
+        <member name="M:JsonGo.CompileTime.TypeBuilder`1.CreateInstance(System.Func{System.Object})">
+            <summary>
+            function of create instance of object
+            </summary>
+            <param name="createInstance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JsonGo.CompileTime.TypeBuilder`1.SerializeObject(System.Action{JsonGo.Serializer,System.Text.StringBuilder,`0})">
+            <summary>
+            add property to type
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JsonGo.CompileTime.TypeBuilder`1.Build">
+            <summary>
+            build a type
+            </summary>
+        </member>
+        <member name="T:JsonGo.CompileTime.TypeInfo">
+            <summary>
+            details of a type
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeInfo.Type">
+            <summary>
+            type of builder
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeInfo.GenericArguments">
+            <summary>
+            all of generic arguments
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeInfo.CreateInstanceFunction">
+            <summary>
+            create instance of type
+            </summary>
+        </member>
+        <member name="T:JsonGo.CompileTime.TypeInfo`1">
+            <summary>
+            details of a type
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeInfo`1.Properties">
+            <summary>
+            all of properties of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeInfo`1.Serialize">
+            <summary>
+            serialize object directly
+            </summary>
+        </member>
+        <member name="T:JsonGo.CompileTime.TypeManager">
+            <summary>
+            manage types
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeManager.Current">
+            <summary>
+            current type manager
+            </summary>
+        </member>
+        <member name="P:JsonGo.CompileTime.TypeManager.CompiledTypes">
+            <summary>
+            compiled types in memory
+            </summary>
+        </member>
+        <member name="M:JsonGo.CompileTime.TypeManager.Add(JsonGo.CompileTime.TypeInfo)">
+            <summary>
+            add a type
+            </summary>
+            <param name="typeInfo"></param>
+        </member>
+        <member name="M:JsonGo.CompileTime.TypeManager.Get``1">
+            <summary>
+            get type info
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
         <member name="T:JsonGo.Deserialize.Deserializer">
             <summary>
             deserializer of json
@@ -278,7 +415,7 @@
             <param name="typeGoInfo"></param>
             <returns>json that serialized</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeArrayReference(System.Collections.IEnumerable,System.Object@)">
+        <member name="M:JsonGo.Serializer.SerializeArrayReference(System.Collections.IEnumerable,System.Int32@)">
             <summary>
             serialize an array to a json string
             </summary>
@@ -286,7 +423,7 @@
             <param name="refrencedId">referenceId</param>
             <returns>json that serialized</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObjectReference(System.Object,System.Object@,JsonGo.Runtime.TypeGoInfo)">
+        <member name="M:JsonGo.Serializer.SerializeObjectReference(System.Object,System.Int32@,JsonGo.Runtime.TypeGoInfo)">
             <summary>
             serialize an object to a json string with reference
             </summary>
@@ -342,7 +479,7 @@
             <param name="typeGoInfo">typego of jsongo</param>
             <returns>json that serialized</returns>
         </member>
-        <member name="M:JsonGo.Serializer.GenerateReference(System.Object@,System.Object@)">
+        <member name="M:JsonGo.Serializer.GenerateReference(System.Object@,System.Int32@)">
             <summary>
             generate reference id for object
             </summary>

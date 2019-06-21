@@ -1,4 +1,5 @@
 ﻿using JsonGo;
+using JsonGo.CodeGenerators;
 using JsonGo.Deserialize;
 using JsonGoPerformance;
 using Newtonsoft.Json;
@@ -51,7 +52,11 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
+                AssemblyLoader assemblyLoader = new AssemblyLoader();
+                assemblyLoader.Add(@"D:\Github\JsonGo\JsonGoCoreConsoleTest\bin\Debug\netcoreapp3.0\JsonGoPerformance.dll");
+                var code = assemblyLoader.GenerateCode();
                 Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
+                JsonGoModelBuilder.Initialize();
                 if (Console.ReadLine() == "1")
                 {
                     Console.WriteLine($"Enter number of items: ");

@@ -19,13 +19,14 @@ namespace JsonGoTest
 
         }
 
-        #region Serialize
+        #region Serialize and Deserialize
         [Test]
         public void ByteTest()
         {
             byte value = 45;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<byte>(result) == value);
         }
         [Test]
         public void UByteTest()
@@ -33,6 +34,7 @@ namespace JsonGoTest
             sbyte value = -5;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<sbyte>(result) == value);
         }
         [Test]
         public void Int16Test()
@@ -40,6 +42,7 @@ namespace JsonGoTest
             short value = -1582;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<short>(result) == value);
         }
         [Test]
         public void UInt16Test()
@@ -47,6 +50,7 @@ namespace JsonGoTest
             ushort value = 1582;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<ushort>(result) == value);
         }
         [Test]
         public void Int32Test()
@@ -54,6 +58,7 @@ namespace JsonGoTest
             int value = -1582;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<int>(result) == value);
         }
         [Test]
         public void UInt32Test()
@@ -68,6 +73,7 @@ namespace JsonGoTest
             long value = -4727327827885;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<long>(result) == value);
         }
         [Test]
         public void UInt64Test()
@@ -75,6 +81,7 @@ namespace JsonGoTest
             ulong value = 4727327827885;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<ulong>(result) == value);
         }
         [Test]
         public void DoubleTest()
@@ -82,6 +89,7 @@ namespace JsonGoTest
             double value = -1582.5453;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<double>(result) == value);
         }
         [Test]
         public void FloatTest()
@@ -89,6 +97,7 @@ namespace JsonGoTest
             float value = 52.66f;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<float>(result) == value);
         }
         [Test]
         public void DecimalTest()
@@ -96,6 +105,7 @@ namespace JsonGoTest
             decimal value = 453445.54245m;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<decimal>(result) == value);
         }
         [Test]
         public void StringTest()
@@ -103,6 +113,7 @@ namespace JsonGoTest
             string value = "ali yousefi";
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string>(result) == value);
         }
 
         [Test]
@@ -111,13 +122,16 @@ namespace JsonGoTest
             bool value = true;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<bool>(result) == value);
         }
         [Test]
         public void DateTimeTest()
         {
             DateTime value = DateTime.Now;
+            value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<DateTime>(result) == value);
         }
         [Test]
         public void EnumTest()
@@ -125,12 +139,15 @@ namespace JsonGoTest
             TestEnum value = TestEnum.None;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{(int)value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<TestEnum>(result) == value);
             value = TestEnum.Value10;
             result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{(int)value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<TestEnum>(result) == value);
             value = TestEnum.Value50;
             result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{(int)value}\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<TestEnum>(result) == value);
         }
         #endregion
     }

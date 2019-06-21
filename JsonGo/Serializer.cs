@@ -1,4 +1,5 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.CompileTime;
+using JsonGo.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace JsonGo
         /// <summary>
         /// save serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>
-        internal Dictionary<object, object> SerializedObjects { get; set; } = new Dictionary<object, object>();
+        public Dictionary<object, int> SerializedObjects { get; set; } = new Dictionary<object, int>();
         /// <summary>
         /// default setting of serializer
         /// </summary>
@@ -57,7 +58,7 @@ namespace JsonGo
         /// <summary>
         /// start of referenced index
         /// </summary>
-        internal int ReferencedIndex { get; set; } = 1;
+        public int ReferencedIndex { get; set; } = 1;
         /// <summary>
         /// single instance of serializer to accesss faster
         /// </summary>
@@ -97,6 +98,26 @@ namespace JsonGo
             return Writer.ToString();
         }
 
+        public string SerializeCompile<T>(T data)
+        {
+            Writer = new StringBuilder(256);
+            SerializedObjects.Clear();
+            ReferencedIndex = 0;
+            var serializer = TypeInfo<T>.Serialize;
+            if (serializer == null)
+                throw new Exception($"Type {typeof(T)} not initialized in compile time!");
+            serializer(this, Writer, data);
+            return Writer.ToString();
+        }
+
+        public void ContinueSerializeCompile<T>(T data)
+        {
+            var serializer = TypeInfo<T>.Serialize;
+            if (serializer == null)
+                throw new Exception($"Type {typeof(T)} not initialized in compile time!");
+            serializer(this, Writer, data);
+        }
+
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
@@ -117,7 +138,7 @@ namespace JsonGo
         /// <param name="list">array list</param>
         /// <param name="refrencedId">referenceId</param>
         /// <returns>json that serialized</returns>
-        internal void SerializeArrayReference(IEnumerable list, ref object refrencedId)
+        internal void SerializeArrayReference(IEnumerable list, ref int refrencedId)
         {
             Writer.Append(JsonSettingInfo.BeforeObject);
             Writer.Append(refrencedId);
@@ -141,10 +162,10 @@ namespace JsonGo
         /// <param name="refrencedId">referenceId</param>
         /// <param name="typeGoInfo">typego of jsongo</param>
         /// <returns>json that serialized</returns>
-        internal void SerializeObjectReference(object data, ref object refrencedId, TypeGoInfo typeGoInfo)
+        internal void SerializeObjectReference(object data, ref int refrencedId, TypeGoInfo typeGoInfo)
         {
             Writer.Append(JsonSettingInfo.BeforeObject);
-            Writer.Append((int)refrencedId);
+            Writer.Append(refrencedId);
             Writer.Append(JsonSettingInfo.CommaQuotes);
 
             var properties = typeGoInfo.ArrayProperties;
@@ -214,7 +235,7 @@ namespace JsonGo
         /// <returns>json that serialized</returns>
         void SerializeFunctionWithReference(TypeGoInfo typeGoInfo, ref object data)
         {
-            if (GenerateReference(ref data, out object refrencedId))
+            if (GenerateReference(ref data, out int refrencedId))
                 return;
             SerializeObjectReference(data, ref refrencedId, typeGoInfo);
         }
@@ -226,7 +247,7 @@ namespace JsonGo
         /// <returns>json that serialized</returns>
         void SerializeArrayFunctionWithReference(TypeGoInfo typeGoInfo, ref object data)
         {
-            if (GenerateReference(ref data, out object refrencedId))
+            if (GenerateReference(ref data, out int refrencedId))
                 return;
             SerializeArrayReference((IEnumerable)data, ref refrencedId);
         }
@@ -256,7 +277,7 @@ namespace JsonGo
         /// <param name="data">object to detect reference</param>
         /// <param name="refrencedId">refrence id created</param>
         /// <returns>is reference created</returns>
-        bool GenerateReference(ref object data, out object refrencedId)
+        bool GenerateReference(ref object data, out int refrencedId)
         {
             if (!SerializedObjects.TryGetValue(data, out refrencedId))
             {
@@ -268,7 +289,7 @@ namespace JsonGo
             else
             {
                 Writer.Append(JsonSettingInfo.OpenBraketRefColonQuotes);
-                Writer.Append((int)refrencedId);
+                Writer.Append(refrencedId);
                 Writer.Append(JsonSettingInfo.QuotesCloseBracket);
                 return true;
             }
