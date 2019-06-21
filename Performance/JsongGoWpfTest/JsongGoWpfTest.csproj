@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MvvmGo">
+      <HintPath>..\..\Components\MvvmGo.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmGo.WindowsWPF">
+      <HintPath>..\..\Components\MvvmGo.WindowsWPF.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\JsonGo\JsonGo.csproj" />
-    <ProjectReference Include="..\JsonGo\JsonGo.csproj" />
+    <ProjectReference Include="..\JsonGoPerformance\JsonGoPerformance.csproj" />
   </ItemGroup>
 
 </Project>

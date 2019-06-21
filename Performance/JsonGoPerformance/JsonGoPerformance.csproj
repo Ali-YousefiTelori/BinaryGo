@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JsonGo\JsonGo.csproj" />
+    <ProjectReference Include="..\..\Engine\JsonGo\JsonGo.csproj" />
   </ItemGroup>
 
 </Project>
