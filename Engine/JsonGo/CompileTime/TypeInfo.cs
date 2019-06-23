@@ -21,6 +21,7 @@ namespace JsonGo.CompileTime
         /// create instance of type
         /// </summary>
         public Func<object> CreateInstanceFunction { get; set; }
+        public Action<Serializer, StringBuilder, object> DynamicSerialize { get; set; }
 
     }
 

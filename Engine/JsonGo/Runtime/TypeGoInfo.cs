@@ -76,108 +76,84 @@ namespace JsonGo.Runtime
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((uint)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(long))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((long)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(short))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((short)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(byte))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((byte)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(double))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((double)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(float))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((float)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(decimal))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((decimal)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(sbyte))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((sbyte)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(ulong))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((ulong)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(bool))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((bool)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(ushort))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((ushort)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(int))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append((int)data);
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (type == typeof(string))
@@ -193,9 +169,7 @@ namespace JsonGo.Runtime
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                     stringBuilder.Append(Convert.ToInt32(data));
-                    stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
             }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
