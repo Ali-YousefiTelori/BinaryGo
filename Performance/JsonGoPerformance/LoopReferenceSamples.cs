@@ -1,4 +1,5 @@
-﻿using JsonGo;
+﻿using BenchmarkDotNet.Attributes;
+using JsonGo;
 using JsonGoPerformance.Models;
 using Newtonsoft.Json;
 using System;
@@ -8,13 +9,13 @@ using System.Text;
 
 namespace JsonGoPerformance
 {
-    public static class LoopReferenceSamples
+    public class LoopReferenceSamples
     {
         public static void InitializeChaches<T>(T obj)
         {
             for (int i = 0; i < 10; i++)
             {
-                var result1 = Serializer.SingleIntance.Serialize(obj);
+                Serializer.SingleIntance.Serialize(obj);
                 JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -24,7 +25,7 @@ namespace JsonGoPerformance
             }
         }
 
-        public static CompanyInfo GetSimpleSample()
+        public CompanyInfo GetSimpleSample()
         {
             CompanyInfo companyInfo = new CompanyInfo()
             {
@@ -44,7 +45,7 @@ namespace JsonGoPerformance
             return companyInfo;
         }
 
-        public static List<CompanyInfo> GetSimpleArraySample()
+        public List<CompanyInfo> GetSimpleArraySample()
         {
             List<CompanyInfo> result = new List<CompanyInfo>();
             for (int i = 1; i < 50; i++)
@@ -69,7 +70,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static List<RoleInfo> GetArrayRoles(UserInfo userInfo)
+        public List<RoleInfo> GetArrayRoles(UserInfo userInfo)
         {
             List<RoleInfo> result = new List<RoleInfo>();
             RoleInfo roleInfo = new RoleInfo()
@@ -96,7 +97,7 @@ namespace JsonGoPerformance
             return result;
         }
 
-        public static List<ProductInfo> GetArrayProducts(UserInfo userInfo)
+        public List<ProductInfo> GetArrayProducts(UserInfo userInfo)
         {
             List<ProductInfo> result = new List<ProductInfo>();
             for (int i = 1; i < 20; i++)
@@ -113,7 +114,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static List<CarInfo> GetArrayCars(CompanyInfo companyInfo)
+        public List<CarInfo> GetArrayCars(CompanyInfo companyInfo)
         {
             List<CarInfo> result = new List<CarInfo>();
             for (int i = 1; i < 50; i++)
@@ -129,7 +130,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static List<CompanyInfo> GetComplexObjectSample()
+        public List<CompanyInfo> GetComplexObjectSample()
         {
             var companies = GetSimpleArraySample();
             foreach (var item in companies)
@@ -150,7 +151,7 @@ namespace JsonGoPerformance
             return companies;
         }
 
-        public static UserInfo GetComplexSample()
+        public UserInfo GetComplexSample()
         {
             UserInfo userInfo = new UserInfo()
             {
@@ -161,14 +162,58 @@ namespace JsonGoPerformance
             };
             return userInfo;
         }
-        public static void Run<T>(T sample, int count)
-        {
-            InitializeChaches(sample);
-            for (int i = 0; i < 5; i++)
-            {
-                RunSample(sample, count);
-            }
+        //public static void Run<T>(T sample, int count)
+        //{
+        //    InitializeChaches(sample);
+        //    for (int i = 0; i < 5; i++)
+        //    {
+        //        RunSample(sample, count);
+        //    }
 
+        //}
+
+        [GlobalSetup]
+        public void Initialize()
+        {
+            Console.WriteLine("initializer runned");
+            JsonGoModelBuilder.Initialize();
+
+            LoopReferenceSamples normalSamples = new LoopReferenceSamples();
+            InitializeChaches(normalSamples.GetSimpleSample());
+            InitializeChaches(normalSamples.GetSimpleArraySample());
+            InitializeChaches(normalSamples.GetComplexObjectSample());
+        }
+
+        [Benchmark]
+        public void RunLoopSimpleSampleCompileTimeJsonGo()
+        {
+            Serializer serializer = new Serializer();
+            serializer.Setting.HasGenerateRefrencedTypes = true;
+            serializer.SerializeCompile(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunLoopSimpleSampleJsonGo()
+        {
+            Serializer serializer = new Serializer();
+            serializer.Setting.HasGenerateRefrencedTypes = true;
+            serializer.Serialize(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunLoopSimpleSampleJsonNet()
+        {
+            JsonConvert.SerializeObject(GetSimpleSample(), new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.Arrays
+            });
+        }
+
+        [Benchmark]
+        public void RunLoopSimpleSampleTextJson()
+        {
+            System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
         }
 
         private static void RunSample<T>(T sample, int count)

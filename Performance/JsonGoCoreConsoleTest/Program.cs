@@ -1,4 +1,5 @@
-﻿using JsonGo;
+﻿using BenchmarkDotNet.Running;
+using JsonGo;
 using JsonGo.CodeGenerators;
 using JsonGo.Deserialize;
 using JsonGoPerformance;
@@ -52,41 +53,54 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
-                AssemblyLoader assemblyLoader = new AssemblyLoader();
-                assemblyLoader.Add(@"D:\Github\JsonGo\JsonGoCoreConsoleTest\bin\Debug\netcoreapp3.0\JsonGoPerformance.dll");
-                var code = assemblyLoader.GenerateCode();
-                Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
-                JsonGoModelBuilder.Initialize();
-                if (Console.ReadLine() == "1")
-                {
-                    Console.WriteLine($"Enter number of items: ");
-                    int count = int.Parse(Console.ReadLine());
-                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
-                }
-                else
-                {
-                    Console.WriteLine($"Enter number of items: ");
-                    int count = int.Parse(Console.ReadLine());
-                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
-                }
+
+                //BenchmarkRunner.Run<NormalSamples>();
+                //JsonGoModelBuilder.Initialize();
+                //NormalSerializeSamples normalSamples = new NormalSerializeSamples();
+                //var userInfos = normalSamples.GetSimpleArraySample();
+
+                //var result = System.Text.Json.Serialization.JsonSerializer.ToString(userInfos);
+                //NormalDeserializeSamples normalDeserialize = new NormalDeserializeSamples();
+                //normalDeserialize.JsonGo_RunSimpleArraySampleJsonGo();
+                //normalDeserialize.JsonGo_RunSimpleSampleJsonGo();
+                //normalDeserialize.JsonGo_RunSimpleCommplexSampleJsonGo();
+                //BenchmarkRunner.Run<NormalDeserializeSamples>();
+                BenchmarkRunner.Run<NormalSerializeSamples>();
+                //AssemblyLoader assemblyLoader = new AssemblyLoader();
+                //assemblyLoader.Add(@"D:\Github\JsonGo\JsonGoCoreConsoleTest\bin\Debug\netcoreapp3.0\JsonGoPerformance.dll");
+                //var code = assemblyLoader.GenerateCode();
+                //Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
+                //JsonGoModelBuilder.Initialize();
+                //if (Console.ReadLine() == "1")
+                //{
+                //    Console.WriteLine($"Enter number of items: ");
+                //    int count = int.Parse(Console.ReadLine());
+                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"Enter number of items: ");
+                //    int count = int.Parse(Console.ReadLine());
+                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
+                //}
 
 
             }

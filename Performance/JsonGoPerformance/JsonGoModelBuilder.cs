@@ -9,67 +9,38 @@ namespace JsonGoPerformance
 {
     public static class JsonGoModelBuilder
     {
+        static void ArrayInitializer<T>(Serializer serializer, StringBuilder builder, IEnumerable<T> obj)
+        {
+            if (obj == null)
+                return;
+            if (serializer.SerializedObjects.TryGetValue(obj, out int index))
+            {
+                builder.Append("\"{\"$ref\":\"");
+                builder.Append(index);
+                builder.Append("\"}\"");
+            }
+            else
+            {
+                serializer.ReferencedIndex++;
+                serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
+                builder.Append("\"{\"$id\":\"");
+                builder.Append(serializer.ReferencedIndex);
+                builder.Append("\",\"$values\":[\"");
+                foreach (var item in obj)
+                {
+                    if (item == null)
+                        continue;
+                    serializer.ContinueSerializeCompile(item);
+                    builder.Append(',');
+                }
+                serializer.RemoveLastCama();
+                builder.AppendLine("]}");
+            }
+        }
         public static void Initialize()
         {
-            //TypeBuilder<UserInfo>.Create().SerializeObject((serializer, builder, obj) =>
-            //{
-            //    if (obj == null)
-            //        return;
-            //    if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-            //    {
-            //        builder.Append("{\"$ref\":");
-            //        builder.Append(index);
-            //        builder.Append("}");
-            //    }
-            //    else
-            //    {
-            //        serializer.ReferencedIndex++;
-            //        serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-            //        builder.Append("{\"$id\":");
-            //        builder.Append(serializer.ReferencedIndex);
-            //        builder.Append(",\"Age\":");
-            //        builder.Append(obj.Age);
-            //        builder.Append(",\"CreatedDate\":\"");
-            //        builder.Append(obj.CreatedDate);
-            //        builder.Append("\",\"FullName\":\"");
-            //        builder.Append(obj.FullName);
-            //        builder.Append("\",\"Id\":");
-            //        builder.Append(obj.Id);
-            //        builder.Append("}");
-            //    }
-            //}).Build();
 
-            //TypeBuilder<List<UserInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            //{
-            //    if (obj == null)
-            //        return;
-            //    if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-            //    {
-            //        builder.Append("{\"$ref\":");
-            //        builder.Append(index);
-            //        builder.Append("}");
-            //    }
-            //    else
-            //    {
-            //        serializer.ReferencedIndex++;
-            //        serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-            //        builder.Append("{\"$id\":");
-            //        builder.Append(serializer.ReferencedIndex);
-            //        builder.Append(",\"$values\":[");
-            //        foreach (var item in obj)
-            //        {
-            //            if (item == null)
-            //                continue;
-            //            serializer.ContinueSerializeCompile(item);
-            //            builder.Append(',');
-            //        }
-            //        serializer.RemoveLastCama();
-            //        builder.Append("]}");
-            //    }
-            //}).Build();
-
-
-
+            Console.WriteLine("initialized compile time");
             TypeBuilder<JsonGoPerformance.Models.CarInfo>.Create().SerializeObject((serializer, builder, obj) =>
             {
                 if (obj == null)
@@ -263,146 +234,12 @@ namespace JsonGoPerformance
                     }
                 }
             }).Build();
-            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.UserInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            {
-                if (obj == null)
-                    return;
-                if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-                {
-                    builder.Append("\"{\"$ref\":\"");
-                    builder.Append(index);
-                    builder.Append("\"}\"");
-                }
-                else
-                {
-                    serializer.ReferencedIndex++;
-                    serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-                    builder.Append("\"{\"$id\":\"");
-                    builder.Append(serializer.ReferencedIndex);
-                    builder.Append("\",\"$values\":[\"");
-                    foreach (var item in obj)
-                    {
-                        if (item == null)
-                            continue;
-                        serializer.ContinueSerializeCompile(item);
-                        builder.Append(',');
-                    }
-                    serializer.RemoveLastCama();
-                    builder.AppendLine("]}");
-                }
-            }).Build();
-            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.CarInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            {
-                if (obj == null)
-                    return;
-                if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-                {
-                    builder.Append("\"{\"$ref\":\"");
-                    builder.Append(index);
-                    builder.Append("\"}\"");
-                }
-                else
-                {
-                    serializer.ReferencedIndex++;
-                    serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-                    builder.Append("\"{\"$id\":\"");
-                    builder.Append(serializer.ReferencedIndex);
-                    builder.Append("\",\"$values\":[\"");
-                    foreach (var item in obj)
-                    {
-                        if (item == null)
-                            continue;
-                        serializer.ContinueSerializeCompile(item);
-                        builder.Append(',');
-                    }
-                    serializer.RemoveLastCama();
-                    builder.AppendLine("]}");
-                }
-            }).Build();
-            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.ProductInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            {
-                if (obj == null)
-                    return;
-                if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-                {
-                    builder.Append("\"{\"$ref\":\"");
-                    builder.Append(index);
-                    builder.Append("\"}\"");
-                }
-                else
-                {
-                    serializer.ReferencedIndex++;
-                    serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-                    builder.Append("\"{\"$id\":\"");
-                    builder.Append(serializer.ReferencedIndex);
-                    builder.Append("\",\"$values\":[\"");
-                    foreach (var item in obj)
-                    {
-                        if (item == null)
-                            continue;
-                        serializer.ContinueSerializeCompile(item);
-                        builder.Append(',');
-                    }
-                    serializer.RemoveLastCama();
-                    builder.AppendLine("]}");
-                }
-            }).Build();
-            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.RoleInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            {
-                if (obj == null)
-                    return;
-                if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-                {
-                    builder.Append("\"{\"$ref\":\"");
-                    builder.Append(index);
-                    builder.Append("\"}\"");
-                }
-                else
-                {
-                    serializer.ReferencedIndex++;
-                    serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-                    builder.Append("\"{\"$id\":\"");
-                    builder.Append(serializer.ReferencedIndex);
-                    builder.Append("\",\"$values\":[\"");
-                    foreach (var item in obj)
-                    {
-                        if (item == null)
-                            continue;
-                        serializer.ContinueSerializeCompile(item);
-                        builder.Append(',');
-                    }
-                    serializer.RemoveLastCama();
-                    builder.AppendLine("]}");
-                }
-            }).Build();
-            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.CompanyInfo>>.Create().SerializeObject((serializer, builder, obj) =>
-            {
-                if (obj == null)
-                    return;
-                if (serializer.SerializedObjects.TryGetValue(obj, out int index))
-                {
-                    builder.Append("\"{\"$ref\":\"");
-                    builder.Append(index);
-                    builder.Append("\"}\"");
-                }
-                else
-                {
-                    serializer.ReferencedIndex++;
-                    serializer.SerializedObjects[obj] = serializer.ReferencedIndex;
-                    builder.Append("\"{\"$id\":\"");
-                    builder.Append(serializer.ReferencedIndex);
-                    builder.Append("\",\"$values\":[\"");
-                    foreach (var item in obj)
-                    {
-                        if (item == null)
-                            continue;
-                        serializer.ContinueSerializeCompile(item);
-                        builder.Append(',');
-                    }
-                    serializer.RemoveLastCama();
-                    builder.AppendLine("]}");
-                }
-            }).Build();
+            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.CompanyInfo>>.Create().SerializeObject(ArrayInitializer).Build();
+            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.RoleInfo>>.Create().SerializeObject(ArrayInitializer).Build();
+            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.ProductInfo>>.Create().SerializeObject(ArrayInitializer).Build();
+            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.CarInfo>>.Create().SerializeObject(ArrayInitializer).Build();
+            TypeBuilder<System.Collections.Generic.List<JsonGoPerformance.Models.UserInfo>>.Create().SerializeObject(ArrayInitializer).Build()
+                .On<System.Collections.Generic.IEnumerable<JsonGoPerformance.Models.UserInfo>>();
 
         }
     }
