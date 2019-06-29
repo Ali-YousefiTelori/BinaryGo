@@ -17,6 +17,7 @@ namespace JsonGo.CompileTime
         /// serialize func
         /// </summary>
         private Action<Serializer, StringBuilder, T> SerializeFunction { get; set; }
+        private Action<Serializer, StringBuilder, object> DynamicSerializeFunction { get; set; }
         /// <summary>
         /// all of properties of type
         /// </summary>
@@ -41,6 +42,8 @@ namespace JsonGo.CompileTime
             return new TypeBuilder<T>();
         }
 
+
+
         /// <summary>
         /// add property to type
         /// </summary>
@@ -50,6 +53,17 @@ namespace JsonGo.CompileTime
             SerializeFunction = serialize;
             return this;
         }
+        public TypeBuilder<T> On<T2>()
+        {
+            var type = TypeBuilder<T2>.Create();
+            type.DynamicSerializeFunction = (serializer, builder, obj) =>
+            {
+                SerializeFunction(serializer, builder, (T)obj);
+            };
+            type.Build();
+            return this;
+        }
+
         public TypeBuilder<T> AddGenericArgument(TypeInfo typeInfo)
         {
             GenericArguments.Add(typeInfo);
@@ -59,7 +73,7 @@ namespace JsonGo.CompileTime
         /// <summary>
         /// build a type
         /// </summary>
-        public TypeInfo<T> Build()
+        public TypeBuilder<T> Build()
         {
             TypeInfo<T> typeInfo = new TypeInfo<T>()
             {
@@ -67,10 +81,11 @@ namespace JsonGo.CompileTime
                 CreateInstanceFunction = CreateInstanceFunction,
                 Properties = Properties,
                 GenericArguments = GenericArguments,
+                DynamicSerialize = DynamicSerializeFunction
             };
             TypeInfo<T>.Serialize = SerializeFunction;
             TypeManager.Current.Add(typeInfo);
-            return typeInfo;
+            return this;
         }
     }
 }

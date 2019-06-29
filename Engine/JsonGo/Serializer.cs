@@ -17,12 +17,16 @@ namespace JsonGo
     {
         static Serializer()
         {
-            SingleIntance = new Serializer();
+            SingleIntance = new Serializer(true);
+        }
+        public Serializer() : this(true)
+        {
         }
 
-        public Serializer()
+        public Serializer(bool generateReference)
         {
-            if (Setting.HasGenerateRefrencedTypes)
+            Setting.HasGenerateRefrencedTypes = generateReference;
+            if (generateReference)
             {
                 SerializeFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
                 {
@@ -103,19 +107,35 @@ namespace JsonGo
             Writer = new StringBuilder(256);
             SerializedObjects.Clear();
             ReferencedIndex = 0;
-            var serializer = TypeInfo<T>.Serialize;
-            if (serializer == null)
-                throw new Exception($"Type {typeof(T)} not initialized in compile time!");
-            serializer(this, Writer, data);
+            if (GetSerializer(out Action<Serializer, StringBuilder, T> serializer, ref data))
+                serializer(this, Writer, data);
             return Writer.ToString();
         }
 
         public void ContinueSerializeCompile<T>(T data)
         {
-            var serializer = TypeInfo<T>.Serialize;
+            if (GetSerializer(out Action<Serializer, StringBuilder, T> serializer, ref data))
+                serializer(this, Writer, data);
+        }
+
+        internal bool GetSerializer<T>(out Action<Serializer, StringBuilder, T> serializer, ref T data)
+        {
+            serializer = TypeInfo<T>.Serialize;
             if (serializer == null)
+            {
+                var genericTypeDefinition = typeof(T).GetGenericTypeDefinition();
+                if (genericTypeDefinition == typeof(IEnumerable<>))
+                {
+                    var type = typeof(IEnumerable<>).MakeGenericType(typeof(T).GetGenericArguments()[0]);
+                    if (TypeManager.CompiledTypes.TryGetValue(type, out CompileTime.TypeInfo typeInfo))
+                    {
+                        typeInfo.DynamicSerialize(this, Writer, data);
+                        return false;
+                    }
+                }
                 throw new Exception($"Type {typeof(T)} not initialized in compile time!");
-            serializer(this, Writer, data);
+            }
+            return true;
         }
 
         /// <summary>
@@ -162,7 +182,7 @@ namespace JsonGo
         /// <param name="refrencedId">referenceId</param>
         /// <param name="typeGoInfo">typego of jsongo</param>
         /// <returns>json that serialized</returns>
-        internal void SerializeObjectReference(object data, ref int refrencedId, TypeGoInfo typeGoInfo)
+        internal void SerializeObjectReference(ref object data, ref int refrencedId, TypeGoInfo typeGoInfo)
         {
             Writer.Append(JsonSettingInfo.BeforeObject);
             Writer.Append(refrencedId);
@@ -209,7 +229,7 @@ namespace JsonGo
         /// <param name="data">object to serialize</param>
         /// <param name="typeGoInfo">typego of jsongo</param>
         /// <returns>json that serialized</returns>
-        internal void SerializeObject(object data, TypeGoInfo typeGoInfo)
+        internal void SerializeObject(ref object data, TypeGoInfo typeGoInfo)
         {
             Writer.Append(JsonSettingInfo.OpenBraket);
             var properties = typeGoInfo.ArrayProperties;
@@ -237,7 +257,7 @@ namespace JsonGo
         {
             if (GenerateReference(ref data, out int refrencedId))
                 return;
-            SerializeObjectReference(data, ref refrencedId, typeGoInfo);
+            SerializeObjectReference(ref data, ref refrencedId, typeGoInfo);
         }
         /// <summary>
         /// serialize an array to a json string with detect reference
@@ -259,7 +279,7 @@ namespace JsonGo
         /// <returns>json that serialized</returns>
         void SerializeFunctionWithoutReference(TypeGoInfo typeGoInfo, ref object data)
         {
-            SerializeObject(data, typeGoInfo);
+            SerializeObject(ref data, typeGoInfo);
         }
         /// <summary>
         /// serialize an object to a json string without detect reference

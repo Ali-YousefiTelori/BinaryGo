@@ -151,11 +151,6 @@
             save deserialized objects for referenced type
             </summary>
         </member>
-        <member name="P:JsonGo.Deserialize.Deserializer.CacheNameVariables">
-            <summary>
-            cache variable to access faster, methods,fields and properties
-            </summary>
-        </member>
         <member name="P:JsonGo.Deserialize.Deserializer.SingleIntance">
             <summary>
             single instance of deserialize to access faster
@@ -182,22 +177,6 @@
             <param name="json">json to deserialize</param>
             <returns>deserialized type</returns>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.Extract(System.String@,System.Int32@)">
-            <summary>
-            deserialize json
-            </summary>
-            <param name="json">json value</param>
-            <param name="indexOf">index of start string</param>
-            <returns>value deserialized</returns>
-        </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.ExtractOject(System.String@,System.Int32@)">
-            <summary>
-            extract list of properties from object
-            </summary>
-            <param name="json"></param>
-            <param name="indexOf"></param>
-            <returns></returns>
-        </member>
         <member name="M:JsonGo.Deserialize.Deserializer.GetKeyType(System.Object,System.String)">
             <summary>
             get type of a json parameter name
@@ -205,14 +184,6 @@
             <param name="obj">object</param>
             <param name="key">json parameter name</param>
             <returns>type of json parameter</returns>
-        </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.ExtractString(System.String@,System.Int32@)">
-            <summary>
-            extract string from inside of double " char
-            </summary>
-            <param name="json"></param>
-            <param name="indexOf"></param>
-            <returns></returns>
         </member>
         <member name="M:JsonGo.Deserialize.Deserializer.SetValue(System.Object,System.Object,System.String)">
             <summary>
@@ -222,7 +193,40 @@
             <param name="value">value to set</param>
             <param name="key">parameter name of object</param>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.IsWhiteSpace(System.Char@)">
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.Extract(System.ReadOnlySpan{System.Char},System.Int32@)">
+            <summary>
+            deserialize json
+            </summary>
+            <param name="json">json value</param>
+            <param name="indexOf">index of start string</param>
+            <returns>value deserialized</returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.ExtractString(System.ReadOnlySpan{System.Char},System.Int32@)">
+            <summary>
+            extract string from inside of double " char
+            </summary>
+            <param name="json"></param>
+            <param name="indexOf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.ExtractValue(System.ReadOnlySpan{System.Char},System.Int32@)">
+            <summary>
+            extract value from json
+            </summary>
+            <param name="json"></param>
+            <param name="indexOf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.ExtractOject(JsonGo.Deserialize.IJsonGoModel,System.ReadOnlySpan{System.Char},System.Int32@)">
+            <summary>
+            extract list of properties from object
+            </summary>
+            <param name="objectModel"></param>
+            <param name="json"></param>
+            <param name="indexOf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.IsWhiteSpace(System.Char@)">
             <summary>
             check if a character is whitespace or empty
             </summary>
@@ -423,7 +427,7 @@
             <param name="refrencedId">referenceId</param>
             <returns>json that serialized</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObjectReference(System.Object,System.Int32@,JsonGo.Runtime.TypeGoInfo)">
+        <member name="M:JsonGo.Serializer.SerializeObjectReference(System.Object@,System.Int32@,JsonGo.Runtime.TypeGoInfo)">
             <summary>
             serialize an object to a json string with reference
             </summary>
@@ -439,7 +443,7 @@
             <param name="list">array list</param>
             <returns>json that serialized</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Object,JsonGo.Runtime.TypeGoInfo)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@,JsonGo.Runtime.TypeGoInfo)">
             <summary>
             serialize an object to a json string
             </summary>

@@ -1,4 +1,5 @@
-﻿using JsonGo;
+﻿using BenchmarkDotNet.Attributes;
+using JsonGo;
 using JsonGoPerformance.Models;
 using Newtonsoft.Json;
 using System;
@@ -7,13 +8,14 @@ using System.Diagnostics;
 
 namespace JsonGoPerformance
 {
-    public static class NormalSamples
+    public class NormalSerializeSamples
     {
         public static void InitializeChaches<T>(T obj)
         {
             for (int i = 0; i < 10; i++)
             {
-                var result1 = Serializer.SingleIntance.Serialize(obj);
+                Serializer.SingleIntance.Serialize(obj);
+                Serializer.SingleIntance.SerializeCompile(obj);
                 JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -21,8 +23,7 @@ namespace JsonGoPerformance
                 System.Text.Json.Serialization.JsonSerializer.ToString(obj);
             }
         }
-
-        public static UserInfo GetSimpleSample()
+        public UserInfo GetSimpleSample()
         {
             UserInfo userInfo = new UserInfo()
             {
@@ -33,7 +34,7 @@ namespace JsonGoPerformance
             };
             return userInfo;
         }
-        public static List<UserInfo> GetSimpleArraySample()
+        public List<UserInfo> GetSimpleArraySample()
         {
             List<UserInfo> result = new List<UserInfo>();
             for (int i = 1; i < 50; i++)
@@ -50,7 +51,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static List<RoleInfo> GetArrayRoles()
+        public List<RoleInfo> GetArrayRoles()
         {
             List<RoleInfo> result = new List<RoleInfo>();
             RoleInfo roleInfo = new RoleInfo()
@@ -73,8 +74,7 @@ namespace JsonGoPerformance
             result.Add(roleInfo3);
             return result;
         }
-
-        public static List<ProductInfo> GetArrayProducts()
+        public List<ProductInfo> GetArrayProducts()
         {
             List<ProductInfo> result = new List<ProductInfo>();
             for (int i = 1; i < 20; i++)
@@ -90,7 +90,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static List<CarInfo> GetArrayCars()
+        public List<CarInfo> GetArrayCars()
         {
             List<CarInfo> result = new List<CarInfo>();
             for (int i = 1; i < 50; i++)
@@ -105,7 +105,7 @@ namespace JsonGoPerformance
 
             return result;
         }
-        public static CompanyInfo GetComplexObjectSample()
+        public CompanyInfo GetComplexObjectSample()
         {
             CompanyInfo companyInfo = new CompanyInfo
             {
@@ -122,26 +122,62 @@ namespace JsonGoPerformance
             return companyInfo;
         }
 
-        public static UserInfo GetComplexSample()
+
+        //public void Run()
+        //{
+        //    RunSample(GetSimpleSample(), 1);
+        //    RunSample(GetSimpleArraySample(), 1);
+        //    RunSample(GetComplexObjectSample(), 1);
+        //}
+
+        //[Benchmark]
+        //public void Run<T>(T sample, int count)
+        //{
+        //    InitializeChaches(sample);
+        //    for (int i = 0; i < 5; i++)
+        //    {
+        //        RunSample(sample, count);
+        //    }
+
+        //}
+        [GlobalSetup]
+        public void Initialize()
         {
-            UserInfo userInfo = new UserInfo()
-            {
-                Age = 28,
-                CreatedDate = DateTime.Now,
-                FullName = "Ali Yousefi Telori",
-                Id = 1,
-            };
-            return userInfo;
+            Console.WriteLine("initializer runned");
+            JsonGoModelBuilder.Initialize();
+
+            NormalSerializeSamples normalSamples = new NormalSerializeSamples();
+            NormalSerializeSamples.InitializeChaches(normalSamples.GetSimpleSample());
+            NormalSerializeSamples.InitializeChaches(normalSamples.GetSimpleArraySample());
+            NormalSerializeSamples.InitializeChaches(normalSamples.GetComplexObjectSample());
+        }
+        [Benchmark]
+        public void RunSimpleSampleCompileTimeJsonGo()
+        {
+            Serializer serializer = new Serializer(false);
+            serializer.SerializeCompile(GetSimpleSample());
         }
 
-        public static void Run<T>(T sample, int count)
+        [Benchmark]
+        public void RunSimpleSampleJsonGo()
         {
-            InitializeChaches(sample);
-            for (int i = 0; i < 5; i++)
-            {
-                RunSample(sample, count);
-            }
+            Serializer serializer = new Serializer(false);
+            serializer.Serialize(GetSimpleSample());
+        }
 
+        [Benchmark]
+        public void RunSimpleSampleJsonNet()
+        {
+            JsonConvert.SerializeObject(GetSimpleSample(), new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            });
+        }
+
+        [Benchmark]
+        public void RunSimpleSampleTextJson()
+        {
+            System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
         }
 
         private static void RunSample<T>(T sample, int count)
@@ -210,8 +246,8 @@ namespace JsonGoPerformance
             stopwatch.Stop();
 
             Console.WriteLine("JsonGo Compile Time: \t " + stopwatch.Elapsed);
-            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(JsonNetRes / stopwatch.ElapsedTicks, 2)+ "X FASTER than JsonNET");
-            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(MicrosoftJsonRes / stopwatch.ElapsedTicks, 2)+ "X FASTER than System.Text.Json");
+            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(JsonNetRes / stopwatch.ElapsedTicks, 2) + "X FASTER than JsonNET");
+            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(MicrosoftJsonRes / stopwatch.ElapsedTicks, 2) + "X FASTER than System.Text.Json");
 
             if (JsonGoRes > JsonNetRes)
             {
