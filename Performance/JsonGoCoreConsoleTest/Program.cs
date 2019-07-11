@@ -53,11 +53,13 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
-
                 //BenchmarkRunner.Run<NormalSamples>();
                 //JsonGoModelBuilder.Initialize();
                 //NormalSerializeSamples normalSamples = new NormalSerializeSamples();
                 //var userInfos = normalSamples.GetSimpleArraySample();
+                NormalDeserializeSamples normalDeserializeSamples = new NormalDeserializeSamples();
+                normalDeserializeSamples.RunDeserialize(100);
+                normalDeserializeSamples.RunDeserialize(100);
 
                 //var result = System.Text.Json.Serialization.JsonSerializer.ToString(userInfos);
                 //NormalDeserializeSamples normalDeserialize = new NormalDeserializeSamples();
@@ -65,7 +67,7 @@ namespace JsonGoCoreConsoleTest
                 //normalDeserialize.JsonGo_RunSimpleSampleJsonGo();
                 //normalDeserialize.JsonGo_RunSimpleCommplexSampleJsonGo();
                 //BenchmarkRunner.Run<NormalDeserializeSamples>();
-                BenchmarkRunner.Run<NormalSerializeSamples>();
+                //BenchmarkRunner.Run<NormalSerializeSamples>();
                 //AssemblyLoader assemblyLoader = new AssemblyLoader();
                 //assemblyLoader.Add(@"D:\Github\JsonGo\JsonGoCoreConsoleTest\bin\Debug\netcoreapp3.0\JsonGoPerformance.dll");
                 //var code = assemblyLoader.GenerateCode();

@@ -9,6 +9,7 @@ using System.Text;
 namespace JsonGo.Deserialize
 {
     delegate IJsonGoModel ExtractFunction(ReadOnlySpan<char> json, ref int indexOf);
+    delegate JsonSpanReader FastExtractFunction(TypeGoInfo typeGo, object instance, ref JsonSpanReader json);
 
     /// <summary>
     /// deserializer of json
@@ -16,11 +17,13 @@ namespace JsonGo.Deserialize
     public class Deserializer
     {
         static ExtractFunction ExtractFunction { get; set; }
+        static FastExtractFunction FastExtractFunction { get; set; }
 
         static Deserializer()
         {
             SingleIntance = new Deserializer();
             ExtractFunction = DeserializerExtractor.Extract;
+            FastExtractFunction = FastDeserializerExtractor.Extract;
         }
 
         /// <summary>
@@ -43,10 +46,18 @@ namespace JsonGo.Deserialize
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(string json)
         {
-            int indexOf = 0;
+            //int indexOf = 0;
             DeSerializedObjects.Clear();
-            IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
-            return (T)jsonModel.Generate(typeof(T), this);
+            var dataType = typeof(T);
+            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+                typeGoInfo = TypeGoInfo.Types[dataType] = TypeGoInfo.Generate(dataType);
+            var instance = typeGoInfo.CreateInstance();
+            var reader = new JsonSpanReader(Encoding.UTF8.GetBytes(json).AsSpan());
+            FastExtractFunction(typeGoInfo, instance, ref reader);
+            return (T)instance;
+            //IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
+            //return default(T);
+            //return (T)jsonModel.Generate(typeof(T), this);
         }
 
         /// <summary>
@@ -86,7 +97,7 @@ namespace JsonGo.Deserialize
             }
             return null;
         }
-       
+
         /// <summary>
         /// set value of json parameter key to an instance of object
         /// </summary>

@@ -43,6 +43,18 @@ namespace JsonGo.Runtime
         /// serialize action
         /// </summary>
         public FunctionGo Serialize { get; set; }
+        /// <summary>
+        /// deserialize string to object
+        /// </summary>
+        public Func<string, object> Deserialize { get; set; }
+        /// <summary>
+        /// create instance of type
+        /// </summary>
+        public Func<object> CreateInstance { get; set; }
+        /// <summary>
+        /// add array value to array type go
+        /// </summary>
+        public Action<object, object> AddArrayValue { get; set; }
 
         /// <summary>
         /// properties of type
@@ -52,6 +64,10 @@ namespace JsonGo.Runtime
         /// array of all properties
         /// </summary>
         public PropertyGoInfo[] ArrayProperties { get; set; }
+        /// <summary>
+        /// generic types
+        /// </summary>
+        public List<TypeGoInfo> Generics { get; set; } = new List<TypeGoInfo>();
         /// <summary>
         /// 
         /// </summary>
@@ -71,6 +87,10 @@ namespace JsonGo.Runtime
                     stringBuilder.Append((DateTime)data);
                     stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
+                typeGoInfo.Deserialize = (x) =>
+                {
+                    return DateTime.Parse(x);
+                };
             }
             else if (type == typeof(uint))
             {
@@ -78,6 +98,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((uint)data);
                 };
+                typeGoInfo.Deserialize = (x) => uint.Parse(x);
             }
             else if (type == typeof(long))
             {
@@ -85,6 +106,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((long)data);
                 };
+                typeGoInfo.Deserialize = (x) => long.Parse(x);
             }
             else if (type == typeof(short))
             {
@@ -92,6 +114,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((short)data);
                 };
+                typeGoInfo.Deserialize = (x) => short.Parse(x);
             }
             else if (type == typeof(byte))
             {
@@ -99,6 +122,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((byte)data);
                 };
+                typeGoInfo.Deserialize = (x) => byte.Parse(x);
             }
             else if (type == typeof(double))
             {
@@ -106,6 +130,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((double)data);
                 };
+                typeGoInfo.Deserialize = (x) => double.Parse(x);
             }
             else if (type == typeof(float))
             {
@@ -113,6 +138,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((float)data);
                 };
+                typeGoInfo.Deserialize = (x) => float.Parse(x);
             }
             else if (type == typeof(decimal))
             {
@@ -120,6 +146,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((decimal)data);
                 };
+                typeGoInfo.Deserialize = (x) => decimal.Parse(x);
             }
             else if (type == typeof(sbyte))
             {
@@ -127,6 +154,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((sbyte)data);
                 };
+                typeGoInfo.Deserialize = (x) => sbyte.Parse(x);
             }
             else if (type == typeof(ulong))
             {
@@ -134,6 +162,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((ulong)data);
                 };
+                typeGoInfo.Deserialize = (x) => ulong.Parse(x);
             }
             else if (type == typeof(bool))
             {
@@ -141,6 +170,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((bool)data);
                 };
+                typeGoInfo.Deserialize = (x) => bool.Parse(x);
             }
             else if (type == typeof(ushort))
             {
@@ -148,6 +178,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((ushort)data);
                 };
+                typeGoInfo.Deserialize = (x) => ushort.Parse(x);
             }
             else if (type == typeof(int))
             {
@@ -155,6 +186,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append((int)data);
                 };
+                typeGoInfo.Deserialize = (x) => int.Parse(x);
             }
             else if (type == typeof(string))
             {
@@ -164,6 +196,7 @@ namespace JsonGo.Runtime
                     stringBuilder.Append(((string)data).Replace("\"", "\\\""));
                     stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
+                typeGoInfo.Deserialize = (x) => x;
             }
             else if (type.IsEnum)
             {
@@ -171,6 +204,7 @@ namespace JsonGo.Runtime
                 {
                     stringBuilder.Append(Convert.ToInt32(data));
                 };
+                typeGoInfo.Deserialize = (x) => Enum.Parse(type, x);
             }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
             {
@@ -181,6 +215,7 @@ namespace JsonGo.Runtime
             }
             else
             {
+                var fastAccessor = FastMember.TypeAccessor.Create(type);
                 foreach (var property in type.GetProperties())
                 {
                     if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
@@ -194,7 +229,9 @@ namespace JsonGo.Runtime
                         Type = property.PropertyType,
                         Name = property.Name,
                         GetValue = x => del.GetPropertyValue(x),
-                        SetValue = property.SetValue
+                        SetValue = del.SetPropertyValue,
+                        //SetValue = (x, val) => property.SetValue(x, val),
+                        //SetValue = (x, val) => fastAccessor[x, property.Name] = val,
                     };
                 }
                 foreach (var item in type.GetFields())
@@ -218,6 +255,7 @@ namespace JsonGo.Runtime
                 {
                     serializer.SerializeFunction(typeGoInfo, serializer, builder, ref data);
                 };
+                typeGoInfo.CreateInstance = fastAccessor.CreateNew;
             }
 
             return typeGoInfo;
@@ -228,13 +266,18 @@ namespace JsonGo.Runtime
             var concreteGetterType = openGetterType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
+            var openSetterType = typeof(Action<,>);
+            var concreteSetterType = openSetterType
+                .MakeGenericType(type, propertyInfo.PropertyType);
+
             Delegate getterInvocation = Delegate.CreateDelegate(concreteGetterType, null, propertyInfo.GetGetMethod());
+            Delegate setterInvocation = Delegate.CreateDelegate(concreteSetterType, null, propertyInfo.GetSetMethod());
 
             var callerType = typeof(PropertyCallerInfo<,>);
             var callerGenericType = callerType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
-            return (IPropertyCallerInfo)Activator.CreateInstance(callerGenericType, getterInvocation);
+            return (IPropertyCallerInfo)Activator.CreateInstance(callerGenericType, getterInvocation, setterInvocation);
         }
 
     }
@@ -242,18 +285,26 @@ namespace JsonGo.Runtime
     public interface IPropertyCallerInfo
     {
         object GetPropertyValue(object instance);
+        void SetPropertyValue(object instance, object value);
     }
-    public class PropertyCallerInfo<TType, TPropertyType>: IPropertyCallerInfo
+    public class PropertyCallerInfo<TType, TPropertyType> : IPropertyCallerInfo
     {
-        public PropertyCallerInfo(Func<TType, TPropertyType> func)
+        public PropertyCallerInfo(Func<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
         {
-            GetValue = func;
+            GetValue = funcGetValue;
+            SetValue = funcSetValue;
         }
         public Func<TType, TPropertyType> GetValue { get; set; }
+        public Action<TType, TPropertyType> SetValue { get; set; }
 
         public object GetPropertyValue(object instance)
         {
             return GetValue((TType)instance);
+        }
+
+        public void SetPropertyValue(object instance, object value)
+        {
+            SetValue((TType)instance, (TPropertyType)value);
         }
     }
 }

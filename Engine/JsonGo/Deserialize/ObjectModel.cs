@@ -16,19 +16,16 @@ namespace JsonGo.Deserialize
 
         public object Generate(Type type, Deserializer deserializer)
         {
-            string idName = JsonSettingInfo.IdRefrencedTypeNameNoQuotes;
-            string referenceName = JsonSettingInfo.RefRefrencedTypeNameNoQuotes;
-            string valuesName = JsonSettingInfo.ValuesRefrencedTypeNameNoQuotes;
-            if (Properties.ContainsKey(referenceName))
+            if (Properties.ContainsKey(JsonSettingInfo.RefRefrencedTypeNameNoQuotes))
             {
-                return deserializer.DeSerializedObjects[(string)Properties[referenceName].Generate(typeof(string), deserializer)];
+                return deserializer.DeSerializedObjects[(string)Properties[JsonSettingInfo.RefRefrencedTypeNameNoQuotes].Generate(typeof(string), deserializer)];
             }
-            else if (Properties.ContainsKey(valuesName))
+            else if (Properties.ContainsKey(JsonSettingInfo.ValuesRefrencedTypeNameNoQuotes))
             {
-                object obj = Properties[valuesName].Generate(type, deserializer);
+                object obj = Properties[JsonSettingInfo.ValuesRefrencedTypeNameNoQuotes].Generate(type, deserializer);
                 foreach (KeyValuePair<string, IJsonGoModel> item in Properties)
                 {
-                    if (item.Key == idName)
+                    if (item.Key == JsonSettingInfo.IdRefrencedTypeNameNoQuotes)
                     {
                         string value = (string)item.Value.Generate(typeof(string), deserializer);
                         deserializer.DeSerializedObjects.Add(value, obj);
@@ -56,7 +53,7 @@ namespace JsonGo.Deserialize
                 {
                     foreach (KeyValuePair<string, IJsonGoModel> item in Properties)
                     {
-                        if (item.Key == idName)
+                        if (item.Key == JsonSettingInfo.IdRefrencedTypeNameNoQuotes)
                         {
                             string value = (string)item.Value.Generate(typeof(string), deserializer);
                             deserializer.DeSerializedObjects.Add(value, obj);

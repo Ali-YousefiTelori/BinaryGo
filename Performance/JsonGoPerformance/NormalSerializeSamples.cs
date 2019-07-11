@@ -180,6 +180,8 @@ namespace JsonGoPerformance
             System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
         }
 
+        
+
         private static void RunSample<T>(T sample, int count)
         {
             Console.WriteLine("******* Newtonsoft.JsonNET *****");

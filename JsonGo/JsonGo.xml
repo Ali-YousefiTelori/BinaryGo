@@ -209,6 +209,14 @@
             <param name="indexOf"></param>
             <returns></returns>
         </member>
+        <member name="M:JsonGo.Deserialize.DeserializerExtractor.IndexOfEndString(System.ReadOnlySpan{System.Char},System.Int32@)">
+            <summary>
+            find index of end of string
+            string will ends with " char
+            </summary>
+            <param name="json"></param>
+            <param name="indexOf"></param>
+        </member>
         <member name="M:JsonGo.Deserialize.DeserializerExtractor.ExtractValue(System.ReadOnlySpan{System.Char},System.Int32@)">
             <summary>
             extract value from json
@@ -226,12 +234,25 @@
             <param name="indexOf"></param>
             <returns></returns>
         </member>
-        <member name="M:JsonGo.Deserialize.DeserializerExtractor.IsWhiteSpace(System.Char@)">
+        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.Extract(JsonGo.Runtime.TypeGoInfo,System.Object,JsonGo.Deserialize.JsonSpanReader@)">
             <summary>
-            check if a character is whitespace or empty
+            deserialize json
             </summary>
-            <param name="value">character to check</param>
-            <returns>is char is white space</returns>
+            <param name="typeGo"></param>
+            <param name="instance"></param>
+            <param name="json">json value</param>
+            <param name="indexOf">index of start string</param>
+            <returns>value deserialized</returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.ExtractOject(JsonGo.Runtime.TypeGoInfo,System.Object,JsonGo.Deserialize.JsonSpanReader@)">
+            <summary>
+            extract list of properties from object
+            </summary>
+            <param name="typeGo"></param>
+            <param name="instance"></param>
+            <param name="json"></param>
+            <param name="indexOf"></param>
+            <returns></returns>
         </member>
         <member name="T:JsonGo.Deserialize.IJsonGoModel">
             <summary>
@@ -252,6 +273,19 @@
             </summary>
             <param name="nameOrValue"></param>
             <param name="value"></param>
+        </member>
+        <member name="M:JsonGo.Deserialize.JsonSpanReader.#ctor(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="M:JsonGo.Deserialize.JsonSpanReader.ExtractValue">
+            <summary>
+            extract value from json
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
         </member>
         <member name="T:JsonGo.JsonSettingInfo">
             <summary>
@@ -274,6 +308,26 @@
             </summary>
         </member>
         <member name="P:JsonGo.JsonSettingInfo.HasGenerateRefrencedTypes">
+            <summary>
+            support for $id,$ref,$values for serialization
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonConstansts.IdRefrencedTypeName">
+            <summary>
+            $Id refrenced type name
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonConstansts.RefRefrencedTypeName">
+            <summary>
+            $Ref refrenced type name
+            </summary>
+        </member>
+        <member name="F:JsonGo.JsonConstansts.ValuesRefrencedTypeName">
+            <summary>
+            $Values refrenced type name
+            </summary>
+        </member>
+        <member name="P:JsonGo.JsonConstansts.HasGenerateRefrencedTypes">
             <summary>
             support for $id,$ref,$values for serialization
             </summary>
@@ -347,6 +401,21 @@
             serialize action
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Deserialize">
+            <summary>
+            deserialize string to object
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.CreateInstance">
+            <summary>
+            create instance of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.AddArrayValue">
+            <summary>
+            add array value to array type go
+            </summary>
+        </member>
         <member name="P:JsonGo.Runtime.TypeGoInfo.Properties">
             <summary>
             properties of type
@@ -355,6 +424,11 @@
         <member name="P:JsonGo.Runtime.TypeGoInfo.ArrayProperties">
             <summary>
             array of all properties
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Generics">
+            <summary>
+            generic types
             </summary>
         </member>
         <member name="M:JsonGo.Runtime.TypeGoInfo.Generate(System.Type)">
