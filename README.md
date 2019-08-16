@@ -1,6 +1,10 @@
 # JsonGo
 simple and easy and fast serialize and deserialize json
 
+Nuget:
+https://www.nuget.org/packages/JsonGo/
+
+
 ```csharp
     public class UserInfo
     {
