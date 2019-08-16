@@ -14,16 +14,29 @@ namespace JsonGoTest.Models
         public List<RoleInfo> Roles { get; set; }
         public CompanyInfo CompanyInfo { get; set; }
 
-        public override bool Equals(object obj)
+        public bool IsEquals(UserInfo user)
         {
-            if (obj is UserInfo user)
+            var isEqual = user.Age == Age &&
+                user.CreatedDate == CreatedDate &&
+                user.FullName == FullName &&
+                user.Id == Id;
+            if (!isEqual)
+                return isEqual;
+            else if (user.Roles != Roles)
             {
-                return user.Age == Age &&
-                    user.CreatedDate == CreatedDate &&
-                    user.FullName == FullName &&
-                    user.Id == Id;
+                if (user.Roles == null || Roles == null || user.Roles.Count != Roles.Count)
+                    return false;
+                else
+                {
+                    for (int i = 0; i < Roles.Count; i++)
+                    {
+                        if (!Roles[i].IsEquals(user.Roles[i]))
+                            return false;
+                    }
+                }
             }
-            return false;
+            return true;
+
         }
     }
 }

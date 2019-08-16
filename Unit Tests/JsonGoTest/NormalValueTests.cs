@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JsonGoTest
@@ -148,6 +149,35 @@ namespace JsonGoTest
             result = JsonGo.Serializer.SingleIntance.Serialize(value);
             Assert.IsTrue(result == $"\"{(int)value}\"");
             Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<TestEnum>(result) == value);
+        }
+
+        [Test]
+        public void ByteArrayTest()
+        {
+            byte[] value = new byte[] { 5, 10, 95, 32 };
+            var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == $"\"BQpfIA==\"");
+            Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<byte[]>(result).SequenceEqual(value));
+
+        }
+        [Test]
+        public void IntArrayTest()
+        {
+            int[] value = new int[] { 5, 10, 95, 32 };
+            var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == "{\"$id\":\"1\",\"$values\":[5,10,95,32]}");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<int[]>(result);
+            Assert.IsTrue(data.SequenceEqual(value));
+        }
+
+        [Test]
+        public void StringArrayTest()
+        {
+            string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
+            var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == "{\"$id\":\"1\",\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string[]>(result);
+            Assert.IsTrue(data.SequenceEqual(value));
         }
         #endregion
     }

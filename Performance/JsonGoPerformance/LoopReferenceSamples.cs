@@ -211,10 +211,35 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
-        public void RunLoopSimpleSampleTextJson()
+        public void RunLoopComeplexSampleCompileTimeJsonGo()
         {
-            System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
+            Serializer serializer = new Serializer();
+            serializer.Setting.HasGenerateRefrencedTypes = true;
+            serializer.SerializeCompile(GetComplexObjectSample());
         }
+
+        [Benchmark]
+        public void RunLoopComeplexSampleJsonGo()
+        {
+            Serializer serializer = new Serializer();
+            serializer.Setting.HasGenerateRefrencedTypes = true;
+            serializer.Serialize(GetComplexObjectSample());
+        }
+
+        [Benchmark]
+        public void RunLoopComeplexSampleJsonNet()
+        {
+            JsonConvert.SerializeObject(GetComplexObjectSample(), new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.Arrays
+            });
+        }
+        //[Benchmark]
+        //public void RunLoopSimpleSampleTextJson()
+        //{
+        //    System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
+        //}
 
         private static void RunSample<T>(T sample, int count)
         {

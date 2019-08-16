@@ -185,14 +185,6 @@
             <param name="key">json parameter name</param>
             <returns>type of json parameter</returns>
         </member>
-        <member name="M:JsonGo.Deserialize.Deserializer.SetValue(System.Object,System.Object,System.String)">
-            <summary>
-            set value of json parameter key to an instance of object
-            </summary>
-            <param name="obj">object to change parameter</param>
-            <param name="value">value to set</param>
-            <param name="key">parameter name of object</param>
-        </member>
         <member name="M:JsonGo.Deserialize.DeserializerExtractor.Extract(System.ReadOnlySpan{System.Char},System.Int32@)">
             <summary>
             deserialize json
@@ -234,17 +226,17 @@
             <param name="indexOf"></param>
             <returns></returns>
         </member>
-        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.Extract(JsonGo.Runtime.TypeGoInfo,System.Object,JsonGo.Deserialize.JsonSpanReader@)">
+        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.Extract(JsonGo.Deserialize.Deserializer,JsonGo.Runtime.TypeGoInfo,System.Object@,System.Func{System.Object},JsonGo.Deserialize.JsonSpanReader@)">
             <summary>
             deserialize json
             </summary>
             <param name="typeGo"></param>
             <param name="instance"></param>
             <param name="json">json value</param>
-            <param name="indexOf">index of start string</param>
+            <param name="createInstance">index of start string</param>
             <returns>value deserialized</returns>
         </member>
-        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.ExtractOject(JsonGo.Runtime.TypeGoInfo,System.Object,JsonGo.Deserialize.JsonSpanReader@)">
+        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor.ExtractOject(JsonGo.Deserialize.Deserializer,JsonGo.Runtime.TypeGoInfo,System.Object@,JsonGo.Deserialize.JsonSpanReader@)">
             <summary>
             extract list of properties from object
             </summary>
@@ -253,6 +245,16 @@
             <param name="json"></param>
             <param name="indexOf"></param>
             <returns></returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.FastDeserializerExtractor2.Extract(JsonGo.Runtime.TypeGoInfo,System.Object@,System.Func{System.Object},System.ReadOnlySpan{System.Byte}@)">
+            <summary>
+            deserialize json
+            </summary>
+            <param name="typeGo"></param>
+            <param name="instance"></param>
+            <param name="json">json value</param>
+            <param name="createInstance">index of start string</param>
+            <returns>value deserialized</returns>
         </member>
         <member name="T:JsonGo.Deserialize.IJsonGoModel">
             <summary>
@@ -280,12 +282,42 @@
             </summary>
             <param name="buffer"></param>
         </member>
+        <member name="M:JsonGo.Deserialize.JsonSpanReader.ExtractStringQuotes">
+            <summary>
+            Extract string with quotes
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:JsonGo.Deserialize.JsonSpanReader.ExtractValue">
             <summary>
             extract value from json
             </summary>
             <param name="json"></param>
             <returns></returns>
+        </member>
+        <member name="M:JsonGo.Deserialize.JsonSpanReader2.#ctor(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="M:JsonGo.Deserialize.JsonSpanReader2.ExtractValue">
+            <summary>
+            extract value from json
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="T:JsonGo.Deserialize.StackReader">
+            <summary>
+            instade of using recursive function i used manualy stack to make better performance
+            </summary>
+        </member>
+        <member name="M:JsonGo.Deserialize.StackReader.#ctor(System.Text.StringBuilder)">
+            <summary>
+            
+            </summary>
+            <param name="stringBuilder"></param>
         </member>
         <member name="T:JsonGo.JsonSettingInfo">
             <summary>
@@ -312,22 +344,22 @@
             support for $id,$ref,$values for serialization
             </summary>
         </member>
-        <member name="F:JsonGo.JsonConstansts.IdRefrencedTypeName">
+        <member name="F:JsonGo.JsonConstants.IdRefrencedTypeName">
             <summary>
             $Id refrenced type name
             </summary>
         </member>
-        <member name="F:JsonGo.JsonConstansts.RefRefrencedTypeName">
+        <member name="F:JsonGo.JsonConstants.RefRefrencedTypeName">
             <summary>
             $Ref refrenced type name
             </summary>
         </member>
-        <member name="F:JsonGo.JsonConstansts.ValuesRefrencedTypeName">
+        <member name="F:JsonGo.JsonConstants.ValuesRefrencedTypeName">
             <summary>
             $Values refrenced type name
             </summary>
         </member>
-        <member name="P:JsonGo.JsonConstansts.HasGenerateRefrencedTypes">
+        <member name="P:JsonGo.JsonConstants.HasGenerateRefrencedTypes">
             <summary>
             support for $id,$ref,$values for serialization
             </summary>
@@ -386,6 +418,11 @@
             generate type details on memory
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.IsNoQuotesValueType">
+            <summary>
+            if the type is simple like int,bye,bool,enum they can serialize without quots
+            </summary>
+        </member>
         <member name="F:JsonGo.Runtime.TypeGoInfo.Types">
             <summary>
             chached types
@@ -411,12 +448,22 @@
             create instance of type
             </summary>
         </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.Cast">
+            <summary>
+            cast to real object
+            </summary>
+        </member>
         <member name="P:JsonGo.Runtime.TypeGoInfo.AddArrayValue">
             <summary>
             add array value to array type go
             </summary>
         </member>
         <member name="P:JsonGo.Runtime.TypeGoInfo.Properties">
+            <summary>
+            properties of type
+            </summary>
+        </member>
+        <member name="P:JsonGo.Runtime.TypeGoInfo.DirectProperties">
             <summary>
             properties of type
             </summary>
@@ -485,7 +532,7 @@
             <param name="data">any object to serialize</param>
             <returns>json that serialized from you object</returns>
         </member>
-        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@)">
+        <member name="M:JsonGo.Serializer.SerializeObject(System.Object@,JsonGo.Runtime.TypeGoInfo@)">
             <summary>
             serialize an object to a json string
             </summary>

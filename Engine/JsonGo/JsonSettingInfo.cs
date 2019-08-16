@@ -15,7 +15,7 @@
         public const string CommaQuotes = "\",";
         public const string ColonQuotes = ":\"";
         public const string QuotesColon = "\":";
-        public const string QuotesColonQuotes= "\":\"";
+        public const string QuotesColonQuotes = "\":\"";
         public const char Colon = ':';
         public const char OpenBraket = '{';
         public const string OpenBraketRefColonQuotes = "{\"$ref\":\"";
@@ -45,9 +45,10 @@
 
     }
 
-    public class JsonConstansts
+    public class JsonConstants
     {
         public const string Null = "null";
+        public const byte Space = (byte)' ';
         public const string BeforeObject = "{\"$id\":\"";
         public const string AfterArrayObject = "\",\"$values\":[";
         public const byte OpenSquareBrackets = (byte)'[';

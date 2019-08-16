@@ -17,5 +17,11 @@ namespace JsonGoTest.Models
         public int Id { get; set; }
         public UserInfo UserInfo { get; set; }
         public RoleType Type { get; set; }
+        public bool IsEquals(RoleInfo obj)
+        {
+            return obj.Id == Id &&
+                obj.Type == Type &&
+                obj.Id == Id;
+        }
     }
 }

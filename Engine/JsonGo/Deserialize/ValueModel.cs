@@ -23,7 +23,8 @@ namespace JsonGo.Deserialize
 
         public object Generate(Type type, Deserializer deserializer)
         {
-            return deserializer.GetValue(type, Value?.Trim('\"'));
+            return null;
+            //return deserializer.GetValue(type, Value?.Trim('\"'));
         }
     }
 }

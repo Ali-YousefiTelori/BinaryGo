@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsonGo.Deserialize;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -24,10 +25,10 @@ namespace JsonGo.Runtime
         /// <summary>
         /// get value of property
         /// </summary>
-        public Func<object,object> GetValue { get; set; }
+        public Func<object, object> GetValue { get; set; }
         /// <summary>
         /// set value of property
         /// </summary>
-        public Action<object, object> SetValue { get; set; }
+        public Action<Deserializer, object, object> SetValue { get; set; }
     }
 }

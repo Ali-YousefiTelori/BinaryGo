@@ -18,7 +18,8 @@ namespace JsonGo.Deserialize
         {
             if (Properties.ContainsKey(JsonSettingInfo.RefRefrencedTypeNameNoQuotes))
             {
-                return deserializer.DeSerializedObjects[(string)Properties[JsonSettingInfo.RefRefrencedTypeNameNoQuotes].Generate(typeof(string), deserializer)];
+                return null;
+                //return deserializer.DeSerializedObjects[(string)Properties[JsonSettingInfo.RefRefrencedTypeNameNoQuotes].Generate(typeof(string), deserializer)];
             }
             else if (Properties.ContainsKey(JsonSettingInfo.ValuesRefrencedTypeNameNoQuotes))
             {
@@ -28,7 +29,7 @@ namespace JsonGo.Deserialize
                     if (item.Key == JsonSettingInfo.IdRefrencedTypeNameNoQuotes)
                     {
                         string value = (string)item.Value.Generate(typeof(string), deserializer);
-                        deserializer.DeSerializedObjects.Add(value, obj);
+                        //deserializer.DeSerializedObjects.Add(value, obj);
                         break;
                     }
                 }
@@ -56,7 +57,7 @@ namespace JsonGo.Deserialize
                         if (item.Key == JsonSettingInfo.IdRefrencedTypeNameNoQuotes)
                         {
                             string value = (string)item.Value.Generate(typeof(string), deserializer);
-                            deserializer.DeSerializedObjects.Add(value, obj);
+                            //deserializer.DeSerializedObjects.Add(value, obj);
                         }
                         else
                         {
@@ -64,7 +65,7 @@ namespace JsonGo.Deserialize
                             if (keyType != null)
                             {
                                 object value = item.Value.Generate(keyType, deserializer);
-                                deserializer.SetValue(obj, value, item.Key);
+                                //deserializer.SetValue(obj, value, item.Key);
                             }
                         }
                     }

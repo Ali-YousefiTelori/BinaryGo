@@ -98,7 +98,12 @@ namespace JsonGo
             Writer = new StringBuilder(256);
             ReferencedIndex = 1;
             SerializedObjects.Clear();
-            SerializeObject(ref data);
+            SerializeObject(ref data, out TypeGoInfo typeGo);
+            if (typeGo.IsNoQuotesValueType)
+            {
+                Writer.Insert(0, (char)JsonConstants.Quotes);
+                Writer.Append((char)JsonConstants.Quotes);
+            }
             return Writer.ToString();
         }
 
@@ -144,10 +149,10 @@ namespace JsonGo
         /// <param name="data">any object to serialize</param>
         /// <param name="typeGoInfo"></param>
         /// <returns>json that serialized</returns>
-        internal void SerializeObject(ref object data)
+        internal void SerializeObject(ref object data, out TypeGoInfo typeGoInfo)
         {
             Type dataType = data.GetType();
-            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+            if (!TypeGoInfo.Types.TryGetValue(dataType, out typeGoInfo))
                 typeGoInfo = TypeGoInfo.Types[dataType] = TypeGoInfo.Generate(dataType);
             typeGoInfo.Serialize(this, Writer, ref data);
         }
@@ -168,7 +173,7 @@ namespace JsonGo
                 if (item == null)
                     continue;
                 var value = item;
-                SerializeObject(ref value);
+                SerializeObject(ref value,out TypeGoInfo typeGo);
                 Writer.Append(JsonSettingInfo.Comma);
             }
             RemoveLastCama();
@@ -191,6 +196,8 @@ namespace JsonGo
             var properties = typeGoInfo.ArrayProperties;
             foreach (var property in properties)
             {
+                if (property.GetValue == null)
+                    continue;
                 object propertyValue = property.GetValue(data);
                 if (propertyValue == null)
                     continue;
@@ -216,7 +223,7 @@ namespace JsonGo
                 if (item == null)
                     continue;
                 var value = item;
-                SerializeObject(ref value);
+                SerializeObject(ref value, out TypeGoInfo typeGo);
                 Writer.Append(JsonSettingInfo.Comma);
             }
 
@@ -235,6 +242,8 @@ namespace JsonGo
             var properties = typeGoInfo.ArrayProperties;
             foreach (var property in properties)
             {
+                if (property.GetValue == null)
+                    continue;
                 object propertyValue = property.GetValue(data);
                 if (propertyValue == null)
                     continue;

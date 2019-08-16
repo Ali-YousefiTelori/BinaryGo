@@ -1,4 +1,5 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.Helpers;
+using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,62 +15,76 @@ namespace JsonGo.Deserialize
         /// <param name="typeGo"></param>
         /// <param name="instance"></param>
         /// <param name="json">json value</param>
-        /// <param name="indexOf">index of start string</param>
+        /// <param name="createInstance">index of start string</param>
         /// <returns>value deserialized</returns>
-        internal static JsonSpanReader Extract(TypeGoInfo typeGo, object instance, ref JsonSpanReader json)
+        internal static ReadOnlySpan<byte> Extract(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
         {
             var character = json.Read();
-            if (character == JsonConstansts.Quotes)
+            if (character == JsonConstants.Quotes)
             {
+                //if (typeGo.IsNoQuotesValueType)
                 return json.ExtractString();
+                //else
+                //    return json.ExtractStringQuotes();
+
             }
-            else if (character == JsonConstansts.OpenBraket)
+            else if (character == JsonConstants.OpenBraket)
             {
-                ExtractOject(typeGo, instance, ref json);
+                //if (createInstance != null)
+                //    instance = createInstance();
+                ExtractOject(deserializer, typeGo, ref instance, ref json);
             }
-            else if (character == JsonConstansts.OpenSquareBrackets)
+            else if (character == JsonConstants.OpenSquareBrackets)
             {
-                ExtractArray(typeGo, instance, ref json);
+                if (typeGo.CreateInstance != null)
+                    instance = typeGo.CreateInstance();
+                ExtractArray(deserializer, typeGo, ref instance, ref json);
             }
             else
             {
+                if (createInstance != null)
+                    instance = null;
                 return json.ExtractValue();
             }
-            return json;
+            return null;
         }
 
-        static void ExtractArray(TypeGoInfo typeGo, object instance, ref JsonSpanReader json)
+        static void ExtractArray(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
         {
             var generic = typeGo.Generics.First();
             while (true)
             {
                 var character = json.Read();
-                if (character == JsonConstansts.OpenBraket)
+                if (character == JsonConstants.OpenBraket)
                 {
-                    var genericInstance = generic.CreateInstance();
-                    ExtractOject(generic, genericInstance, ref json);
+                    object genericInstance = null;
+                    ExtractOject(deserializer, generic, ref genericInstance, ref json);
                     typeGo.AddArrayValue(instance, genericInstance);
                 }
-                else if (character == JsonConstansts.OpenSquareBrackets)
+                else if (character == JsonConstants.OpenSquareBrackets)
                 {
-                    var genericInstance = generic.CreateInstance();
-                    ExtractArray(generic, genericInstance, ref json);
+                    object genericInstance = null;
+                    ExtractArray(deserializer, generic, ref genericInstance, ref json);
                     typeGo.AddArrayValue(instance, genericInstance);
                 }
-                else if (character == JsonConstansts.Comma)
+                else if (character == JsonConstants.Comma)
                 {
                     continue;
                 }
-                else if (character == JsonConstansts.CloseSquareBrackets)
+                else if (character == JsonConstants.CloseSquareBrackets)
                 {
                     break;
                 }
-                else if (character == JsonConstansts.Quotes)
+                else if (character == JsonConstants.Quotes)
                 {
-                    json.ExtractString();
+                    var value = json.ExtractString();
+                    typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
                 }
                 else
-                    throw new Exception($"end of character not support '{character}' index of {json.Index} i think i must find '}}' character");
+                {
+                    var value = json.ExtractValue();
+                    typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
+                }
 
             }
 
@@ -83,28 +98,50 @@ namespace JsonGo.Deserialize
         /// <param name="json"></param>
         /// <param name="indexOf"></param>
         /// <returns></returns>
-        static void ExtractOject(TypeGoInfo typeGo, object instance, ref JsonSpanReader json)
+        static void ExtractOject(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
         {
             while (!json.IsFinished)
             {
+                //read tp uneascape char
                 var character = json.Read();
-                if (character == JsonConstansts.Comma)
+                if (character == JsonConstants.Comma)
                     continue;
-                else if (character == JsonConstansts.CloseBracket)
+                else if (character == JsonConstants.CloseBracket)
                 {
                     break;
                 }
                 var key = json.ExtractKey();
-                //read coma char
+                //read to uneascape char
                 json.Read();
-                var value = Extract(typeGo, instance, ref json);
-                if (typeGo.Properties.TryGetValue(key.ToString(), out PropertyGoInfo propertyGo))
+                var propertyname = TextHelper.SpanToString(key);
+                if (typeGo.Properties.TryGetValue(propertyname, out PropertyGoInfo propertyGo))
                 {
-                    var text = value.ToString();
-                    if (propertyGo.TypeGoInfo.Deserialize != null)
-                        propertyGo.SetValue(instance, propertyGo.TypeGoInfo.Deserialize(text));
-                    else if (text != JsonConstansts.Null)
-                        propertyGo.SetValue(instance, text);
+                    if (instance == null && typeGo.CreateInstance != null)
+                        instance = typeGo.CreateInstance();
+                    object propertyInstance = instance;
+                    var value = Extract(deserializer, propertyGo.TypeGoInfo, ref propertyInstance, propertyGo.TypeGoInfo.CreateInstance, ref json);
+                    var deserialize = propertyGo.TypeGoInfo.Deserialize;
+                    if (deserialize != null)
+                        propertyGo.SetValue(deserializer, propertyInstance, deserialize(deserializer, value));
+                    else
+                        propertyGo.SetValue(deserializer, instance, propertyInstance);
+                }
+                else if (propertyname == JsonConstants.ValuesRefrencedTypeNameNoQuotes)
+                {
+                    Extract(deserializer, typeGo, ref instance, null, ref json);
+                }
+                else if (propertyname == JsonConstants.RefRefrencedTypeNameNoQuotes)
+                {
+                    object propertyInstance = null;
+                    var value = Extract(deserializer, null, ref propertyInstance, null, ref json);
+
+                    var type = TypeGoInfo.Generate(typeof(int));
+                    var result = (int)type.Deserialize(deserializer, value);
+                    deserializer.DeSerializedObjects.TryGetValue(result, out instance);
+                }
+                else
+                {
+                    Extract(deserializer, propertyGo?.TypeGoInfo, ref instance, null, ref json);
                 }
             }
         }

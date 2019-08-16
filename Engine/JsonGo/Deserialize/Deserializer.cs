@@ -1,4 +1,5 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.Helpers;
+using JsonGo.Runtime;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ using System.Text;
 namespace JsonGo.Deserialize
 {
     delegate IJsonGoModel ExtractFunction(ReadOnlySpan<char> json, ref int indexOf);
-    delegate JsonSpanReader FastExtractFunction(TypeGoInfo typeGo, object instance, ref JsonSpanReader json);
+    //delegate void FastExtractFunction(TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref ReadOnlySpan<byte> _buffer);
+    delegate ReadOnlySpan<byte> FastExtractFunction(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader _buffer);
 
     /// <summary>
     /// deserializer of json
@@ -22,14 +24,15 @@ namespace JsonGo.Deserialize
         static Deserializer()
         {
             SingleIntance = new Deserializer();
-            ExtractFunction = DeserializerExtractor.Extract;
+            //ExtractFunction = DeserializerExtractor.Extract;
+            //FastExtractFunction = FastDeserializerExtractor2.Extract;
             FastExtractFunction = FastDeserializerExtractor.Extract;
         }
 
         /// <summary>
         /// save deserialized objects for referenced type
         /// </summary>
-        internal Dictionary<string, object> DeSerializedObjects { get; set; } = new Dictionary<string, object>();
+        internal Dictionary<int, object> DeSerializedObjects { get; set; } = new Dictionary<int, object>();
         /// <summary>
         /// single instance of deserialize to access faster
         /// </summary>
@@ -46,18 +49,26 @@ namespace JsonGo.Deserialize
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(string json)
         {
-            //int indexOf = 0;
-            DeSerializedObjects.Clear();
-            var dataType = typeof(T);
-            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
-                typeGoInfo = TypeGoInfo.Types[dataType] = TypeGoInfo.Generate(dataType);
-            var instance = typeGoInfo.CreateInstance();
-            var reader = new JsonSpanReader(Encoding.UTF8.GetBytes(json).AsSpan());
-            FastExtractFunction(typeGoInfo, instance, ref reader);
-            return (T)instance;
-            //IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
-            //return default(T);
-            //return (T)jsonModel.Generate(typeof(T), this);
+            try
+            {
+                var dataType = typeof(T);
+                if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
+                    typeGoInfo = TypeGoInfo.Types[dataType] = TypeGoInfo.Generate(dataType);
+                object instance = null;
+                var reader = new JsonSpanReader(TextHelper.StringToSpanByteArray(ref json));
+                var result = FastExtractFunction(this, typeGoInfo, ref instance, typeGoInfo.CreateInstance, ref reader);
+                var text = Encoding.UTF8.GetString(result.ToArray());
+                if (instance == null)
+                    instance = typeGoInfo.Deserialize(this, result);
+                if (typeGoInfo.Cast != null)
+                    return (T)typeGoInfo.Cast(instance);
+                return (T)instance;
+            }
+            finally
+            {
+                DeSerializedObjects.Clear();
+            }
+           
         }
 
         /// <summary>
@@ -68,10 +79,16 @@ namespace JsonGo.Deserialize
         /// <returns>deserialized type</returns>
         public object Deserialize(string json, Type type)
         {
-            int indexOf = 0;
-            DeSerializedObjects.Clear();
-            IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
-            return jsonModel.Generate(type, this);
+            try
+            {
+                int indexOf = 0;
+                IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
+                return jsonModel.Generate(type, this);
+            }
+            finally
+            {
+                DeSerializedObjects.Clear();
+            }
         }
 
 
@@ -98,40 +115,5 @@ namespace JsonGo.Deserialize
             return null;
         }
 
-        /// <summary>
-        /// set value of json parameter key to an instance of object
-        /// </summary>
-        /// <param name="obj">object to change parameter</param>
-        /// <param name="value">value to set</param>
-        /// <param name="key">parameter name of object</param>
-        internal void SetValue(object obj, object value, string key)
-        {
-            if (obj == null)
-                return;
-            key = key.Trim('\"');
-            Type dataType = obj.GetType();
-            if (!TypeGoInfo.Types.TryGetValue(dataType, out TypeGoInfo typeGoInfo))
-            {
-                TypeGoInfo.Types[dataType] = typeGoInfo = TypeGoInfo.Generate(dataType);
-            }
-            if (typeGoInfo.Properties.TryGetValue(key, out PropertyGoInfo propertyGo))
-            {
-                propertyGo.SetValue(obj, value);
-            }
-        }
-
-        internal object GetValue(Type type, object value)
-        {
-            if (value == null)
-                return null;
-            if (type.IsEnum)
-            {
-                value = Convert.ChangeType(value, typeof(int));
-                value = Enum.ToObject(type, (int)value);
-            }
-            else
-                value = Convert.ChangeType(value, type);
-            return value;
-        }
     }
 }
