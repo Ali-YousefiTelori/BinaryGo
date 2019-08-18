@@ -85,29 +85,49 @@ namespace JsonGo.Deserialize
 
         public ReadOnlySpan<byte> ExtractString()
         {
-            //StringBuilder builder = new StringBuilder();
-            //byte last = default;
-            //foreach (var item in _buffer.Slice(_Index + 1, Length - _Index))
-            //{
-            //    if (item == JsonSettingInfo.Quotes && last != JsonSettingInfo.BackSlash)
-            //        break;
-            //    builder.Append(item);
-            //    last = item;
-            //}
-            //_Index += builder.Length;
-            //return builder;
+            byte[] result = new byte[10];
+            var max = result.Length - 1;
+            int writeIndex = 0;
             ReadOnlySpan<byte> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
-
-            for (int i = 0; i < readOnlySpan.Length; i++)
+            for (int i = 0; i < readOnlySpan.Length - 1; i++)
             {
+                if (i == max)
+                {
+                    max = result.Length + 10;
+                    Array.Resize(ref result, max);
+                }
                 if (readOnlySpan[i] == JsonConstants.Quotes && readOnlySpan[i - 1] != JsonConstants.BackSlash)
                 {
                     _Index += i + 1;
-                    return readOnlySpan.Slice(0, i);
+                    Array.Resize(ref result, writeIndex);
+                    return result.AsSpan();
                 }
+                else if (readOnlySpan[i] == JsonConstants.BackSlash && readOnlySpan[i + 1] == JsonConstants.Quotes)
+                    continue;
+                else
+                {
+                    result[writeIndex] = readOnlySpan[i];
+                    writeIndex++;
+                }
+               
             }
             _Index = _Length;
-            return readOnlySpan;
+            Array.Resize(ref result, writeIndex);
+
+            return result.AsSpan();
+            //StringBuilder stringBuilder
+            //ReadOnlySpan<byte> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
+
+            //for (int i = 0; i < readOnlySpan.Length; i++)
+            //{
+            //    if (readOnlySpan[i] == JsonConstants.Quotes && readOnlySpan[i - 1] != JsonConstants.BackSlash)
+            //    {
+            //        _Index += i + 1;
+            //        return readOnlySpan.Slice(0, i);
+            //    }
+            //}
+            //_Index = _Length;
+            //return readOnlySpan;
             //ReadOnlySpan<char> readOnlySpan = _buffer.Slice(Index + 1, Length - Index);
             //for (int i = 0; i < readOnlySpan.Length; i++)
             //{

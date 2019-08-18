@@ -179,6 +179,16 @@ namespace JsonGoTest
             var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string[]>(result);
             Assert.IsTrue(data.SequenceEqual(value));
         }
+
+        [Test]
+        public void StringQuatsTest()
+        {
+            string value = "salam\"\"ddv sdd {} [] \"";
+            var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == "\"salam\\\"\\\"ddv sdd {} [] \\\"\"");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string>(result);
+            Assert.IsTrue(value == data);
+        }
         #endregion
     }
 }
