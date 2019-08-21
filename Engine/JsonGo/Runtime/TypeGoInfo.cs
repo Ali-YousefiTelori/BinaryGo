@@ -367,7 +367,15 @@ namespace JsonGo.Runtime
                 {
                     if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
                         continue;
-                    var del = GetDelegateInstance(type, property);
+                    IPropertyCallerInfo del = null;
+                    try
+                    {
+                        del = GetDelegateInstance(type, property);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Cannot create delegate for property {property.Name} in type {type.FullName}",ex);
+                    }
                     if (!Types.TryGetValue(property.PropertyType, out TypeGoInfo typeGoInfoProperty))
                         Types[property.PropertyType] = typeGoInfoProperty = Generate(property.PropertyType);
                     typeGoInfo.Properties[property.Name] = new PropertyGoInfo()
