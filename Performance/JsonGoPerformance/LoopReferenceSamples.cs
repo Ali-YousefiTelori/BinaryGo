@@ -21,7 +21,7 @@ namespace JsonGoPerformance
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                     PreserveReferencesHandling = PreserveReferencesHandling.Arrays
                 });
-                //System.Text.Json.Serialization.JsonSerializer.ToString(obj, new System.Text.Json.Serialization.JsonSerializerOptions() {  });
+                //System.Text.Json.JsonSerializer.Serialize(obj, new System.Text.Json.JsonSerializerOptions() {   });
             }
         }
 
@@ -185,14 +185,6 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
-        public void RunLoopSimpleSampleCompileTimeJsonGo()
-        {
-            Serializer serializer = new Serializer();
-            serializer.Setting.HasGenerateRefrencedTypes = true;
-            serializer.SerializeCompile(GetSimpleSample());
-        }
-
-        [Benchmark]
         public void RunLoopSimpleSampleJsonGo()
         {
             Serializer serializer = new Serializer();
@@ -208,14 +200,6 @@ namespace JsonGoPerformance
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 PreserveReferencesHandling = PreserveReferencesHandling.Arrays
             });
-        }
-
-        [Benchmark]
-        public void RunLoopComeplexSampleCompileTimeJsonGo()
-        {
-            Serializer serializer = new Serializer();
-            serializer.Setting.HasGenerateRefrencedTypes = true;
-            serializer.SerializeCompile(GetComplexObjectSample());
         }
 
         [Benchmark]
@@ -235,11 +219,6 @@ namespace JsonGoPerformance
                 PreserveReferencesHandling = PreserveReferencesHandling.Arrays
             });
         }
-        //[Benchmark]
-        //public void RunLoopSimpleSampleTextJson()
-        //{
-        //    System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
-        //}
 
         private static void RunSample<T>(T sample, int count)
         {

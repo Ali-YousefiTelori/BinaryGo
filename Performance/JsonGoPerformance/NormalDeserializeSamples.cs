@@ -87,19 +87,19 @@ namespace JsonGoPerformance
         [Benchmark]
         public void JsonText_RunSimpleSample()
         {
-            System.Text.Json.Serialization.JsonSerializer.Parse<UserInfo>(NormalSample);
+            System.Text.Json.JsonSerializer.Deserialize<UserInfo>(NormalSample);
         }
 
         [Benchmark]
         public void JsonText_RunSimpleArraySample()
         {
-            System.Text.Json.Serialization.JsonSerializer.Parse<List<UserInfo>>(NormalArraySample);
+            System.Text.Json.JsonSerializer.Deserialize<List<UserInfo>>(NormalArraySample);
         }
 
         [Benchmark]
         public void JsonText_RunSimpleCommplexSample()
         {
-            System.Text.Json.Serialization.JsonSerializer.Parse<CompanyInfo>(NormalComplexSample);
+            System.Text.Json.JsonSerializer.Deserialize<CompanyInfo>(NormalComplexSample);
         }
 
         public void RunDeserialize(int count)
@@ -135,20 +135,20 @@ namespace JsonGoPerformance
             double JsonNetRes = stopwatch.ElapsedTicks;
             Console.WriteLine("Newtonsoft.JsonNET: \t " + stopwatch.Elapsed);
 
-            //Console.WriteLine("******* System.Text.Json *****");
+            Console.WriteLine("******* System.Text.Json *****");
 
-            //Console.WriteLine($"Count {count}");
+            Console.WriteLine($"Count {count}");
 
-            //stopwatch = new Stopwatch();
-            //stopwatch.Start();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    JsonText_RunSimpleSample();
-            //}
-            //stopwatch.Stop();
-            //double MicrosoftJsonRes = stopwatch.ElapsedTicks;
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < count; i++)
+            {
+                JsonText_RunSimpleSample();
+            }
+            stopwatch.Stop();
+            double MicrosoftJsonRes = stopwatch.ElapsedTicks;
 
-            //Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
+            Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
             stopwatch = new Stopwatch();
             Serializer serializer = new Serializer();
 
@@ -166,8 +166,8 @@ namespace JsonGoPerformance
             Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
 
 
-            Console.WriteLine("******* JsonGo Compile Time *****");
-            Console.WriteLine($"Count {count}");
+            //Console.WriteLine("******* JsonGo Compile Time *****");
+            //Console.WriteLine($"Count {count}");
             //stopwatch = new Stopwatch();
             //stopwatch.Start();
             //for (int i = 0; i < count; i++)
@@ -193,18 +193,18 @@ namespace JsonGoPerformance
                 Console.WriteLine($"JsonGo is {res}X FASTER than JsonNET");
             }
 
-            //if (JsonGoRes > MicrosoftJsonRes)
-            //{
-            //    double tt = JsonGoRes / MicrosoftJsonRes;
-            //    double res = Math.Round(tt, 2);
-            //    Console.WriteLine($"JsonGo is {res}X SLOWER than System.Text.Json");
-            //}
-            //else
-            //{
-            //    double tt = MicrosoftJsonRes / JsonGoRes;
-            //    double res = Math.Round(tt, 2);
-            //    Console.WriteLine($"JsonGo is {res}X FASTER than System.Text.Json");
-            //}
+            if (JsonGoRes > MicrosoftJsonRes)
+            {
+                double tt = JsonGoRes / MicrosoftJsonRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X SLOWER than System.Text.Json");
+            }
+            else
+            {
+                double tt = MicrosoftJsonRes / JsonGoRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X FASTER than System.Text.Json");
+            }
             Console.WriteLine();
             Console.WriteLine("-------------------------------------------------------------");
             Console.WriteLine();

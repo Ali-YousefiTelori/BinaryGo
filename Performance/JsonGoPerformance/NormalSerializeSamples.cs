@@ -20,7 +20,7 @@ namespace JsonGoPerformance
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
-                //System.Text.Json.Serialization.JsonSerializer.ToString(obj);
+                System.Text.Json.JsonSerializer.Serialize(obj);
             }
         }
         public UserInfo GetSimpleSample()
@@ -174,13 +174,13 @@ namespace JsonGoPerformance
             });
         }
 
-        //[Benchmark]
-        //public void RunSimpleSampleTextJson()
-        //{
-        //    System.Text.Json.Serialization.JsonSerializer.ToString(GetSimpleSample());
-        //}
+        [Benchmark]
+        public void RunSimpleSampleTextJson()
+        {
+            System.Text.Json.JsonSerializer.Serialize(GetSimpleSample());
+        }
 
-        
+
 
         private static void RunSample<T>(T sample, int count)
         {
@@ -204,20 +204,20 @@ namespace JsonGoPerformance
             double JsonNetRes = stopwatch.ElapsedTicks;
             Console.WriteLine("Newtonsoft.JsonNET: \t " + stopwatch.Elapsed);
 
-            //Console.WriteLine("******* System.Text.Json *****");
+            Console.WriteLine("******* System.Text.Json *****");
 
-            //Console.WriteLine($"Count {count}");
+            Console.WriteLine($"Count {count}");
 
-            //stopwatch = new Stopwatch();
-            //stopwatch.Start();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    System.Text.Json.Serialization.JsonSerializer.ToString(sample);
-            //}
-            //stopwatch.Stop();
-            //double MicrosoftJsonRes = stopwatch.ElapsedTicks;
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < count; i++)
+            {
+                System.Text.Json.JsonSerializer.Serialize(sample);
+            }
+            stopwatch.Stop();
+            double MicrosoftJsonRes = stopwatch.ElapsedTicks;
 
-            //Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
+            Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
 
             Serializer serializer = new Serializer();
 
@@ -249,7 +249,7 @@ namespace JsonGoPerformance
 
             Console.WriteLine("JsonGo Compile Time: \t " + stopwatch.Elapsed);
             Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(JsonNetRes / stopwatch.ElapsedTicks, 2) + "X FASTER than JsonNET");
-            //Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(MicrosoftJsonRes / stopwatch.ElapsedTicks, 2) + "X FASTER than System.Text.Json");
+            Console.WriteLine("JsonGo Compile Time: \t " + Math.Round(MicrosoftJsonRes / stopwatch.ElapsedTicks, 2) + "X FASTER than System.Text.Json");
 
             if (JsonGoRes > JsonNetRes)
             {
@@ -264,18 +264,18 @@ namespace JsonGoPerformance
                 Console.WriteLine($"JsonGo is {res}X FASTER than JsonNET");
             }
 
-            //if (JsonGoRes > MicrosoftJsonRes)
-            //{
-            //    double tt = JsonGoRes / MicrosoftJsonRes;
-            //    double res = Math.Round(tt, 2);
-            //    Console.WriteLine($"JsonGo is {res}X SLOWER than System.Text.Json");
-            //}
-            //else
-            //{
-            //    double tt = MicrosoftJsonRes / JsonGoRes;
-            //    double res = Math.Round(tt, 2);
-            //    Console.WriteLine($"JsonGo is {res}X FASTER than System.Text.Json");
-            //}
+            if (JsonGoRes > MicrosoftJsonRes)
+            {
+                double tt = JsonGoRes / MicrosoftJsonRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X SLOWER than System.Text.Json");
+            }
+            else
+            {
+                double tt = MicrosoftJsonRes / JsonGoRes;
+                double res = Math.Round(tt, 2);
+                Console.WriteLine($"JsonGo is {res}X FASTER than System.Text.Json");
+            }
             Console.WriteLine();
             Console.WriteLine("-------------------------------------------------------------");
             Console.WriteLine();
