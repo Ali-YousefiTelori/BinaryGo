@@ -94,6 +94,9 @@ namespace JsonGo.Runtime
         {
             if (Types.TryGetValue(type, out TypeGoInfo find))
                 return find;
+            var nullableType = Nullable.GetUnderlyingType(type);
+            if (nullableType != null)
+                return Generate(nullableType);
             TypeGoInfo typeGoInfo = new TypeGoInfo
             {
                 Properties = new Dictionary<string, PropertyGoInfo>(),
@@ -365,7 +368,7 @@ namespace JsonGo.Runtime
                 typeGoInfo.IsNoQuotesValueType = false;
                 foreach (var property in type.GetProperties())
                 {
-                    if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
+                    if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite)
                         continue;
                     IPropertyCallerInfo del = null;
                     try
@@ -374,7 +377,7 @@ namespace JsonGo.Runtime
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception($"Cannot create delegate for property {property.Name} in type {type.FullName}",ex);
+                        throw new Exception($"Cannot create delegate for property {property.Name} in type {type.FullName}", ex);
                     }
                     if (!Types.TryGetValue(property.PropertyType, out TypeGoInfo typeGoInfoProperty))
                         Types[property.PropertyType] = typeGoInfoProperty = Generate(property.PropertyType);

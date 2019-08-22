@@ -8,6 +8,7 @@ namespace JsonGoTest.Models
     {
         public int Id { get; set; }
         public string FullName { get; set; }
+        public bool? IsMarried { get; set; }
         public int Age { get; set; }
         public DateTime CreatedDate { get; set; }
 
@@ -19,7 +20,7 @@ namespace JsonGoTest.Models
             var isEqual = user.Age == Age &&
                 user.CreatedDate == CreatedDate &&
                 user.FullName == FullName &&
-                user.Id == Id;
+                user.Id == Id && user.IsMarried == IsMarried;
             if (!isEqual)
                 return isEqual;
             else if (user.Roles != Roles)
