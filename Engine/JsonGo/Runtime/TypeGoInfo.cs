@@ -378,7 +378,13 @@ namespace JsonGo.Runtime
                     Name = JsonConstants.ValuesRefrencedTypeNameNoQuotes,
                     SetValue = (serializer, instance, value) =>
                     {
-
+                        if (Generate(instance.GetType()) is TypeGoInfo typeGo)
+                        {
+                            foreach (var item in (IEnumerable)value)
+                            {
+                                typeGo.AddArrayValue(instance, item);
+                            }
+                        }
                     },
                     GetValue = (serializer, data) =>
                     {
@@ -466,7 +472,7 @@ namespace JsonGo.Runtime
                 };
                 foreach (var property in baseType.GetProperties())
                 {
-                    if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite)
+                    if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0)
                         continue;
                     IPropertyCallerInfo del = null;
                     try
