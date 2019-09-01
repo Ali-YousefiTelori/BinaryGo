@@ -9,9 +9,9 @@ namespace JsonGo.Deserialize
     public ref struct JsonSpanReader
     {
         //static byte[] SupportedValue { get; set; } = "0123456789.truefalsTRUEFALS-n".Select(x => (byte)x).ToArray();
-        static byte[] UnSupportedValue { get; set; } = " ,\r\n\t".Select(x => (byte)x).ToArray();
-        static byte[] EndsValue { get; set; } = "}]".Select(x => (byte)x).ToArray();
-        static byte[] SkipValues { get; set; } = " \r\n\t".Select(x => (byte)x).ToArray();
+        static HashSet<byte> UnSupportedValue { get; set; } = new HashSet<byte>(" ,\r\n\t".Select(x => (byte)x));
+        static HashSet<byte> EndsValue { get; set; } = new HashSet<byte>("}]".Select(x => (byte)x));
+        static HashSet<byte> SkipValues { get; set; } = new HashSet<byte>(" \r\n\t".Select(x => (byte)x));
 
         #region white space
         //static byte BSpace { get; set; } = (byte)'\b';

@@ -48,24 +48,24 @@
     public class JsonConstants
     {
         public const string Null = "null";
-        public const byte Space = (byte)' ';
+        public const char Space = ' ';
         public const string BeforeObject = "{\"$id\":\"";
         public const string AfterArrayObject = "\",\"$values\":[";
-        public const byte OpenSquareBrackets = (byte)'[';
-        public const byte CloseSquareBrackets = (byte)']';
+        public const char OpenSquareBrackets = '[';
+        public const char CloseSquareBrackets = ']';
         public const string CloseSquareBracketsWithBrackets = "]}";
-        public const byte Comma = (byte)',';
+        public const char Comma = ',';
         public const string CommaQuotes = "\",";
         public const string ColonQuotes = ":\"";
         public const string QuotesColon = "\":";
         public const string QuotesColonQuotes = "\":\"";
-        public const byte Colon = (byte)':';
-        public const byte OpenBraket = (byte)'{';
+        public const char Colon = ':';
+        public const char OpenBraket = '{';
         public const string OpenBraketRefColonQuotes = "{\"$ref\":\"";
-        public const byte CloseBracket = (byte)'}';
-        public const byte Quotes = (byte)'"';
+        public const char CloseBracket = '}';
+        public const char Quotes = '"';
         public const string QuotesCloseBracket = "\"}";
-        public const byte BackSlash = (byte)'\\';
+        public const char BackSlash = '\\';
         /// <summary>
         /// $Id refrenced type name
         /// </summary>

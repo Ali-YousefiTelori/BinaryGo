@@ -53,64 +53,20 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
-                BenchmarkRunner.Run<LoopReferenceSamples>();
-                //BenchmarkRunner.Run<NormalSerializeSamples>();
+                Console.WriteLine("Select Option:");
+                Console.WriteLine("1) Normal Serialize Samples");
+                Console.WriteLine("2) Loop Reference Samples");
+                Console.WriteLine("3) Normal Deserialize Samples");
 
-                //BenchmarkRunner.Run<NormalSamples>();
-                //JsonGoModelBuilder.Initialize();
-                //NormalSerializeSamples normalSamples = new NormalSerializeSamples();
-                //normalSamples.RunSimpleSampleJsonGo();
-                //var userInfos = normalSamples.GetSimpleArraySample();
-                //NormalDeserializeSamples normalDeserializeSamples = new NormalDeserializeSamples();
-                //normalDeserializeSamples.JsonGo_RunSimpleSample();
-                //normalDeserializeSamples.RunDeserialize(10000);
-                //normalDeserializeSamples.RunDeserialize(10000);
-
-                //var result = System.Text.Json.Serialization.JsonSerializer.ToString(userInfos);
-                //NormalDeserializeSamples normalDeserialize = new NormalDeserializeSamples();
-                //normalDeserialize.JsonGo_RunSimpleArraySampleJsonGo();
-                //normalDeserialize.JsonGo_RunSimpleSampleJsonGo();
-                //normalDeserialize.JsonGo_RunSimpleCommplexSampleJsonGo();
-                //BenchmarkRunner.Run<NormalDeserializeSamples>();
-                //BenchmarkRunner.Run<NormalDeserializeSamples>();
-
-                //AssemblyLoader assemblyLoader = new AssemblyLoader();
-                //assemblyLoader.Add(@"D:\Github\JsonGo\JsonGoCoreConsoleTest\bin\Debug\netcoreapp3.0\JsonGoPerformance.dll");
-                //var code = assemblyLoader.GenerateCode();
-                //Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
-                //JsonGoModelBuilder.Initialize();
-                //if (Console.ReadLine() == "1")
-                //{
-                //    Console.WriteLine($"Enter number of items: ");
-                //    int count = int.Parse(Console.ReadLine());
-                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
-                //    Console.WriteLine();
-                //    Console.WriteLine();
-                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
-                //    Console.WriteLine();
-                //    Console.WriteLine();
-                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"Enter number of items: ");
-                //    int count = int.Parse(Console.ReadLine());
-                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
-                //    Console.WriteLine();
-                //    Console.WriteLine();
-                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
-                //    Console.WriteLine();
-                //    Console.WriteLine();
-                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                //    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
-                //}
-
-
+                var read = Console.ReadLine();
+                if (read == "1")
+                    BenchmarkRunner.Run<NormalSerializeSamples>();
+                else if (read == "2")
+                    BenchmarkRunner.Run<LoopReferenceSamples>();
+                else if (read == "3")
+                    BenchmarkRunner.Run<NormalDeserializeSamples>();
+                else
+                    Console.WriteLine($"not support {read}");
             }
             catch (Exception ex)
             {

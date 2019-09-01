@@ -175,7 +175,7 @@ namespace JsonGoTest
         {
             string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
-            Assert.IsTrue(result == "{\"$id\":\"1\",\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}");
+            Assert.IsTrue(result == "{\"$id\":1,\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}");
             var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string[]>(result);
             Assert.IsTrue(data.SequenceEqual(value));
         }

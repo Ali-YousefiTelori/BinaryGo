@@ -37,6 +37,10 @@ namespace JsonGo.Runtime
     public class TypeGoInfo
     {
         /// <summary>
+        /// default value of object
+        /// </summary>
+        public object DefaultValue { get; set; }
+        /// <summary>
         /// if the type is simple like int,bye,bool,enum they can serialize without quots
         /// </summary>
         public bool IsNoQuotesValueType { get; set; } = true;
@@ -78,9 +82,13 @@ namespace JsonGo.Runtime
         /// </summary>
         public Dictionary<string, PropertyGoInfo> DirectProperties { get; set; }
         /// <summary>
-        /// array of all properties
+        /// array of all properties for serialize
         /// </summary>
-        public PropertyGoInfo[] ArrayProperties { get; set; }
+        public PropertyGoInfo[] SerializeProperties { get; set; }
+        /// <summary>
+        /// array of all properties for deserialize
+        /// </summary>
+        public PropertyGoInfo[] DeserializeProperties { get; set; }
         /// <summary>
         /// generic types
         /// </summary>
@@ -94,16 +102,21 @@ namespace JsonGo.Runtime
         {
             if (Types.TryGetValue(type, out TypeGoInfo find))
                 return find;
-            var nullableType = Nullable.GetUnderlyingType(type);
-            if (nullableType != null)
-                return Generate(nullableType);
+            var baseType = Nullable.GetUnderlyingType(type);
+            bool isNullable = false;
+            if (baseType != null)
+            {
+                isNullable = true;
+            }
+            else
+                baseType = type;
             TypeGoInfo typeGoInfo = new TypeGoInfo
             {
                 Properties = new Dictionary<string, PropertyGoInfo>(),
-                Type = type
+                Type = type,
             };
             Types[type] = typeGoInfo;
-            if (type == typeof(DateTime))
+            if (baseType == typeof(DateTime))
             {
                 typeGoInfo.IsNoQuotesValueType = false;
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
@@ -119,8 +132,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(DateTime);
                 };
+                typeGoInfo.DefaultValue = default(DateTime);
             }
-            else if (type == typeof(uint))
+            else if (baseType == typeof(uint))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -132,8 +146,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(uint);
                 };
+                typeGoInfo.DefaultValue = default(uint);
             }
-            else if (type == typeof(long))
+            else if (baseType == typeof(long))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -145,8 +160,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(long);
                 };
+                typeGoInfo.DefaultValue = default(long);
             }
-            else if (type == typeof(short))
+            else if (baseType == typeof(short))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -158,8 +174,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(short);
                 };
+                typeGoInfo.DefaultValue = default(short);
             }
-            else if (type == typeof(byte))
+            else if (baseType == typeof(byte))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -171,8 +188,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(byte);
                 };
+                typeGoInfo.DefaultValue = default(byte);
             }
-            else if (type == typeof(double))
+            else if (baseType == typeof(double))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -184,8 +202,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(double);
                 };
+                typeGoInfo.DefaultValue = default(double);
             }
-            else if (type == typeof(float))
+            else if (baseType == typeof(float))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -197,8 +216,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(float);
                 };
+                typeGoInfo.DefaultValue = default(float);
             }
-            else if (type == typeof(decimal))
+            else if (baseType == typeof(decimal))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -210,8 +230,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(decimal);
                 };
+                typeGoInfo.DefaultValue = default(decimal);
             }
-            else if (type == typeof(sbyte))
+            else if (baseType == typeof(sbyte))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -223,8 +244,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(sbyte);
                 };
+                typeGoInfo.DefaultValue = default(sbyte);
             }
-            else if (type == typeof(ulong))
+            else if (baseType == typeof(ulong))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -236,8 +258,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(ulong);
                 };
+                typeGoInfo.DefaultValue = default(ulong);
             }
-            else if (type == typeof(bool))
+            else if (baseType == typeof(bool))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -249,8 +272,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(bool);
                 };
+                typeGoInfo.DefaultValue = default(bool);
             }
-            else if (type == typeof(ushort))
+            else if (baseType == typeof(ushort))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -262,8 +286,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(ushort);
                 };
+                typeGoInfo.DefaultValue = default(ushort);
             }
-            else if (type == typeof(int))
+            else if (baseType == typeof(int))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -275,8 +300,9 @@ namespace JsonGo.Runtime
                         return value;
                     return default(int);
                 };
+                typeGoInfo.DefaultValue = default(int);
             }
-            else if (type == typeof(byte[]))
+            else if (baseType == typeof(byte[]))
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -286,8 +312,9 @@ namespace JsonGo.Runtime
                 {
                     return Convert.FromBase64String(TextHelper.SpanToString(x));
                 };
+                typeGoInfo.DefaultValue = default(byte[]);
             }
-            else if (type == typeof(string))
+            else if (baseType == typeof(string))
             {
                 typeGoInfo.IsNoQuotesValueType = false;
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
@@ -300,8 +327,9 @@ namespace JsonGo.Runtime
                 {
                     return TextHelper.SpanToString(x);
                 };
+                typeGoInfo.DefaultValue = default(string);
             }
-            else if (type.IsEnum)
+            else if (baseType.IsEnum)
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
@@ -310,20 +338,14 @@ namespace JsonGo.Runtime
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
                     if (Utf8Parser.TryParse(x, out int value, out int bytes))
-                        return Enum.ToObject(type, value);
-                    return Enum.ToObject(type, 0);
+                        return Enum.ToObject(baseType, value);
+                    return Enum.ToObject(baseType, 0);
                 };
-
+                typeGoInfo.DefaultValue = Activator.CreateInstance(baseType);
             }
-            else if (typeof(IEnumerable).IsAssignableFrom(type))
+            else if (typeof(IEnumerable).IsAssignableFrom(baseType))
             {
                 typeGoInfo.IsNoQuotesValueType = false;
-                foreach (var item in type.GetGenericArguments())
-                {
-                    if (!Types.TryGetValue(item, out TypeGoInfo typeGoInfoProperty))
-                        Types[item] = typeGoInfoProperty = Generate(item);
-                    typeGoInfo.Generics.Add(typeGoInfoProperty);
-                }
 
                 //add $Id dproperties
                 typeGoInfo.Properties[JsonConstants.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
@@ -334,18 +356,63 @@ namespace JsonGo.Runtime
                     SetValue = (serializer, instance, value) =>
                     {
                         serializer.DeSerializedObjects.Add((int)value, instance);
+                    },
+                    GetValue = (serializer, data) =>
+                    {
+                        if (!serializer.SerializedObjects.TryGetValue(data, out int refrencedId))
+                        {
+                            serializer.ReferencedIndex++;
+                            serializer.SerializedObjects.Add(data, serializer.ReferencedIndex);
+                            return serializer.ReferencedIndex;
+                        }
+                        else
+                        {
+                            return refrencedId;
+                        }
                     }
                 };
-
-                typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
+                typeGoInfo.Properties[JsonConstants.ValuesRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
                 {
-                    serializer.SerializeArrayFunction(typeGoInfo, serializer, stringBuilder, ref data);
+                    TypeGoInfo = Generate(type),
+                    Type = type,
+                    Name = JsonConstants.ValuesRefrencedTypeNameNoQuotes,
+                    SetValue = (serializer, instance, value) =>
+                    {
+
+                    },
+                    GetValue = (serializer, data) =>
+                    {
+                        if (data == null)
+                            return null;
+                        var builder = serializer.Writer;
+                        builder.Append(JsonSettingInfo.Quotes);
+                        builder.Append(JsonConstants.ValuesRefrencedTypeNameNoQuotes);
+                        builder.Append(JsonSettingInfo.QuotesColon);
+                        builder.Append(JsonSettingInfo.OpenSquareBrackets);
+                        var generic = typeGoInfo.Generics[0];
+                        foreach (var item in (IEnumerable)data)
+                        {
+                            var obj = item;
+                            generic.Serialize(serializer, builder, ref obj);
+                            builder.Append(JsonConstants.Comma);
+                        }
+                        serializer.RemoveLastCama();
+                        builder.Append(JsonSettingInfo.CloseSquareBrackets);
+                        return null;
+                    }
                 };
-                if (type.IsArray)
+                foreach (var item in baseType.GetGenericArguments())
+                {
+                    if (!Types.TryGetValue(item, out TypeGoInfo typeGoInfoProperty))
+                        Types[item] = typeGoInfoProperty = Generate(item);
+                    typeGoInfo.Generics.Add(typeGoInfoProperty);
+                }
+
+                if (baseType.IsArray)
                 {
                     List<int> items = new List<int>();
                     items.ToArray();
-                    var elementType = type.GetElementType();
+                    var elementType = baseType.GetElementType();
                     var newType = typeof(List<>).MakeGenericType(elementType);
                     if (!Types.TryGetValue(elementType, out TypeGoInfo typeGoInfoProperty))
                         Types[elementType] = typeGoInfoProperty = Generate(elementType);
@@ -358,22 +425,53 @@ namespace JsonGo.Runtime
                 }
                 else
                 {
-                    typeGoInfo.CreateInstance = () => Activator.CreateInstance(type);
-                    var method = type.GetMethod("Add");
+                    typeGoInfo.CreateInstance = () => Activator.CreateInstance(baseType);
+                    var method = baseType.GetMethod("Add");
                     typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
                 }
+                typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
+                {
+                    serializer.SerializeFunction(typeGoInfo, serializer, builder, ref data);
+                };
+                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.GetValue != null).ToArray();
+                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.SetValue != null).ToArray();
+                typeGoInfo.DefaultValue = null;
             }
             else
             {
                 typeGoInfo.IsNoQuotesValueType = false;
-                foreach (var property in type.GetProperties())
+                //add $Id dproperties
+                typeGoInfo.Properties[JsonConstants.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+                {
+                    TypeGoInfo = Generate(typeof(int)),
+                    Type = typeof(int),
+                    Name = JsonConstants.IdRefrencedTypeNameNoQuotes,
+                    SetValue = (serializer, instance, value) =>
+                    {
+                        serializer.DeSerializedObjects.Add((int)value, instance);
+                    },
+                    GetValue = (serializer, data) =>
+                    {
+                        if (!serializer.SerializedObjects.TryGetValue(data, out int refrencedId))
+                        {
+                            serializer.ReferencedIndex++;
+                            serializer.SerializedObjects.Add(data, serializer.ReferencedIndex);
+                            return serializer.ReferencedIndex;
+                        }
+                        else
+                        {
+                            return refrencedId;
+                        }
+                    }
+                };
+                foreach (var property in baseType.GetProperties())
                 {
                     if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite)
                         continue;
                     IPropertyCallerInfo del = null;
                     try
                     {
-                        del = GetDelegateInstance(type, property);
+                        del = GetDelegateInstance(baseType, property);
                     }
                     catch (Exception ex)
                     {
@@ -386,25 +484,15 @@ namespace JsonGo.Runtime
                         TypeGoInfo = typeGoInfoProperty,
                         Type = property.PropertyType,
                         Name = property.Name,
-                        GetValue = x => del.GetPropertyValue(x),
+                        GetValue = (serializer, x) => del.GetPropertyValue(x),
                         SetValue = del.SetPropertyValue,
                         //SetValue = (x, val) => property.SetValue(x, val),
                     };
                 }
-                //add $Id dproperties
-                typeGoInfo.Properties[JsonConstants.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
-                {
-                    TypeGoInfo = Generate(typeof(int)),
-                    Type = typeof(int),
-                    Name = JsonConstants.IdRefrencedTypeNameNoQuotes,
-                    SetValue = (serializer, instance, value) =>
-                    {
-                        serializer.DeSerializedObjects.Add((int)value, instance);
-                    }
-                };
+               
 
 
-                foreach (var item in type.GetFields())
+                foreach (var item in baseType.GetFields())
                 {
                     if (item.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
                         continue;
@@ -420,14 +508,26 @@ namespace JsonGo.Runtime
                         //SetValue = item.SetValue
                     };
                 }
-                typeGoInfo.ArrayProperties = typeGoInfo.Properties.Values.ToArray();
+                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.GetValue != null).ToArray();
+                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.SetValue != null).ToArray();
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder builder, ref object data) =>
                 {
-                    serializer.SerializeFunction(typeGoInfo, serializer, builder, ref data);
+                    if (serializer.SerializedObjects.TryGetValue(data, out int refrencedId))
+                    {
+                        builder.Append(JsonConstants.OpenBraket);
+                        builder.Append(JsonConstants.RefRefrencedTypeName);
+                        builder.Append(JsonSettingInfo.Colon);
+                        builder.Append(refrencedId);
+                        builder.Append(JsonConstants.CloseBracket);
+                    }
+                    else
+                        serializer.SerializeFunction(typeGoInfo, serializer, builder, ref data);
                 };
-                typeGoInfo.CreateInstance = () => Activator.CreateInstance(type);
+                typeGoInfo.CreateInstance = () => Activator.CreateInstance(baseType);
+                typeGoInfo.DefaultValue = null;
             }
-
+            if (isNullable)
+                typeGoInfo.DefaultValue = null;
             return typeGoInfo;
         }
         public static IPropertyCallerInfo GetDelegateInstance(Type type, PropertyInfo propertyInfo)
