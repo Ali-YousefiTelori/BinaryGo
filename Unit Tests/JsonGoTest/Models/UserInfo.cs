@@ -6,6 +6,17 @@ namespace JsonGoTest.Models
 {
     public class UserInfo
     {
+        public string this[int index]
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+
+            }
+        }
         public short EMP_NO { get; set; }
         public int Id { get; set; }
         public string FullName { get; set; }

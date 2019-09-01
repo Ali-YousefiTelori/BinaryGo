@@ -73,7 +73,7 @@ namespace JsonGoTest
 
             }
 
-           
+
         }
 
         [Test]
@@ -103,12 +103,12 @@ namespace JsonGoTest
             };
 
             var result = JsonGo.Serializer.SingleIntance.Serialize(companyInfo);
-            var equalData = "{\"$id\":\"1\",\"Id\":14,\"Name\":\"company test\",\"Users\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":\"4\",\"$values\":[{\"$id\":\"5\",\"Id\":1,\"UserInfo\":{\"$ref\":\"3\"},\"Type\":3},{\"$id\":\"6\",\"Id\":2,\"UserInfo\":{\"$ref\":\"3\"},\"Type\":2}]},\"CompanyInfo\":{\"$ref\":\"1\"}},{\"$ref\":\"3\"}]}}";
+            var equalData = "{\"$id\":1,\"Id\":14,\"Name\":\"company test\",\"Users\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":4,\"$values\":[{\"$id\":5,\"Id\":1,\"UserInfo\":{\"$ref\":3},\"Type\":3},{\"$id\":6,\"Id\":2,\"UserInfo\":{\"$ref\":3},\"Type\":2}]},\"CompanyInfo\":{\"$ref\":1}},{\"$ref\":3}]}}";
             Assert.IsTrue(result == equalData);
-
 
             var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<CompanyInfo>(result);
             Assert.IsTrue(deserialized.IsEquals(companyInfo));
+
         }
     }
 }

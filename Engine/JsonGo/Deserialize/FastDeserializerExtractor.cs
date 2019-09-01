@@ -36,7 +36,7 @@ namespace JsonGo.Deserialize
             }
             else if (character == JsonConstants.OpenSquareBrackets)
             {
-                if (typeGo.CreateInstance != null)
+                if (instance == null && typeGo.CreateInstance != null)
                     instance = typeGo.CreateInstance();
                 ExtractArray(deserializer, typeGo, ref instance, ref json);
             }
@@ -118,7 +118,11 @@ namespace JsonGo.Deserialize
                 {
                     if (instance == null && typeGo.CreateInstance != null)
                         instance = typeGo.CreateInstance();
-                    object propertyInstance = instance;
+                    object propertyInstance = null;
+                    if (propertyGo.TypeGoInfo.CreateInstance != null)
+                        propertyInstance = propertyGo.TypeGoInfo.CreateInstance();
+                    else
+                        propertyInstance = instance;
                     var value = Extract(deserializer, propertyGo.TypeGoInfo, ref propertyInstance, propertyGo.TypeGoInfo.CreateInstance, ref json);
                     var deserialize = propertyGo.TypeGoInfo.Deserialize;
                     if (deserialize != null)
