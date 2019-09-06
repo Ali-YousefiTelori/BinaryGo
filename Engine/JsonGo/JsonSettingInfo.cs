@@ -66,6 +66,8 @@
         public const char Quotes = '"';
         public const string QuotesCloseBracket = "\"}";
         public const char BackSlash = '\\';
+        public const char RNewLine = 'r';
+        public const char NNewLine = 'n';
         /// <summary>
         /// $Id refrenced type name
         /// </summary>

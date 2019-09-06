@@ -91,7 +91,7 @@ namespace JsonGo.Deserialize
             ReadOnlySpan<byte> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
             for (int i = 0; i < readOnlySpan.Length - 1; i++)
             {
-                if (i == max)
+                if (i >= max)
                 {
                     max = result.Length + 10;
                     Array.Resize(ref result, max);
@@ -104,12 +104,24 @@ namespace JsonGo.Deserialize
                 }
                 else if (readOnlySpan[i] == JsonConstants.BackSlash && readOnlySpan[i + 1] == JsonConstants.Quotes)
                     continue;
+                else if (readOnlySpan[i] == JsonConstants.BackSlash && readOnlySpan[i + 1] == JsonConstants.RNewLine)
+                {
+                    result[writeIndex] = (byte)'\r';
+                    i++;
+                    writeIndex++;
+                }
+                else if (readOnlySpan[i] == JsonConstants.BackSlash && readOnlySpan[i + 1] == JsonConstants.NNewLine)
+                {
+                    result[writeIndex] = (byte)'\n';
+                    i++;
+                    writeIndex++;
+                }
                 else
                 {
                     result[writeIndex] = readOnlySpan[i];
                     writeIndex++;
                 }
-               
+
             }
             _Index = _Length;
             Array.Resize(ref result, writeIndex);
