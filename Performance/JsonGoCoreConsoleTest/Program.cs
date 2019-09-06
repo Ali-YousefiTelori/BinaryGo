@@ -2,11 +2,13 @@
 using JsonGo;
 using JsonGo.CodeGenerators;
 using JsonGo.Deserialize;
+using JsonGo.Runtime;
 using JsonGoPerformance;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace JsonGoCoreConsoleTest
 {
@@ -53,6 +55,7 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
+                //var text = string.Join(Environment.NewLine, TypeGoInfo.Generate(typeof(Profile)).SerializeProperties.Select(x => $"name: {x.Name} , type: {x.Type.FullName}"));
                 Console.WriteLine("Select Option:");
                 Console.WriteLine("1) Normal Serialize Samples");
                 Console.WriteLine("2) Loop Reference Samples");
