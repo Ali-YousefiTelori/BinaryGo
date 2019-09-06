@@ -36,6 +36,13 @@ namespace JsonGo.Runtime
     /// </summary>
     public class TypeGoInfo
     {
+        static TypeGoInfo()
+        {
+            AddToCustomTypes<ICollection, Array>();
+            AddToCustomTypes<IEnumerable, Array>();
+            AddToCustomTypes(typeof(IEnumerable<>), typeof(List<>));
+            AddToCustomTypes(typeof(ICollection<>), typeof(List<>));
+        }
         /// <summary>
         /// default value of object
         /// </summary>
@@ -320,7 +327,7 @@ namespace JsonGo.Runtime
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
                     stringBuilder.Append(JsonSettingInfo.Quotes);
-                    stringBuilder.Append(((string)data).Replace("\"", "\\\""));
+                    stringBuilder.Append(((string)data).Replace("\"", "\\\"").Replace("\r\n", "\\r\\n").Replace("\n", "\\n"));
                     stringBuilder.Append(JsonSettingInfo.Quotes);
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
@@ -345,6 +352,7 @@ namespace JsonGo.Runtime
             }
             else if (typeof(IEnumerable).IsAssignableFrom(baseType))
             {
+                baseType = GenerateTypeFromInterface(baseType);
                 typeGoInfo.IsNoQuotesValueType = false;
 
                 //add $Id dproperties
@@ -445,6 +453,7 @@ namespace JsonGo.Runtime
             }
             else
             {
+                baseType = GenerateTypeFromInterface(baseType);
                 typeGoInfo.IsNoQuotesValueType = false;
                 //add $Id dproperties
                 typeGoInfo.Properties[JsonConstants.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
@@ -495,7 +504,7 @@ namespace JsonGo.Runtime
                         //SetValue = (x, val) => property.SetValue(x, val),
                     };
                 }
-               
+
 
 
                 foreach (var item in baseType.GetFields())
@@ -535,6 +544,56 @@ namespace JsonGo.Runtime
             if (isNullable)
                 typeGoInfo.DefaultValue = null;
             return typeGoInfo;
+        }
+
+        internal static Dictionary<Type, Type> CustomTypeChanges { get; set; } = new Dictionary<Type, Type>();
+        /// <summary>
+        /// generate interface ot types to new types
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        internal static Type GenerateTypeFromInterface(Type type)
+        {
+            Type[] genericTypes = null;
+            if (type.GenericTypeArguments.Length > 0)
+            {
+                genericTypes = type.GenericTypeArguments;
+                type = type.GetGenericTypeDefinition();
+            }
+
+            if (CustomTypeChanges.TryGetValue(type, out Type newType))
+            {
+                type = newType;
+            }
+
+            if (genericTypes != null)
+            {
+                for (int i = 0; i < genericTypes.Length; i++)
+                {
+                    genericTypes[i] = GenerateTypeFromInterface(genericTypes[i]);
+                }
+                type = type.MakeGenericType(genericTypes);
+            }
+            return type;
+        }
+
+        /// <summary>
+        /// add your types or interfaces to automatic custom type
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        public static void AddToCustomTypes<TType, TResult>()
+        {
+            AddToCustomTypes(typeof(TType), typeof(TResult));
+        }
+        /// <summary>
+        /// add your types or interfaces to automatic custom type
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        public static void AddToCustomTypes(Type type, Type result)
+        {
+            CustomTypeChanges[type] = result;
         }
         public static IPropertyCallerInfo GetDelegateInstance(Type type, PropertyInfo propertyInfo)
         {
