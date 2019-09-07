@@ -5,7 +5,6 @@ using System;
 using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -37,13 +36,8 @@ namespace JsonGo.Runtime
     /// </summary>
     public class TypeGoInfo
     {
-        /// <summary>
-        /// current calture
-        /// </summary>
-        public static CultureInfo CurrentCulture { get; set; }
         static TypeGoInfo()
         {
-            CurrentCulture = new CultureInfo("en-US");
             AddToCustomTypes<ICollection, Array>();
             AddToCustomTypes<IEnumerable, Array>();
             AddToCustomTypes(typeof(IEnumerable<>), typeof(List<>));
@@ -207,7 +201,7 @@ namespace JsonGo.Runtime
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.AppendFormat(CurrentCulture, "", (double)data);
+                    stringBuilder.Append((double)data);
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
@@ -221,7 +215,7 @@ namespace JsonGo.Runtime
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.AppendFormat(CurrentCulture, "", (float)data);
+                    stringBuilder.Append((float)data);
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
@@ -235,7 +229,7 @@ namespace JsonGo.Runtime
             {
                 typeGoInfo.Serialize = (Serializer serializer, StringBuilder stringBuilder, ref object data) =>
                 {
-                    stringBuilder.AppendFormat(CurrentCulture, "", (decimal)data);
+                    stringBuilder.Append((decimal)data);
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
