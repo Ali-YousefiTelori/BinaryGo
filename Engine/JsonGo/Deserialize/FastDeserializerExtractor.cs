@@ -83,7 +83,8 @@ namespace JsonGo.Deserialize
                 else
                 {
                     var value = json.ExtractValue();
-                    typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
+                    if (generic.Deserialize != null)
+                        typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
                 }
 
             }
