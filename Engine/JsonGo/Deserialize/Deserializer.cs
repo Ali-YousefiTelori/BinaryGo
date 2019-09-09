@@ -9,7 +9,6 @@ using System.Text;
 
 namespace JsonGo.Deserialize
 {
-    delegate IJsonGoModel ExtractFunction(ReadOnlySpan<char> json, ref int indexOf);
     //delegate void FastExtractFunction(TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref ReadOnlySpan<byte> _buffer);
     delegate ReadOnlySpan<byte> FastExtractFunction(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader _buffer);
 
@@ -18,7 +17,6 @@ namespace JsonGo.Deserialize
     /// </summary>
     public class Deserializer
     {
-        static ExtractFunction ExtractFunction { get; set; }
         static FastExtractFunction FastExtractFunction { get; set; }
 
         static Deserializer()
@@ -40,7 +38,7 @@ namespace JsonGo.Deserialize
         /// <summary>
         /// default setting of serializer
         /// </summary>
-        public JsonSettingInfo Setting { get; set; } = new JsonSettingInfo();
+        public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
         /// <summary>
         /// deserialize a json to a type
         /// </summary>
@@ -70,27 +68,6 @@ namespace JsonGo.Deserialize
             }
            
         }
-
-        /// <summary>
-        /// deserialize a json to a type
-        /// </summary>
-        /// <param name="type">type of deserialize</param>
-        /// <param name="json">json to deserialize</param>
-        /// <returns>deserialized type</returns>
-        public object Deserialize(string json, Type type)
-        {
-            try
-            {
-                int indexOf = 0;
-                IJsonGoModel jsonModel = ExtractFunction(json.AsSpan(), ref indexOf);
-                return jsonModel.Generate(type, this);
-            }
-            finally
-            {
-                DeSerializedObjects.Clear();
-            }
-        }
-
 
         /// <summary>
         /// get type of a json parameter name

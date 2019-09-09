@@ -3,7 +3,7 @@
     /// <summary>
     /// default setting of json serialize and deserialier
     /// </summary>
-    public class JsonSettingInfo
+    public class JsonConstantsString
     {
         public const string Null = "null";
         public const string BeforeObject = "{\"$id\":\"";
@@ -45,7 +45,7 @@
 
     }
 
-    public class JsonConstants
+    public class JsonConstantsBytes
     {
         public const string Null = "null";
         public const char Space = ' ';

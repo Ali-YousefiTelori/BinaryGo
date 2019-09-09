@@ -20,7 +20,7 @@ namespace JsonGo.Deserialize
         internal static ReadOnlySpan<byte> Extract(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
         {
             var character = json.Read();
-            if (character == JsonConstants.Quotes)
+            if (character == JsonConstantsBytes.Quotes)
             {
                 //if (typeGo.IsNoQuotesValueType)
                 return json.ExtractString();
@@ -28,13 +28,13 @@ namespace JsonGo.Deserialize
                 //    return json.ExtractStringQuotes();
 
             }
-            else if (character == JsonConstants.OpenBraket)
+            else if (character == JsonConstantsBytes.OpenBraket)
             {
                 //if (createInstance != null)
                 //    instance = createInstance();
                 ExtractOject(deserializer, typeGo, ref instance, ref json);
             }
-            else if (character == JsonConstants.OpenSquareBrackets)
+            else if (character == JsonConstantsBytes.OpenSquareBrackets)
             {
                 if (instance == null && typeGo.CreateInstance != null)
                     instance = typeGo.CreateInstance();
@@ -55,27 +55,27 @@ namespace JsonGo.Deserialize
             while (true)
             {
                 var character = json.Read();
-                if (character == JsonConstants.OpenBraket)
+                if (character == JsonConstantsBytes.OpenBraket)
                 {
                     object genericInstance = null;
                     ExtractOject(deserializer, generic, ref genericInstance, ref json);
                     typeGo.AddArrayValue(instance, genericInstance);
                 }
-                else if (character == JsonConstants.OpenSquareBrackets)
+                else if (character == JsonConstantsBytes.OpenSquareBrackets)
                 {
                     object genericInstance = null;
                     ExtractArray(deserializer, generic, ref genericInstance, ref json);
                     typeGo.AddArrayValue(instance, genericInstance);
                 }
-                else if (character == JsonConstants.Comma)
+                else if (character == JsonConstantsBytes.Comma)
                 {
                     continue;
                 }
-                else if (character == JsonConstants.CloseSquareBrackets)
+                else if (character == JsonConstantsBytes.CloseSquareBrackets)
                 {
                     break;
                 }
-                else if (character == JsonConstants.Quotes)
+                else if (character == JsonConstantsBytes.Quotes)
                 {
                     var value = json.ExtractString();
                     typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
@@ -105,9 +105,9 @@ namespace JsonGo.Deserialize
             {
                 //read tp uneascape char
                 var character = json.Read();
-                if (character == JsonConstants.Comma)
+                if (character == JsonConstantsBytes.Comma)
                     continue;
-                else if (character == JsonConstants.CloseBracket)
+                else if (character == JsonConstantsBytes.CloseBracket)
                 {
                     break;
                 }
@@ -131,11 +131,11 @@ namespace JsonGo.Deserialize
                     else
                         propertyGo.SetValue(deserializer, instance, propertyInstance);
                 }
-                else if (propertyname == JsonConstants.ValuesRefrencedTypeNameNoQuotes)
+                else if (propertyname == JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes)
                 {
                     Extract(deserializer, typeGo, ref instance, null, ref json);
                 }
-                else if (propertyname == JsonConstants.RefRefrencedTypeNameNoQuotes)
+                else if (propertyname == JsonConstantsBytes.RefRefrencedTypeNameNoQuotes)
                 {
                     object propertyInstance = null;
                     var value = Extract(deserializer, null, ref propertyInstance, null, ref json);

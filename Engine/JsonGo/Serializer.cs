@@ -19,8 +19,10 @@ namespace JsonGo
         {
             SingleIntance = new Serializer(true);
         }
+
         public Serializer() : this(true)
         {
+
         }
 
         public Serializer(bool generateReference)
@@ -55,11 +57,11 @@ namespace JsonGo
         /// <summary>
         /// save serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>
-        public Dictionary<object, int> SerializedObjects { get; set; } = new Dictionary<object, int>();
+        public Dictionary<object, int> SerializedObjects { get; set; }
         /// <summary>
         /// default setting of serializer
         /// </summary>
-        public JsonSettingInfo Setting { get; set; } = new JsonSettingInfo();
+        public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
 
         /// <summary>
         /// start of referenced index
@@ -73,20 +75,17 @@ namespace JsonGo
         /// serialize object function
         /// </summary>
         public FunctionTypeGo SerializeFunction { get; set; }
-        /// <summary>
-        /// serialize array function
-        /// </summary>
-        //public FunctionTypeGo SerializeArrayFunction { get; set; }
 
         /// <summary>
         /// string builder of json serialization
         /// </summary>
-        //public StringBuilder Builder { get; set; } = new StringBuilder(256);
         public StringBuilder Writer { get; set; }
-
+        /// <summary>
+        /// remove last cama from serialization
+        /// </summary>
         public void RemoveLastCama()
         {
-            if (Writer[Writer.Length - 1] == JsonSettingInfo.Comma)
+            if (Writer[Writer.Length - 1] == JsonConstantsString.Comma)
                 Writer.Length--;
         }
 
@@ -99,20 +98,21 @@ namespace JsonGo
         {
             Writer = new StringBuilder(256);
             ReferencedIndex = 0;
-            SerializedObjects.Clear();
+            SerializedObjects = new Dictionary<object, int>();
             SerializeObject(ref data, out TypeGoInfo typeGo);
             if (typeGo.IsNoQuotesValueType)
             {
-                Writer.Insert(0, JsonConstants.Quotes);
-                Writer.Append(JsonConstants.Quotes);
+                Writer.Insert(0, JsonConstantsString.Quotes);
+                Writer.Append(JsonConstantsString.Quotes);
             }
             return Writer.ToString();
         }
 
+        #region CompileTimeSerialization
         public string SerializeCompile<T>(T data)
         {
             Writer = new StringBuilder(256);
-            SerializedObjects.Clear();
+            SerializedObjects = new Dictionary<object, int>();
             ReferencedIndex = 0;
             if (GetSerializer(out Action<Serializer, StringBuilder, T> serializer, ref data))
                 serializer(this, Writer, data);
@@ -144,7 +144,7 @@ namespace JsonGo
             }
             return true;
         }
-
+        #endregion
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
@@ -167,20 +167,20 @@ namespace JsonGo
         /// <returns>json that serialized</returns>
         internal void SerializeObject(ref object data, TypeGoInfo typeGoInfo)
         {
-            Writer.Append(JsonSettingInfo.OpenBraket);
+            Writer.Append(JsonConstantsString.OpenBraket);
             foreach (var property in typeGoInfo.SerializeProperties)
             {
                 object propertyValue = property.GetValue(this, data);
                 if (propertyValue == null || propertyValue.Equals(property.TypeGoInfo.DefaultValue))
                     continue;
-                Writer.Append(JsonSettingInfo.Quotes);
+                Writer.Append(JsonConstantsString.Quotes);
                 Writer.Append(property.Name);
-                Writer.Append(JsonSettingInfo.QuotesColon);
+                Writer.Append(JsonConstantsString.QuotesColon);
                 property.TypeGoInfo.Serialize(this, Writer, ref propertyValue);
-                Writer.Append(JsonSettingInfo.Comma);
+                Writer.Append(JsonConstantsString.Comma);
             }
             RemoveLastCama();
-            Writer.Append(JsonSettingInfo.CloseBracket);
+            Writer.Append(JsonConstantsString.CloseBracket);
         }
     }
 }

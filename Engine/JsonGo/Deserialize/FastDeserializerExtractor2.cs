@@ -37,23 +37,23 @@ namespace JsonGo.Deserialize
                 goto ExtractEmpty;
             else
             {
-                if (character == JsonConstants.Comma)
+                if (character == JsonConstantsBytes.Comma)
                 {
                     goto ExtractEmpty;
                 }
-                else if (character == JsonConstants.Colon)
+                else if (character == JsonConstantsBytes.Colon)
                 {
                     goto ExtractEmpty;
                 }
-                else if (character == JsonConstants.OpenBraket)
+                else if (character == JsonConstantsBytes.OpenBraket)
                 {
                     goto CreateObject;
                 }
-                else if (character == JsonConstants.OpenSquareBrackets)
+                else if (character == JsonConstantsBytes.OpenSquareBrackets)
                 {
 
                 }
-                else if (character == JsonConstants.Quotes)
+                else if (character == JsonConstantsBytes.Quotes)
                 {
                     goto ExtractString;
                 }
@@ -78,7 +78,7 @@ namespace JsonGo.Deserialize
             {
                 index++;
                 character = _buffer[index];
-                if (character == JsonConstants.Quotes)
+                if (character == JsonConstantsBytes.Quotes)
                 {
                     if (canSkip)
                     {
@@ -89,7 +89,7 @@ namespace JsonGo.Deserialize
                         break;
                     }
                 }
-                else if (character == JsonConstants.BackSlash)
+                else if (character == JsonConstantsBytes.BackSlash)
                     canSkip = true;
                 endIndex = index;
                 //stringBuilder.Append((char)character);
@@ -106,7 +106,7 @@ namespace JsonGo.Deserialize
             {
                 index++;
                 character = _buffer[index];
-                if (character == JsonConstants.Space || character == JsonConstants.Comma || character == JsonConstants.CloseBracket || character == JsonConstants.CloseSquareBrackets)
+                if (character == JsonConstantsBytes.Space || character == JsonConstantsBytes.Comma || character == JsonConstantsBytes.CloseBracket || character == JsonConstantsBytes.CloseSquareBrackets)
                 {
                     break;
                 }

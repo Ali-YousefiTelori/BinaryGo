@@ -37,7 +37,7 @@ namespace JsonGoTest
                 Id = 1,
             };
             var result = JsonGo.Serializer.SingleIntance.Serialize(userInfo);
-            var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":False,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
+            var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":false,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.IsTrue(result == equalData);
             var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(result);
             Assert.IsTrue(deserialized.IsEquals(userInfo));

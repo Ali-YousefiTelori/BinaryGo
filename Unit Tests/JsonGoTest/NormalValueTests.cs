@@ -122,7 +122,7 @@ namespace JsonGoTest
         {
             bool value = true;
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
-            Assert.IsTrue(result == $"\"{value}\"");
+            Assert.IsTrue(result == $"\"{value.ToString().ToLower()}\"");
             Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<bool>(result) == value);
         }
         [Test]
