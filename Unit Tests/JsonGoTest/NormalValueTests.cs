@@ -160,11 +160,22 @@ namespace JsonGoTest
             Assert.IsTrue(JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<byte[]>(result).SequenceEqual(value));
 
         }
+
         [Test]
         public void IntArrayTest()
         {
             int[] value = new int[] { 5, 10, 95, 32 };
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == "[5,10,95,32]");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<int[]>(result);
+            Assert.IsTrue(data.SequenceEqual(value));
+        }
+        [Test]
+        public void IntArrayValueReferenceTest()
+        {
+            int[] value = new int[] { 5, 10, 95, 32 };
+            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            var result = serializer.Serialize(value);
             Assert.IsTrue(result == "{\"$id\":1,\"$values\":[5,10,95,32]}");
             var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<int[]>(result);
             Assert.IsTrue(data.SequenceEqual(value));
@@ -175,6 +186,17 @@ namespace JsonGoTest
         {
             string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
             var result = JsonGo.Serializer.SingleIntance.Serialize(value);
+            Assert.IsTrue(result == "[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string[]>(result);
+            Assert.IsTrue(data.SequenceEqual(value));
+        }
+
+        [Test]
+        public void StringArrayReferenceTest()
+        {
+            string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
+            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            var result = serializer.Serialize(value);
             Assert.IsTrue(result == "{\"$id\":1,\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}");
             var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string[]>(result);
             Assert.IsTrue(data.SequenceEqual(value));
@@ -188,6 +210,18 @@ namespace JsonGoTest
             Assert.IsTrue(result == "\"salam\\\"\\\"ddv sdd {} [] \\\"\"");
             var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string>(result);
             Assert.IsTrue(value == data);
+        }
+
+        [Test]
+        public void StringWithLineTest()
+        {
+            string line = @"test hello: ""my name is
+ali
+then yousefi"" so we are good now""";
+            var result = JsonGo.Serializer.SingleIntance.Serialize(line);
+            Assert.IsTrue(result == "\"test hello: \\\"my name is\\r\\nali\\r\\nthen yousefi\\\" so we are good now\\\"\"");
+            var data = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<string>(result);
+            Assert.IsTrue(data == line);
         }
         #endregion
     }

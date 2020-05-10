@@ -61,12 +61,47 @@ namespace JsonGoCoreConsoleTest
                 Console.WriteLine("2) Loop Reference Samples");
                 Console.WriteLine("3) Normal Deserialize Samples");
 
+                Console.WriteLine("Select Manual Option:");
+                Console.WriteLine("4) Simple Normal Serialize Samples");
+                Console.WriteLine("5) Complex Normal Serialize Samples");
+                Console.WriteLine("6) Array Normal Serialize Samples");
+                Console.WriteLine("7) Simple Loop Reference Samples");
+                Console.WriteLine("8) Complex Loop Reference Samples");
+                Console.WriteLine("9) Array Loop Reference Samples");
+                Console.WriteLine("10) Normal Deserialize Samples");
+
                 var read = Console.ReadLine();
                 if (read == "1")
                     BenchmarkRunner.Run<NormalSerializeSamples>();
                 else if (read == "2")
                     BenchmarkRunner.Run<LoopReferenceSamples>();
                 else if (read == "3")
+                    BenchmarkRunner.Run<NormalDeserializeSamples>();
+                else if (read == "4")
+                {
+                    NormalSerializeSamples.RunSimple();
+                }
+                else if (read == "5")
+                {
+                    NormalSerializeSamples.RunComplex();
+                }
+                else if (read == "6")
+                {
+                    NormalSerializeSamples.RunArray();
+                }
+                else if (read == "7")
+                {
+                    LoopReferenceSamples.RunSimple();
+                }
+                else if (read == "8")
+                {
+                    LoopReferenceSamples.RunComplex();
+                }
+                else if (read == "9")
+                {
+                    LoopReferenceSamples.RunArray();
+                }
+                else if (read == "10")
                     BenchmarkRunner.Run<NormalDeserializeSamples>();
                 else
                     Console.WriteLine($"not support {read}");

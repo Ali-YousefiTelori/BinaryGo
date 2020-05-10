@@ -9,9 +9,9 @@ namespace JsonGo.Deserialize
     public ref struct JsonSpanReader
     {
         //static byte[] SupportedValue { get; set; } = "0123456789.truefalsTRUEFALS-n".Select(x => (byte)x).ToArray();
-        static HashSet<byte> UnSupportedValue { get; set; } = new HashSet<byte>(" ,\r\n\t".Select(x => (byte)x));
-        static HashSet<byte> EndsValue { get; set; } = new HashSet<byte>("}]".Select(x => (byte)x));
-        static HashSet<byte> SkipValues { get; set; } = new HashSet<byte>(" \r\n\t".Select(x => (byte)x));
+        static HashSet<char> UnSupportedValue { get; set; } = new HashSet<char>(" ,\r\n\t");
+        static HashSet<char> EndsValue { get; set; } = new HashSet<char>("}]");
+        static HashSet<char> SkipValues { get; set; } = new HashSet<char>(" \r\n\t");
 
         #region white space
         //static byte BSpace { get; set; } = (byte)'\b';
@@ -31,12 +31,12 @@ namespace JsonGo.Deserialize
         }
         private int _Length;
 
-        public ReadOnlySpan<byte> _buffer;
+        public ReadOnlySpan<char> _buffer;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="buffer"></param>
-        public JsonSpanReader(ReadOnlySpan<byte> buffer) : this()
+        public JsonSpanReader(ReadOnlySpan<char> buffer) : this()
         {
             _buffer = buffer;
             _Index = -1;
@@ -45,7 +45,7 @@ namespace JsonGo.Deserialize
 
         private int _Index;
 
-        public byte Read()
+        public char Read()
         {
             //ReadOnlySpan<char> readOnlySpan = _buffer.Slice(_Index + 1, Length - _Index);
             //for (; _Index < readOnlySpan.Length; _Index++)
@@ -83,12 +83,12 @@ namespace JsonGo.Deserialize
         }
 
 
-        public ReadOnlySpan<byte> ExtractString()
+        public ReadOnlySpan<char> ExtractString()
         {
-            byte[] result = new byte[10];
+            char[] result = new char[10];
             var max = result.Length - 1;
             int writeIndex = 0;
-            ReadOnlySpan<byte> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
+            ReadOnlySpan<char> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
             for (int i = 0; i < readOnlySpan.Length - 1; i++)
             {
                 if (i >= max)
@@ -106,13 +106,13 @@ namespace JsonGo.Deserialize
                     continue;
                 else if (readOnlySpan[i] == JsonConstantsBytes.BackSlash && readOnlySpan[i + 1] == JsonConstantsBytes.RNewLine)
                 {
-                    result[writeIndex] = (byte)'\r';
+                    result[writeIndex] = '\r';
                     i++;
                     writeIndex++;
                 }
                 else if (readOnlySpan[i] == JsonConstantsBytes.BackSlash && readOnlySpan[i + 1] == JsonConstantsBytes.NNewLine)
                 {
-                    result[writeIndex] = (byte)'\n';
+                    result[writeIndex] = '\n';
                     i++;
                     writeIndex++;
                 }
@@ -185,9 +185,9 @@ namespace JsonGo.Deserialize
         /// Extract string with quotes
         /// </summary>
         /// <returns></returns>
-        public ReadOnlySpan<byte> ExtractStringQuotes()
+        public ReadOnlySpan<char> ExtractStringQuotes()
         {
-            ReadOnlySpan<byte> readOnlySpan = _buffer.Slice(_Index, _Length - _Index);
+            ReadOnlySpan<char> readOnlySpan = _buffer.Slice(_Index, _Length - _Index);
 
             for (int i = 1; i < readOnlySpan.Length; i++)
             {
@@ -205,7 +205,7 @@ namespace JsonGo.Deserialize
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
-        public ReadOnlySpan<byte> ExtractValue()
+        public ReadOnlySpan<char> ExtractValue()
         {
             //StringBuilder builder = new StringBuilder();
             //foreach (var item in _buffer.Slice(_Index + 1, Length - _Index))
@@ -230,7 +230,7 @@ namespace JsonGo.Deserialize
             }
             return _buffer.Slice(start, _Index - start);
         }
-        public ReadOnlySpan<byte> ExtractKey()
+        public ReadOnlySpan<char> ExtractKey()
         {
             Read();
             //StringBuilder builder = new StringBuilder();

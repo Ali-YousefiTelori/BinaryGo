@@ -17,7 +17,7 @@ namespace JsonGo.Deserialize
         /// <param name="json">json value</param>
         /// <param name="createInstance">index of start string</param>
         /// <returns>value deserialized</returns>
-        internal static ReadOnlySpan<byte> Extract(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
+        internal static ReadOnlySpan<char> Extract(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
         {
             var character = json.Read();
             if (character == JsonConstantsBytes.Quotes)
@@ -114,7 +114,7 @@ namespace JsonGo.Deserialize
                 var key = json.ExtractKey();
                 //read to uneascape char
                 json.Read();
-                var propertyname = TextHelper.SpanToString(key);
+                var propertyname = new string(key.ToArray());
                 if (typeGo.Properties.TryGetValue(propertyname, out PropertyGoInfo propertyGo))
                 {
                     if (instance == null && typeGo.CreateInstance != null)
@@ -140,7 +140,7 @@ namespace JsonGo.Deserialize
                     object propertyInstance = null;
                     var value = Extract(deserializer, null, ref propertyInstance, null, ref json);
 
-                    var type = TypeGoInfo.Generate(typeof(int));
+                    var type = TypeGoInfo.Generate(typeof(int), deserializer);
                     var result = (int)type.Deserialize(deserializer, value);
                     deserializer.DeSerializedObjects.TryGetValue(result, out instance);
                 }

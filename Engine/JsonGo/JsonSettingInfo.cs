@@ -1,4 +1,6 @@
-﻿namespace JsonGo
+﻿using System;
+
+namespace JsonGo
 {
     /// <summary>
     /// default setting of json serialize and deserialier
