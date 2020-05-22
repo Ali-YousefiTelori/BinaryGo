@@ -34,52 +34,38 @@ namespace JsonGo
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
         public SerializeHandler SerializeHandler { get; set; } = new SerializeHandler();
         internal JsonOptionInfo Options { get; set; }
-        public Serializer() : this(null)
+        public Serializer()
         {
-
-        }
-
-        public Serializer(JsonOptionInfo jsonOptionInfo)
-        {
-            Initialize(ref jsonOptionInfo);
-            HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
-            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
-            //if (generateReference)
-            //{
-            //    SerializeFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
-            //    {
-            //        SerializeFunctionWithReference(typeGoInfo, ref dataRef);
-            //    };
-            //    SerializeArrayFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
-            //    {
-            //        SerializeArrayFunctionWithReference(typeGoInfo, ref dataRef);
-            //    };
-            //}
-            //else
-            //{
-            SerializeFunction = (TypeGoInfo typeGoInfo, SerializeHandler handler, ref object dataRef) =>
-            {
-                SerializeObject(ref dataRef, typeGoInfo);
-                //SerializeFunctionWithoutReference(typeGoInfo, ref dataRef);
-            };
-            //SerializeArrayFunction = (TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder, ref object dataRef) =>
-            //{
-            //    SerializeArray((IEnumerable)dataRef);
-            //    //SerializeArrayFunctionWithoutReference(typeGoInfo, ref dataRef);
-            //};
-            //}
-        }
-
-        void Initialize(ref JsonOptionInfo jsonOptionInfo)
-        {
-            if (jsonOptionInfo == null)
-                jsonOptionInfo = Options = DefaultOptions;
-            else
-                Options = jsonOptionInfo;
+            Options = DefaultOptions;
 
             AddTypes = Options.Types.Add;
             TryGetValueOfTypeGo = Options.Types.TryGetValue;
             SerializeHandler.Serializer = this;
+
+            HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
+            Setting.HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
+
+            SerializeFunction = (TypeGoInfo typeGoInfo, SerializeHandler handler, ref object dataRef) =>
+            {
+                SerializeObject(ref dataRef, typeGoInfo);
+            };
+        }
+
+        public Serializer(JsonOptionInfo jsonOptionInfo)
+        {
+            Options = jsonOptionInfo;
+
+            AddTypes = Options.Types.Add;
+            TryGetValueOfTypeGo = Options.Types.TryGetValue;
+            SerializeHandler.Serializer = this;
+
+            HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
+            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
+
+            SerializeFunction = (TypeGoInfo typeGoInfo, SerializeHandler handler, ref object dataRef) =>
+            {
+                SerializeObject(ref dataRef, typeGoInfo);
+            };
         }
 
         /// <summary>

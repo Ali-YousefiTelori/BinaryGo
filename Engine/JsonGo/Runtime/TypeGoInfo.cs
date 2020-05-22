@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace JsonGo.Runtime
@@ -16,9 +18,10 @@ namespace JsonGo.Runtime
     /// <summary>
     /// function for serialize object
     /// </summary>
+    /// <param name="handler"></param>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>
-    public delegate void FunctionGo(SerializeHandler handler, ref object data);
+    public delegate void JsonFunctionGo(SerializeHandler handler, ref object data);
     /// <summary>
     /// function for serialize object
     /// </summary>
@@ -61,7 +64,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// serialize action
         /// </summary>
-        public FunctionGo Serialize { get; set; }
+        public JsonFunctionGo Serialize { get; set; }
         /// <summary>
         /// deserialize string to object
         /// </summary>
@@ -133,7 +136,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    var text = new string(x.ToArray());
+                    var text = new string(x);
                     if (DateTime.TryParse(text, out DateTime value))
                         return value;
                     return default(DateTime);
@@ -148,7 +151,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (uint.TryParse(new string(x.ToArray()), out uint value))
+                    if (uint.TryParse(new string(x), out uint value))
                         return value;
                     return default(uint);
                 };
@@ -162,7 +165,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (long.TryParse(new string(x.ToArray()), out long value))
+                    if (long.TryParse(new string(x), out long value))
                         return value;
                     return default(long);
                 };
@@ -176,7 +179,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (short.TryParse(new string(x.ToArray()), out short value))
+                    if (short.TryParse(new string(x), out short value))
                         return value;
                     return default(short);
                 };
@@ -190,7 +193,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (byte.TryParse(new string(x.ToArray()), out byte value))
+                    if (byte.TryParse(new string(x), out byte value))
                         return value;
                     return default(byte);
                 };
@@ -204,7 +207,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (double.TryParse(new string(x.ToArray()), out double value))
+                    if (double.TryParse(new string(x), out double value))
                         return value;
                     return default(double);
                 };
@@ -218,7 +221,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (float.TryParse(new string(x.ToArray()), out float value))
+                    if (float.TryParse(new string(x), out float value))
                         return value;
                     return default(float);
                 };
@@ -232,7 +235,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (decimal.TryParse(new string(x.ToArray()), out decimal value))
+                    if (decimal.TryParse(new string(x), out decimal value))
                         return value;
                     return default(decimal);
                 };
@@ -246,7 +249,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (sbyte.TryParse(new string(x.ToArray()), out sbyte value))
+                    if (sbyte.TryParse(new string(x), out sbyte value))
                         return value;
                     return default(sbyte);
                 };
@@ -260,7 +263,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (ulong.TryParse(new string(x.ToArray()), out ulong value))
+                    if (ulong.TryParse(new string(x), out ulong value))
                         return value;
                     return default(ulong);
                 };
@@ -277,7 +280,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (bool.TryParse(new string(x.ToArray()), out bool value))
+                    if (bool.TryParse(new string(x), out bool value))
                         return value;
                     return default(bool);
                 };
@@ -291,7 +294,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (ushort.TryParse(new string(x.ToArray()), out ushort value))
+                    if (ushort.TryParse(new string(x), out ushort value))
                         return value;
                     return default(ushort);
                 };
@@ -305,7 +308,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    if (int.TryParse(new string(x.ToArray()), out int value))
+                    if (int.TryParse(new string(x), out int value))
                         return value;
                     return default(int);
                 };
@@ -319,7 +322,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    return Convert.FromBase64String(new string(x.ToArray()));
+                    return Convert.FromBase64String(new string(x));
                 };
                 typeGoInfo.DefaultValue = default(byte[]);
             }
@@ -334,7 +337,7 @@ namespace JsonGo.Runtime
                 };
                 typeGoInfo.Deserialize = (deserializer, x) =>
                 {
-                    return new string(x.ToArray());
+                    return new string(x);
                 };
                 typeGoInfo.DefaultValue = default(string);
             }
@@ -349,7 +352,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (uint.TryParse(new string(x.ToArray()), out uint value))
+                        if (uint.TryParse(new string(x), out uint value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -362,7 +365,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (long.TryParse(new string(x.ToArray()), out long value))
+                        if (long.TryParse(new string(x), out long value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -375,7 +378,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (short.TryParse(new string(x.ToArray()), out short value))
+                        if (short.TryParse(new string(x), out short value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -388,7 +391,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (byte.TryParse(new string(x.ToArray()), out byte value))
+                        if (byte.TryParse(new string(x), out byte value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -401,7 +404,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (double.TryParse(new string(x.ToArray()), out double value))
+                        if (double.TryParse(new string(x), out double value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -414,7 +417,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (float.TryParse(new string(x.ToArray()), out float value))
+                        if (float.TryParse(new string(x), out float value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -427,7 +430,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (decimal.TryParse(new string(x.ToArray()), out decimal value))
+                        if (decimal.TryParse(new string(x), out decimal value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -440,7 +443,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (sbyte.TryParse(new string(x.ToArray()), out sbyte value))
+                        if (sbyte.TryParse(new string(x), out sbyte value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -453,7 +456,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (ulong.TryParse(new string(x.ToArray()), out ulong value))
+                        if (ulong.TryParse(new string(x), out ulong value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -466,7 +469,7 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (ushort.TryParse(new string(x.ToArray()), out ushort value))
+                        if (ushort.TryParse(new string(x), out ushort value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
@@ -479,13 +482,13 @@ namespace JsonGo.Runtime
                     };
                     typeGoInfo.Deserialize = (deserializer, x) =>
                     {
-                        if (int.TryParse(new string(x.ToArray()), out int value))
+                        if (int.TryParse(new string(x), out int value))
                             return Enum.ToObject(baseType, value);
                         return Enum.ToObject(baseType, 0);
                     };
                 }
 
-                typeGoInfo.DefaultValue = Activator.CreateInstance(baseType);
+                typeGoInfo.DefaultValue = GetActivator(baseType);
             }
             else if (typeof(IEnumerable).IsAssignableFrom(baseType))
             {
@@ -573,7 +576,7 @@ namespace JsonGo.Runtime
                         typeGoInfoProperty = Generate(elementType, options);
                     }
                     typeGoInfo.Generics.Add(typeGoInfoProperty);
-                    typeGoInfo.CreateInstance = () => Activator.CreateInstance(newType);
+                    typeGoInfo.CreateInstance = GetActivator(newType);
                     var castMethod = typeof(TypeGoInfo).GetMethod("GetArray", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(elementType);
                     typeGoInfo.Cast = (obj) => castMethod.Invoke(null, new object[] { obj });
                     var method = newType.GetMethod("Add");
@@ -581,7 +584,7 @@ namespace JsonGo.Runtime
                 }
                 else
                 {
-                    typeGoInfo.CreateInstance = () => Activator.CreateInstance(baseType);
+                    typeGoInfo.CreateInstance = GetActivator(baseType);
                     var method = baseType.GetMethod("Add");
                     typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
                 }
@@ -651,7 +654,7 @@ namespace JsonGo.Runtime
                         }
                     };
                 }
-                
+
                 foreach (var property in baseType.GetProperties())
                 {
                     if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0)
@@ -726,7 +729,7 @@ namespace JsonGo.Runtime
                     };
                 }
 
-                typeGoInfo.CreateInstance = () => Activator.CreateInstance(baseType);
+                typeGoInfo.CreateInstance = GetActivator(baseType);
                 typeGoInfo.DefaultValue = null;
             }
             if (isNullable)
@@ -810,6 +813,47 @@ namespace JsonGo.Runtime
             Array.Copy(iList.ToArray(), 0, result, 0, result.Length);
             return result;
         }
+
+        /// <summary>
+        /// object create instance
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Func<object> GetActivator(Type type)
+        {
+            ConstructorInfo emptyConstructor = type.GetConstructor(Type.EmptyTypes);
+            if (emptyConstructor == null)
+            {
+                return new Func<object>(() => null);
+            }
+            //make a NewExpression that calls the
+            //ctor with the args we just created
+            NewExpression newExp = Expression.New(emptyConstructor);
+
+            //create a lambda with the New
+            //Expression as body and our param object[] as arg
+            LambdaExpression lambda =
+                Expression.Lambda(typeof(Func<object>), newExp);
+
+            //compile it
+            Func<object> compiled = (Func<object>)lambda.Compile();
+            return compiled;
+        }
+
+        //public static Func<object> GetActivator(Type type)
+        //{
+        //    ConstructorInfo emptyConstructor = type.GetConstructor(Type.EmptyTypes);
+        //    if (emptyConstructor == null)
+        //    {
+        //        return new Func<object>(() => null);
+        //    }
+        //    var dynamicMethod = new DynamicMethod("CreateInstance", type, Type.EmptyTypes, true);
+        //    ILGenerator ilGenerator = dynamicMethod.GetILGenerator();
+        //    ilGenerator.Emit(OpCodes.Nop);
+        //    ilGenerator.Emit(OpCodes.Newobj, emptyConstructor);
+        //    ilGenerator.Emit(OpCodes.Ret);
+        //    return (Func<object>)dynamicMethod.CreateDelegate(typeof(Func<object>));
+        //}
     }
 
     public interface IPropertyCallerInfo

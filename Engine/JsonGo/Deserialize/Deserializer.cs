@@ -10,7 +10,7 @@ using System.Text;
 namespace JsonGo.Deserialize
 {
     //delegate void FastExtractFunction(TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref ReadOnlySpan<byte> _buffer);
-    delegate ReadOnlySpan<char> FastExtractFunction(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader _buffer);
+    delegate object FastExtractFunction(Deserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
 
     /// <summary>
     /// deserializer of json
@@ -24,7 +24,7 @@ namespace JsonGo.Deserialize
             SingleIntance = new Deserializer();
             //ExtractFunction = DeserializerExtractor.Extract;
             //FastExtractFunction = FastDeserializerExtractor2.Extract;
-            FastExtractFunction = FastDeserializerExtractor.Extract;
+            FastExtractFunction = FastDeserializerExtractor3.Extract;
         }
         public Deserializer()
         {
@@ -79,14 +79,9 @@ namespace JsonGo.Deserialize
                 {
                     typeGoInfo = TypeGoInfo.Generate(dataType, this);
                 }
-                object instance = null;
                 var reader = new JsonSpanReader(json.AsSpan());
-                var result = FastExtractFunction(this, typeGoInfo, ref instance, typeGoInfo.CreateInstance, ref reader);
-                if (instance == null)
-                    instance = typeGoInfo.Deserialize(this, result);
-                if (typeGoInfo.Cast != null)
-                    return (T)typeGoInfo.Cast(instance);
-                return (T)instance;
+                var result = FastExtractFunction(this, typeGoInfo, ref reader);
+                return (T)result;
             }
             finally
             {

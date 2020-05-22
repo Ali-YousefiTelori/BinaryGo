@@ -39,7 +39,7 @@ namespace JsonGoPerformance
         public void JsonGo_RunSimpleSample()
         {
             Deserializer deserializer = new Deserializer();
-            var result = deserializer.Deserialize<UserInfo>(NormalSample);
+            var result = deserializer.Deserialize<SimpleUserInfo>(NormalSample);
         }
 
         [Benchmark]
@@ -59,7 +59,7 @@ namespace JsonGoPerformance
         [Benchmark]
         public void JsonNet_RunSimpleSample()
         {
-            JsonConvert.DeserializeObject<UserInfo>(NormalSample, new JsonSerializerSettings()
+            JsonConvert.DeserializeObject<SimpleUserInfo>(NormalSample, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             });
@@ -87,7 +87,7 @@ namespace JsonGoPerformance
         [Benchmark]
         public void JsonText_RunSimpleSample()
         {
-            System.Text.Json.JsonSerializer.Deserialize<UserInfo>(NormalSample);
+            System.Text.Json.JsonSerializer.Deserialize<SimpleUserInfo>(NormalSample);
         }
 
         [Benchmark]
@@ -129,7 +129,10 @@ namespace JsonGoPerformance
             stopwatch.Start();
             for (int i = 0; i < count; i++)
             {
-                JsonNet_RunSimpleSample();
+                JsonConvert.DeserializeObject<SimpleUserInfo>(NormalSample, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
             }
             stopwatch.Stop();
             double JsonNetRes = stopwatch.ElapsedTicks;
@@ -143,21 +146,22 @@ namespace JsonGoPerformance
             stopwatch.Start();
             for (int i = 0; i < count; i++)
             {
-                JsonText_RunSimpleSample();
+                System.Text.Json.JsonSerializer.Deserialize<SimpleUserInfo>(NormalSample);
             }
             stopwatch.Stop();
             double MicrosoftJsonRes = stopwatch.ElapsedTicks;
 
             Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
             stopwatch = new Stopwatch();
-            Serializer serializer = new Serializer();
+            Deserializer deserializer = new Deserializer();
+            deserializer.Deserialize<SimpleUserInfo>(NormalSample);
 
             Console.WriteLine("******* JsonGo *****");
             Console.WriteLine($"Count {count}");
             stopwatch.Start();
             for (int i = 0; i < count; i++)
             {
-                JsonGo_RunSimpleSample();
+                deserializer.Deserialize<SimpleUserInfo>(NormalSample);
             }
             stopwatch.Stop();
             double JsonGoRes = stopwatch.ElapsedTicks;

@@ -102,7 +102,7 @@ namespace JsonGoCoreConsoleTest
                     LoopReferenceSamples.RunArray();
                 }
                 else if (read == "10")
-                    BenchmarkRunner.Run<NormalDeserializeSamples>();
+                    new NormalDeserializeSamples().RunDeserialize(100000);
                 else
                     Console.WriteLine($"not support {read}");
             }
