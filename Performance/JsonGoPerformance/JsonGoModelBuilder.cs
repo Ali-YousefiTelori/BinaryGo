@@ -1,5 +1,6 @@
 ﻿using JsonGo;
 using JsonGo.CompileTime;
+using JsonGo.Json;
 using JsonGoPerformance.Models;
 using System;
 using System.Collections.Generic;

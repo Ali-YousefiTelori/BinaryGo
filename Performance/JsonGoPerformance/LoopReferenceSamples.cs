@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using JsonGo;
+using JsonGo.Json;
 using JsonGoPerformance.Models;
 using Newtonsoft.Json;
 using System;
@@ -184,7 +185,7 @@ namespace JsonGoPerformance
             InitializeChaches(normalSamples.GetComplexObjectSample());
         }
 
-        static Serializer JsonGoSerializer { get; set; } = new Serializer(new JsonGo.JsonOptionInfo());
+        static Serializer JsonGoSerializer { get; set; } = new Serializer(new JsonGo.Json.JsonOptionInfo());
 
         [Benchmark]
         public void RunLoopSimpleSampleJsonGo()

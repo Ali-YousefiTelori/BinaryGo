@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonGo
+namespace JsonGo.Json
 {
     /// <summary>
     /// default setting of json serialize and deserialier

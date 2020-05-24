@@ -1,4 +1,5 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.Json;
+using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,12 @@ namespace JsonGo.Deserialize
         /// <param name="typeGo"></param>
         /// <param name="json">json value</param>
         /// <returns>value deserialized</returns>
-        internal static object Extract(Deserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
+        internal static object Extract(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
         {
             var character = json.Read();
             if (character == JsonConstantsBytes.Quotes)
             {
-                return typeGo.Deserialize(deserializer, json.ExtractString());
+                return typeGo.JsonDeserialize(deserializer, json.ExtractString());
             }
             else if (character == JsonConstantsBytes.OpenBraket)
             {
@@ -33,12 +34,12 @@ namespace JsonGo.Deserialize
             }
             else
             {
-                if (typeGo == null || typeGo.Deserialize == null )
+                if (typeGo == null || typeGo.JsonDeserialize == null )
                 {
                     json.ExtractValue();
                     return null;
                 }
-                return typeGo.Deserialize(deserializer, json.ExtractValue());
+                return typeGo.JsonDeserialize(deserializer, json.ExtractValue());
             }
         }
 
@@ -92,7 +93,7 @@ namespace JsonGo.Deserialize
         /// <param name="json"></param>
         /// <param name="indexOf"></param>
         /// <returns></returns>
-        static object ExtractOject(Deserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
+        static object ExtractOject(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
         {
             var instance = typeGo.CreateInstance();
             while (!json.IsFinished)
@@ -110,7 +111,7 @@ namespace JsonGo.Deserialize
                 if (typeGo.Properties.TryGetValue(propertyname, out PropertyGoInfo propertyGo))
                 {
                     var value = Extract(deserializer, propertyGo.TypeGoInfo, ref json);
-                    propertyGo.SetValue(deserializer, instance, value);
+                    propertyGo.JsonSetValue(deserializer, instance, value);
                 }
                 //else if (propertyname == JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes)
                 //{

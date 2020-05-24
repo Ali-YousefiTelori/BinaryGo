@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGo
+namespace JsonGo.Json
 {
     public delegate bool TryGetValue<TKey, TResult>(TKey key, out TResult result);
     /// <summary>

@@ -1,6 +1,10 @@
-﻿using JsonGo.DataTypes;
+﻿using JsonGo.Binary;
+using JsonGo.DataTypes;
 using JsonGo.Deserialize;
 using JsonGo.Helpers;
+using JsonGo.Interfaces;
+using JsonGo.Json;
+using JsonGo.Runtime.Variables;
 using System;
 using System.Buffers.Text;
 using System.Collections;
@@ -12,23 +16,32 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JsonGo.Runtime
 {
+    public delegate T RefFunc<T>(ReadOnlySpan<char> readOnlySpan);
     /// <summary>
     /// function for serialize object
     /// </summary>
     /// <param name="handler"></param>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>
-    public delegate void JsonFunctionGo(SerializeHandler handler, ref object data);
+    public delegate void JsonFunctionGo(JsonSerializeHandler handler, ref object data);
+    /// <summary>
+    /// binary serializer
+    /// </summary>
+    /// <param name="handler"></param>
+    /// <param name="data"></param>
+    public delegate void BinaryFunctionGo(Stream stream, ref object data);
     /// <summary>
     /// function for serialize object
     /// </summary>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder,
-    public delegate void FunctionTypeGo(TypeGoInfo typeGoInfo, SerializeHandler handler, ref object data);
-    public delegate object DeserializeFunc(Deserializer deserializer, ReadOnlySpan<char> data);
+    public delegate void JsonFunctionTypeGo(TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object data);
+    public delegate void BinaryFunctionTypeGo(TypeGoInfo typeGoInfo, Stream stream, ref object data);
+    public delegate object DeserializeFunc(JsonDeserializer deserializer, ReadOnlySpan<char> data);
 
     /// <summary>
     /// generate type details on memory
@@ -64,11 +77,15 @@ namespace JsonGo.Runtime
         /// <summary>
         /// serialize action
         /// </summary>
-        public JsonFunctionGo Serialize { get; set; }
+        public JsonFunctionGo JsonSerialize { get; set; }
+        /// <summary>
+        /// binary serialize
+        /// </summary>
+        public BinaryFunctionGo BinarySerialize { get; set; }
         /// <summary>
         /// deserialize string to object
         /// </summary>
-        public DeserializeFunc Deserialize { get; set; }
+        public DeserializeFunc JsonDeserialize { get; set; }
         /// <summary>
         /// create instance of type
         /// </summary>
@@ -102,8 +119,21 @@ namespace JsonGo.Runtime
         /// generic types
         /// </summary>
         public List<TypeGoInfo> Generics { get; set; } = new List<TypeGoInfo>();
+
         /// <summary>
-        /// 
+        /// initialize a variable to a typeGo
+        /// </summary>
+        /// <param name="serializationVariable"></param>
+        /// <param name="typeGoInfo"></param>
+        public static void InitializeVariable<T>(TypeGoInfo typeGoInfo) where T : ISerializationVariable, new()
+        {
+            T variable = new T();
+            variable.Initialize(typeGoInfo);
+        }
+
+        /// <summary>
+        /// initialize a typeGo for a runtime type
+        /// the typeGo make everything to use faster with near access
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -124,372 +154,42 @@ namespace JsonGo.Runtime
                 Properties = new Dictionary<string, PropertyGoInfo>(),
                 Type = type,
             };
-            options.AddTypes(type, typeGoInfo);
-            if (baseType == typeof(DateTime))
-            {
-                typeGoInfo.IsNoQuotesValueType = false;
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.AppendChar(JsonConstantsString.Quotes);
-                    handler.Append(((DateTime)data).ToString(CurrentCulture));
-                    handler.AppendChar(JsonConstantsString.Quotes);
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    var text = new string(x);
-                    if (DateTime.TryParse(text, out DateTime value))
-                        return value;
-                    return default(DateTime);
-                };
-                typeGoInfo.DefaultValue = default(DateTime);
-            }
-            else if (baseType == typeof(uint))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((uint)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (uint.TryParse(new string(x), out uint value))
-                        return value;
-                    return default(uint);
-                };
-                typeGoInfo.DefaultValue = default(uint);
-            }
-            else if (baseType == typeof(long))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((long)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (long.TryParse(new string(x), out long value))
-                        return value;
-                    return default(long);
-                };
-                typeGoInfo.DefaultValue = default(long);
-            }
-            else if (baseType == typeof(short))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((short)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (short.TryParse(new string(x), out short value))
-                        return value;
-                    return default(short);
-                };
-                typeGoInfo.DefaultValue = default(short);
-            }
-            else if (baseType == typeof(byte))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((byte)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (byte.TryParse(new string(x), out byte value))
-                        return value;
-                    return default(byte);
-                };
-                typeGoInfo.DefaultValue = default(byte);
-            }
-            else if (baseType == typeof(double))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((double)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (double.TryParse(new string(x), out double value))
-                        return value;
-                    return default(double);
-                };
-                typeGoInfo.DefaultValue = default(double);
-            }
-            else if (baseType == typeof(float))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((float)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (float.TryParse(new string(x), out float value))
-                        return value;
-                    return default(float);
-                };
-                typeGoInfo.DefaultValue = default(float);
-            }
-            else if (baseType == typeof(decimal))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((decimal)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (decimal.TryParse(new string(x), out decimal value))
-                        return value;
-                    return default(decimal);
-                };
-                typeGoInfo.DefaultValue = default(decimal);
-            }
-            else if (baseType == typeof(sbyte))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((sbyte)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (sbyte.TryParse(new string(x), out sbyte value))
-                        return value;
-                    return default(sbyte);
-                };
-                typeGoInfo.DefaultValue = default(sbyte);
-            }
-            else if (baseType == typeof(ulong))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((ulong)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (ulong.TryParse(new string(x), out ulong value))
-                        return value;
-                    return default(ulong);
-                };
-                typeGoInfo.DefaultValue = default(ulong);
-            }
-            else if (baseType == typeof(bool))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    if ((bool)data)
-                        handler.Append("true");
-                    else
-                        handler.Append("false");
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (bool.TryParse(new string(x), out bool value))
-                        return value;
-                    return default(bool);
-                };
-                typeGoInfo.DefaultValue = default(bool);
-            }
-            else if (baseType == typeof(ushort))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((ushort)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (ushort.TryParse(new string(x), out ushort value))
-                        return value;
-                    return default(ushort);
-                };
-                typeGoInfo.DefaultValue = default(ushort);
-            }
-            else if (baseType == typeof(int))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(((int)data).ToString(CurrentCulture));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    if (int.TryParse(new string(x), out int value))
-                        return value;
-                    return default(int);
-                };
-                typeGoInfo.DefaultValue = default(int);
-            }
-            else if (baseType == typeof(byte[]))
-            {
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.Append(Convert.ToBase64String((byte[])data));
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    return Convert.FromBase64String(new string(x));
-                };
-                typeGoInfo.DefaultValue = default(byte[]);
-            }
-            else if (baseType == typeof(string))
-            {
-                typeGoInfo.IsNoQuotesValueType = false;
-                typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                {
-                    handler.AppendChar(JsonConstantsString.Quotes);
-                    handler.Append(((string)data).Replace("\"", "\\\"").Replace("\r\n", "\\r\\n").Replace("\n", "\\n"));
-                    handler.AppendChar(JsonConstantsString.Quotes);
-                };
-                typeGoInfo.Deserialize = (deserializer, x) =>
-                {
-                    return new string(x);
-                };
-                typeGoInfo.DefaultValue = default(string);
-            }
-            else if (baseType.IsEnum)
-            {
-                var enumType = Enum.GetUnderlyingType(baseType);
-                if (enumType == typeof(uint))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToUInt32(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (uint.TryParse(new string(x), out uint value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(long))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToInt64(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (long.TryParse(new string(x), out long value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(short))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToInt16(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (short.TryParse(new string(x), out short value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(byte))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToByte(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (byte.TryParse(new string(x), out byte value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(double))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToDouble(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (double.TryParse(new string(x), out double value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(float))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToSingle(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (float.TryParse(new string(x), out float value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(decimal))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToDecimal(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (decimal.TryParse(new string(x), out decimal value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(sbyte))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToSByte(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (sbyte.TryParse(new string(x), out sbyte value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(ulong))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToUInt64(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (ulong.TryParse(new string(x), out ulong value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(ushort))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToUInt16(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (ushort.TryParse(new string(x), out ushort value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
-                else if (enumType == typeof(int))
-                {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
-                    {
-                        handler.Append(Convert.ToInt32(data).ToString(CurrentCulture));
-                    };
-                    typeGoInfo.Deserialize = (deserializer, x) =>
-                    {
-                        if (int.TryParse(new string(x), out int value))
-                            return Enum.ToObject(baseType, value);
-                        return Enum.ToObject(baseType, 0);
-                    };
-                }
 
-                typeGoInfo.DefaultValue = GetActivator(baseType);
-            }
+            options.AddTypes(type, typeGoInfo);
+
+            if (baseType == typeof(DateTime))
+                InitializeVariable<DateTimeVariable>(typeGoInfo);
+            else if (baseType == typeof(uint))
+                InitializeVariable<UIntVariable>(typeGoInfo);
+            else if (baseType == typeof(long))
+                InitializeVariable<LongVariable>(typeGoInfo);
+            else if (baseType == typeof(short))
+                InitializeVariable<ShortVariable>(typeGoInfo);
+            else if (baseType == typeof(byte))
+                InitializeVariable<ByteVariable>(typeGoInfo);
+            else if (baseType == typeof(double))
+                InitializeVariable<DoubleVariable>(typeGoInfo);
+            else if (baseType == typeof(float))
+                InitializeVariable<FloatVariable>(typeGoInfo);
+            else if (baseType == typeof(decimal))
+                InitializeVariable<DecimalVariable>(typeGoInfo);
+            else if (baseType == typeof(sbyte))
+                InitializeVariable<SByteVariable>(typeGoInfo);
+            else if (baseType == typeof(ulong))
+                InitializeVariable<ULongVariable>(typeGoInfo);
+            else if (baseType == typeof(bool))
+                InitializeVariable<BoolVariable>(typeGoInfo);
+            else if (baseType == typeof(ushort))
+                InitializeVariable<UShortVariable>(typeGoInfo);
+            else if (baseType == typeof(int))
+                InitializeVariable<IntVariable>(typeGoInfo);
+            else if (baseType == typeof(byte[]))
+                InitializeVariable<ByteArrayVariable>(typeGoInfo);
+            else if (baseType == typeof(string))
+                InitializeVariable<StringVariable>(typeGoInfo);
+            else if (baseType.IsEnum)
+                InitializeVariable<EnumVariable>(typeGoInfo);
+            //array data
             else if (typeof(IEnumerable).IsAssignableFrom(baseType))
             {
                 baseType = GenerateTypeFromInterface(baseType);
@@ -502,11 +202,11 @@ namespace JsonGo.Runtime
                         TypeGoInfo = Generate(typeof(int), options),
                         Type = typeof(int),
                         Name = JsonConstantsBytes.IdRefrencedTypeNameNoQuotes,
-                        SetValue = (serializer, instance, value) =>
+                        JsonSetValue = (serializer, instance, value) =>
                         {
                             serializer.DeSerializedObjects.Add((int)value, instance);
                         },
-                        GetValue = (handler, data) =>
+                        JsonGetValue = (handler, data) =>
                         {
                             if (!handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
                             {
@@ -527,7 +227,7 @@ namespace JsonGo.Runtime
                         TypeGoInfo = Generate(type, options),
                         Type = type,
                         Name = JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes,
-                        SetValue = (serializer, instance, value) =>
+                        JsonSetValue = (serializer, instance, value) =>
                         {
                             if (Generate(instance.GetType(), options) is TypeGoInfo typeGo)
                             {
@@ -537,7 +237,7 @@ namespace JsonGo.Runtime
                                 }
                             }
                         },
-                        GetValue = (handler, data) =>
+                        JsonGetValue = (handler, data) =>
                         {
                             if (data == null)
                                 return null;
@@ -549,7 +249,7 @@ namespace JsonGo.Runtime
                             foreach (var item in (IEnumerable)data)
                             {
                                 var obj = item;
-                                generic.Serialize(handler, ref obj);
+                                generic.JsonSerialize(handler, ref obj);
                                 handler.AppendChar(JsonConstantsBytes.Comma);
                             }
                             handler.Serializer.RemoveLastCama();
@@ -590,14 +290,14 @@ namespace JsonGo.Runtime
                 }
                 if (options.HasGenerateRefrencedTypes)
                 {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
+                    typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
                     {
                         handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
                     };
                 }
                 else
                 {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
+                    typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
                     {
                         if (data != null)
                         {
@@ -606,7 +306,7 @@ namespace JsonGo.Runtime
                             foreach (var item in (IEnumerable)data)
                             {
                                 var obj = item;
-                                generic.Serialize(handler, ref obj);
+                                generic.JsonSerialize(handler, ref obj);
                                 handler.AppendChar(JsonConstantsBytes.Comma);
                             }
                             handler.Serializer.RemoveLastCama();
@@ -617,11 +317,28 @@ namespace JsonGo.Runtime
                             handler.Append("null");
                         }
                     };
+                    typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
+                    {
+                        var generic = typeGoInfo.Generics[0];
+                        if (data != null)
+                        {
+                            foreach (var item in (IEnumerable)data)
+                            {
+                                var obj = item;
+                                generic.BinarySerialize(stream, ref obj);
+                            }
+                        }
+                        else
+                        {
+                            //await generic.BinarySerialize(stream, (byte)0);
+                        }
+                    };
                 }
-                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.GetValue != null).ToArray();
-                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.SetValue != null).ToArray();
+                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();
+                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonSetValue != null).ToArray();
                 typeGoInfo.DefaultValue = null;
             }
+            //object daat
             else
             {
                 baseType = GenerateTypeFromInterface(baseType);
@@ -634,11 +351,11 @@ namespace JsonGo.Runtime
                         TypeGoInfo = Generate(typeof(int), options),
                         Type = typeof(int),
                         Name = JsonConstantsBytes.IdRefrencedTypeNameNoQuotes,
-                        SetValue = (serializer, instance, value) =>
+                        JsonSetValue = (serializer, instance, value) =>
                         {
                             serializer.DeSerializedObjects.Add((int)value, instance);
                         },
-                        GetValue = (handler, data) =>
+                        JsonGetValue = (handler, data) =>
                         {
                             if (!handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
                             {
@@ -677,9 +394,9 @@ namespace JsonGo.Runtime
                         TypeGoInfo = typeGoInfoProperty,
                         Type = property.PropertyType,
                         Name = property.Name,
-                        GetValue = (handler, x) => del.GetPropertyValue(x),
-                        SetValue = del.SetPropertyValue,
-                        //SetValue = (x, val) => property.SetValue(x, val),
+                        JsonGetValue = (handler, x) => del.GetPropertyValue(x),
+                        JsonSetValue = del.SetPropertyValue,
+                        GetValue = del.GetPropertyValue,
                     };
                 }
 
@@ -703,11 +420,11 @@ namespace JsonGo.Runtime
                         //SetValue = item.SetValue
                     };
                 }
-                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.GetValue != null).ToArray();
-                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.SetValue != null).ToArray();
+                typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();
+                typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonSetValue != null).ToArray();
                 if (options.HasGenerateRefrencedTypes)
                 {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
+                    typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
                     {
                         if (handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
                         {
@@ -723,9 +440,26 @@ namespace JsonGo.Runtime
                 }
                 else
                 {
-                    typeGoInfo.Serialize = (SerializeHandler handler, ref object data) =>
+                    typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
                     {
                         handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
+                    };
+
+                    typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
+                    {
+                        var properties = typeGoInfo.SerializeProperties;
+                        var len = properties.Length;
+                        for (int i = 0; i < len; i++)
+                        {
+                            var property = properties[i];
+                            var value = property.GetValue(data);
+                            if (value == null || value == property.TypeGoInfo.DefaultValue)
+                            {
+
+                            }
+                            else
+                                property.TypeGoInfo.BinarySerialize(stream, ref value);
+                        }
                     };
                 }
 
@@ -859,7 +593,7 @@ namespace JsonGo.Runtime
     public interface IPropertyCallerInfo
     {
         object GetPropertyValue(object instance);
-        void SetPropertyValue(Deserializer deserializer, object instance, object value);
+        void SetPropertyValue(JsonDeserializer deserializer, object instance, object value);
     }
     public class PropertyCallerInfo<TType, TPropertyType> : IPropertyCallerInfo
     {
@@ -873,10 +607,14 @@ namespace JsonGo.Runtime
 
         public object GetPropertyValue(object instance)
         {
+            if (instance == null)
+            {
+
+            }
             return GetValue((TType)instance);
         }
 
-        public void SetPropertyValue(Deserializer deserializer, object instance, object value)
+        public void SetPropertyValue(JsonDeserializer deserializer, object instance, object value)
         {
             SetValue((TType)instance, (TPropertyType)value);
         }

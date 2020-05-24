@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGo
+namespace JsonGo.Json
 {
     public interface IJson
     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,11 +17,17 @@ namespace JsonGoPerformance.Models
 
         public CompanyInfo CompanyInfo { get; set; }
     }
+
+    [MessagePackObject]
     public class SimpleUserInfo
     {
+        [Key(0)]
         public int Id { get; set; }
+        [Key(1)]
         public string FullName { get; set; }
+        [Key(2)]
         public int Age { get; set; }
+        [Key(3)]
         public DateTime CreatedDate { get; set; }
     }
 }

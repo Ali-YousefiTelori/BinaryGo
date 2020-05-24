@@ -11,7 +11,7 @@ namespace JsonGoTest
         [Test]
         public void UserInfoTest()
         {
-            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -23,7 +23,7 @@ namespace JsonGoTest
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"EMP_NO\":56,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.IsTrue(result == equalData);
-            var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(result);
+            var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
             Assert.IsTrue(deserialized.IsEquals(userInfo));
         }
         [Test]
@@ -37,11 +37,11 @@ namespace JsonGoTest
                 FullName = "Ali Yousefi",
                 Id = 1,
             };
-            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":false,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.IsTrue(result == equalData);
-            var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(result);
+            var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
             Assert.IsTrue(deserialized.IsEquals(userInfo));
         }
 
@@ -49,7 +49,7 @@ namespace JsonGoTest
         [Test]
         public void UserInfoWithRolesTest()
         {
-            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -68,7 +68,7 @@ namespace JsonGoTest
                 var result = serializer.Serialize(userInfo);
                 var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"UserInfo\":{\"$ref\":1},\"Type\":3},{\"$id\":4,\"Id\":2,\"UserInfo\":{\"$ref\":1},\"Type\":2}]}}";
                 Assert.IsTrue(result == equalData);
-                var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(result);
+                var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
                 Assert.IsTrue(deserialized.IsEquals(userInfo));
             }
             catch (Exception ex)
@@ -82,7 +82,7 @@ namespace JsonGoTest
         [Test]
         public void UserInfoWithRolesAndCompanyTest()
         {
-            JsonGo.Serializer serializer = new JsonGo.Serializer(new JsonGo.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
             CompanyInfo companyInfo = new CompanyInfo()
             {
                 Id = 14,
@@ -110,7 +110,7 @@ namespace JsonGoTest
             var equalData = "{\"$id\":1,\"Id\":14,\"Name\":\"company test\",\"Users\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":4,\"$values\":[{\"$id\":5,\"Id\":1,\"UserInfo\":{\"$ref\":3},\"Type\":3},{\"$id\":6,\"Id\":2,\"UserInfo\":{\"$ref\":3},\"Type\":2}]},\"CompanyInfo\":{\"$ref\":1}},{\"$ref\":3}]}}";
             Assert.IsTrue(result == equalData);
 
-            var deserialized = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<CompanyInfo>(result);
+            var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<CompanyInfo>(result);
             Assert.IsTrue(deserialized.IsEquals(companyInfo));
 
         }

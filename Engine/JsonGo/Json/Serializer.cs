@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace JsonGo
+namespace JsonGo.Json
 {
     /// <summary>
     /// serialize json to an object
@@ -32,7 +32,7 @@ namespace JsonGo
         /// get typefo value from 
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
-        public SerializeHandler SerializeHandler { get; set; } = new SerializeHandler();
+        public JsonSerializeHandler SerializeHandler { get; set; } = new JsonSerializeHandler();
         internal JsonOptionInfo Options { get; set; }
         public Serializer()
         {
@@ -45,7 +45,7 @@ namespace JsonGo
             HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
             Setting.HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
 
-            SerializeFunction = (TypeGoInfo typeGoInfo, SerializeHandler handler, ref object dataRef) =>
+            SerializeFunction = (TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object dataRef) =>
             {
                 SerializeObject(ref dataRef, typeGoInfo);
             };
@@ -62,7 +62,7 @@ namespace JsonGo
             HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
             Setting.HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
 
-            SerializeFunction = (TypeGoInfo typeGoInfo, SerializeHandler handler, ref object dataRef) =>
+            SerializeFunction = (TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object dataRef) =>
             {
                 SerializeObject(ref dataRef, typeGoInfo);
             };
@@ -84,7 +84,7 @@ namespace JsonGo
         /// <summary>
         /// serialize object function
         /// </summary>
-        public FunctionTypeGo SerializeFunction { get; set; }
+        public JsonFunctionTypeGo SerializeFunction { get; set; }
 
         /// <summary>
         /// string builder of json serialization
@@ -115,11 +115,11 @@ namespace JsonGo
             SerializeHandler.AddSerializedObjects = serializedObjects.Add;
             SerializeHandler.TryGetValueOfSerializedObjects = serializedObjects.TryGetValue;
             SerializeObject(ref data, out TypeGoInfo typeGo);
-            if (typeGo.IsNoQuotesValueType)
-            {
-                Writer.Insert(0, JsonConstantsString.Quotes);
-                Writer.Append(JsonConstantsString.Quotes);
-            }
+            //if (typeGo.IsNoQuotesValueType)
+            //{
+            //    Writer.Insert(0, JsonConstantsString.Quotes);
+            //    Writer.Append(JsonConstantsString.Quotes);
+            //}
             return Writer.ToString();
         }
 
@@ -173,7 +173,7 @@ namespace JsonGo
             {
                 typeGoInfo = TypeGoInfo.Generate(dataType, this);
             }
-            typeGoInfo.Serialize(SerializeHandler, ref data);
+            typeGoInfo.JsonSerialize(SerializeHandler, ref data);
         }
 
         /// <summary>
@@ -191,13 +191,13 @@ namespace JsonGo
             {
                 var property = typeGoInfo.SerializeProperties[i];
                 var propertyType = property.TypeGoInfo;
-                object propertyValue = property.GetValue(SerializeHandler, data);
+                object propertyValue = property.JsonGetValue(SerializeHandler, data);
                 if (propertyValue == null || propertyValue.Equals(propertyType.DefaultValue))
                     continue;
                 appendChar(JsonConstantsString.Quotes);
                 append(property.Name);
                 append(JsonConstantsString.QuotesColon);
-                propertyType.Serialize(SerializeHandler, ref propertyValue);
+                propertyType.JsonSerialize(SerializeHandler, ref propertyValue);
                 appendChar(JsonConstantsString.Comma);
             }
             RemoveLastCama();

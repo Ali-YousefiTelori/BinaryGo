@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsonGo.Json;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,19 +141,21 @@ namespace JsonGo.Deserialize
                 else if (readOnlySpan[i] == BackSlash && readOnlySpan[i + 1] == RNewLine)
                 {
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                    stringBuilder.Append(RSpace);
                     i++;
-                    index = i;
+                    index = i + 1;
                 }
                 else if (readOnlySpan[i] == BackSlash && readOnlySpan[i + 1] == NNewLine)
                 {
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                    stringBuilder.Append(NSpace);
                     i++;
-                    index = i;
+                    index = i + 1;
                 }
             }
             _Index = _Length;
             if (readOnlySpan[readOnlySpan.Length - 1] == Quotes)
-                stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - 1));
+                stringBuilder.Append(readOnlySpan.Slice(index, 1));
             else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length));
             return stringBuilder.ToString().AsSpan();
@@ -185,7 +188,7 @@ namespace JsonGo.Deserialize
         public ReadOnlySpan<char> ExtractValue()
         {
             int start = _Index;
-            while (true)
+            while (_Index < _Length)
             {
                 //UnSupportedValue = ' ', ',', '\r', '\n', '\t' 
                 if (_buffer[_Index] == Space || _buffer[_Index] == Comma || _buffer[_Index] == RSpace || _buffer[_Index] == NSpace
@@ -199,7 +202,7 @@ namespace JsonGo.Deserialize
                 }
                 _Index++;
             }
-            return _buffer.Slice(start, _Index - start);
+            return _buffer.Slice(start, _Index - start + 1);
         }
 
         /// <summary>

@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGo
+namespace JsonGo.Json
 {
-    public class SerializeHandler
+    public class JsonSerializeHandler
     {
-        public Func<string, StringBuilder> Append { get; set; }
+        public RefFunc<StringBuilder> Append { get; set; }
         public Func<char, StringBuilder> AppendChar { get; set; }
         public Serializer Serializer { get; set; }
         public Action<object, int> AddSerializedObjects { get; set; }

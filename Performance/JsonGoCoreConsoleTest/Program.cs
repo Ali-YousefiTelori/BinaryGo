@@ -1,9 +1,11 @@
 ﻿using BenchmarkDotNet.Running;
 using JsonGo;
+using JsonGo.Binary;
 using JsonGo.CodeGenerators;
 using JsonGo.Deserialize;
 using JsonGo.Runtime;
 using JsonGoPerformance;
+using MessagePack;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -55,6 +57,16 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
+
+                NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+
+                var data1 = MessagePackSerializer.Serialize(normalSerializeSamples.GetSimpleSample());
+                BinarySerializer serializer = new BinarySerializer();
+                var data2 = serializer.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
+
+                var data = normalSerializeSamples.GetSimpleSample();
+                var result = JsonGo.Binary.BinarySerializer.SingleIntance.Serialize(data);
+                var bytes = result.ToArray();
                 //var text = string.Join(Environment.NewLine, TypeGoInfo.Generate(typeof(Profile)).SerializeProperties.Select(x => $"name: {x.Name} , type: {x.Type.FullName}"));
                 Console.WriteLine("Select Option:");
                 Console.WriteLine("1) Normal Serialize Samples");

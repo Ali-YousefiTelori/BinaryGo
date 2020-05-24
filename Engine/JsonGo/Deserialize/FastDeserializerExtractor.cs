@@ -1,4 +1,5 @@
 ﻿using JsonGo.Helpers;
+using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace JsonGo.Deserialize
         /// <param name="json">json value</param>
         /// <param name="createInstance">index of start string</param>
         /// <returns>value deserialized</returns>
-        internal static ReadOnlySpan<char> Extract(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
+        internal static ReadOnlySpan<char> Extract(JsonDeserializer deserializer, TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref JsonSpanReader json)
         {
             var character = json.Read();
             if (character == JsonConstantsBytes.Quotes)
@@ -49,7 +50,7 @@ namespace JsonGo.Deserialize
             return null;
         }
 
-        static void ExtractArray(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
+        static void ExtractArray(JsonDeserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
         {
             var generic = typeGo.Generics.First();
             while (true)
@@ -78,13 +79,13 @@ namespace JsonGo.Deserialize
                 else if (character == JsonConstantsBytes.Quotes)
                 {
                     var value = json.ExtractString();
-                    typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
+                    typeGo.AddArrayValue(instance, generic.JsonDeserialize(deserializer, value));
                 }
                 else
                 {
                     var value = json.ExtractValue();
-                    if (generic.Deserialize != null)
-                        typeGo.AddArrayValue(instance, generic.Deserialize(deserializer, value));
+                    if (generic.JsonDeserialize != null)
+                        typeGo.AddArrayValue(instance, generic.JsonDeserialize(deserializer, value));
                 }
 
             }
@@ -99,7 +100,7 @@ namespace JsonGo.Deserialize
         /// <param name="json"></param>
         /// <param name="indexOf"></param>
         /// <returns></returns>
-        static void ExtractOject(Deserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
+        static void ExtractOject(JsonDeserializer deserializer, TypeGoInfo typeGo, ref object instance, ref JsonSpanReader json)
         {
             while (!json.IsFinished)
             {
@@ -125,11 +126,11 @@ namespace JsonGo.Deserialize
                     else
                         propertyInstance = instance;
                     var value = Extract(deserializer, propertyGo.TypeGoInfo, ref propertyInstance, propertyGo.TypeGoInfo.CreateInstance, ref json);
-                    var deserialize = propertyGo.TypeGoInfo.Deserialize;
+                    var deserialize = propertyGo.TypeGoInfo.JsonDeserialize;
                     if (deserialize != null)
-                        propertyGo.SetValue(deserializer, propertyInstance, deserialize(deserializer, value));
+                        propertyGo.JsonSetValue(deserializer, propertyInstance, deserialize(deserializer, value));
                     else
-                        propertyGo.SetValue(deserializer, instance, propertyInstance);
+                        propertyGo.JsonSetValue(deserializer, instance, propertyInstance);
                 }
                 else if (propertyname == JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes)
                 {
@@ -141,7 +142,7 @@ namespace JsonGo.Deserialize
                     var value = Extract(deserializer, null, ref propertyInstance, null, ref json);
 
                     var type = TypeGoInfo.Generate(typeof(int), deserializer);
-                    var result = (int)type.Deserialize(deserializer, value);
+                    var result = (int)type.JsonDeserialize(deserializer, value);
                     deserializer.DeSerializedObjects.TryGetValue(result, out instance);
                 }
                 else

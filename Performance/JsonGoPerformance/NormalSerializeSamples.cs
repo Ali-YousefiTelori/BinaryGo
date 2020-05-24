@@ -1,6 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
 using JsonGo;
+using JsonGo.Binary;
+using JsonGo.Json;
 using JsonGoPerformance.Models;
+using MessagePack;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,9 +26,9 @@ namespace JsonGoPerformance
                 System.Text.Json.JsonSerializer.Serialize(obj);
             }
         }
-        public UserInfo GetSimpleSample()
+        public SimpleUserInfo GetSimpleSample()
         {
-            UserInfo userInfo = new UserInfo()
+            SimpleUserInfo userInfo = new SimpleUserInfo()
             {
                 Age = 28,
                 CreatedDate = DateTime.Now,
@@ -157,6 +160,19 @@ namespace JsonGoPerformance
             Serializer serializer = new Serializer();
             serializer.SerializeCompile(GetSimpleSample());
         }
+        [Benchmark]
+        public void RunSimpleBinarySampleMessagePack()
+        {
+            MessagePackSerializer.Serialize(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunSimpleBinarySampleJsonGo()
+        {
+            BinarySerializer serializer = new BinarySerializer();
+            serializer.Serialize(GetSimpleSample()).ToArray();
+        }
+
 
         [Benchmark]
         public void RunSimpleSampleJsonGo()

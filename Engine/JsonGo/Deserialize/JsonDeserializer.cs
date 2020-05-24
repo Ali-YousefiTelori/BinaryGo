@@ -1,4 +1,5 @@
 ﻿using JsonGo.Helpers;
+using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
 using System.Collections.Concurrent;
@@ -10,23 +11,23 @@ using System.Text;
 namespace JsonGo.Deserialize
 {
     //delegate void FastExtractFunction(TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref ReadOnlySpan<byte> _buffer);
-    delegate object FastExtractFunction(Deserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
+    delegate object FastExtractFunction(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
 
     /// <summary>
     /// deserializer of json
     /// </summary>
-    public class Deserializer : IJson
+    public class JsonDeserializer : IJson
     {
         static FastExtractFunction FastExtractFunction { get; set; }
 
-        static Deserializer()
+        static JsonDeserializer()
         {
-            SingleIntance = new Deserializer();
+            SingleIntance = new JsonDeserializer();
             //ExtractFunction = DeserializerExtractor.Extract;
             //FastExtractFunction = FastDeserializerExtractor2.Extract;
             FastExtractFunction = FastDeserializerExtractor3.Extract;
         }
-        public Deserializer()
+        public JsonDeserializer()
         {
             Initialize();
         }
@@ -47,7 +48,7 @@ namespace JsonGo.Deserialize
         /// <summary>
         /// single instance of deserialize to access faster
         /// </summary>
-        public static Deserializer SingleIntance { get; set; }
+        public static JsonDeserializer SingleIntance { get; set; }
         /// <summary>
         /// default setting of serializer
         /// </summary>

@@ -38,21 +38,21 @@ namespace JsonGoPerformance
         [Benchmark]
         public void JsonGo_RunSimpleSample()
         {
-            Deserializer deserializer = new Deserializer();
+            JsonDeserializer deserializer = new JsonDeserializer();
             var result = deserializer.Deserialize<SimpleUserInfo>(NormalSample);
         }
 
         [Benchmark]
         public void JsonGo_RunSimpleArraySample()
         {
-            Deserializer deserializer = new Deserializer();
+            JsonDeserializer deserializer = new JsonDeserializer();
             deserializer.Deserialize<List<UserInfo>>(NormalArraySample);
         }
 
         [Benchmark]
         public void JsonGo_RunSimpleCommplexSample()
         {
-            Deserializer deserializer = new Deserializer();
+            JsonDeserializer deserializer = new JsonDeserializer();
             var result = deserializer.Deserialize<CompanyInfo>(NormalComplexSample);
         }
 
@@ -153,7 +153,7 @@ namespace JsonGoPerformance
 
             Console.WriteLine("System.Text.Json: \t " + stopwatch.Elapsed);
             stopwatch = new Stopwatch();
-            Deserializer deserializer = new Deserializer();
+            JsonDeserializer deserializer = new JsonDeserializer();
             deserializer.Deserialize<SimpleUserInfo>(NormalSample);
 
             Console.WriteLine("******* JsonGo *****");
