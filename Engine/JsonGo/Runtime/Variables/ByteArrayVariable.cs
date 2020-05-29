@@ -24,7 +24,9 @@ namespace JsonGo.Runtime.Variables
             //json serialize
             typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
             {
+                handler.AppendChar(JsonConstantsString.Quotes);
                 handler.Append(Convert.ToBase64String((byte[])data));
+                handler.AppendChar(JsonConstantsString.Quotes);
             };
 
             //json deserialize of variable
