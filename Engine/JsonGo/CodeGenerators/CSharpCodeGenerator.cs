@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 
 namespace JsonGo.CodeGenerators
 {
+    /// <summary>
+    /// code generator for compile time
+    /// </summary>
     public static class CSharpCodeGenerator
     {
         static List<Type> AllTypes { get; set; } = new List<Type>();
+        /// <summary>
+        /// generate compile time codes
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="assemblyLoader"></param>
         public static void GenerateCode(StringBuilder stringBuilder, AssemblyLoader assemblyLoader)
         {
             AllTypes.Clear();
@@ -193,7 +201,11 @@ namespace JsonGo.CodeGenerators
             //stringBuilder.AppendLine("}");
             //stringBuilder.AppendLine("}).Build();");
         }
-
+        /// <summary>
+        /// get name of type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static string GetFriendlyName(this Type type)
         {
             if (type == typeof(int))

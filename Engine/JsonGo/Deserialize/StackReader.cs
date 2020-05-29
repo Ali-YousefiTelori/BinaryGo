@@ -17,7 +17,9 @@ namespace JsonGo.Deserialize
         {
             //Builder = stringBuilder;
         }
-        //public StackReader? Parent { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder Builder { get; set; }
     }
 }

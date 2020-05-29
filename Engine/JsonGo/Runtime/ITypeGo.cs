@@ -1,11 +1,15 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.Json;
+using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGo.Json
+namespace JsonGo.Runtime
 {
-    public interface IJson
+    /// <summary>
+    /// the interface with a fast way access to add and get type from memory
+    /// </summary>
+    public interface ITypeGo
     {
         /// <summary>
         /// add new value to types

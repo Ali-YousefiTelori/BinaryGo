@@ -13,7 +13,7 @@ namespace JsonGo.Json
     /// <summary>
     /// serialize json to an object
     /// </summary>
-    public class Serializer : IJson
+    public class Serializer : ITypeGo
     {
         static Serializer()
         {
@@ -36,6 +36,9 @@ namespace JsonGo.Json
 
         internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
 
+        /// <summary>
+        /// generate $ref and $values and support for loop reference serialization and deserialization
+        /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
         /// <summary>
@@ -46,8 +49,14 @@ namespace JsonGo.Json
         /// get typefo value from 
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
+        /// <summary>
+        /// the serialize handler let the serializer to fast access to pointers
+        /// </summary>
         public JsonSerializeHandler SerializeHandler { get; set; } = new JsonSerializeHandler();
         internal JsonOptionInfo Options { get; set; }
+        /// <summary>
+        /// json serializer, serialize your object to json
+        /// </summary>
         public Serializer()
         {
             Options = DefaultOptions;
@@ -65,6 +74,10 @@ namespace JsonGo.Json
             };
         }
 
+        /// <summary>
+        /// serialize your object to json
+        /// </summary>
+        /// <param name="jsonOptionInfo">your json serializer option</param>
         public Serializer(JsonOptionInfo jsonOptionInfo)
         {
             Options = jsonOptionInfo;
@@ -144,6 +157,12 @@ namespace JsonGo.Json
         }
 
         #region CompileTimeSerialization
+        /// <summary>
+        /// compile time serialization is faster way to serialize your data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public string SerializeCompile<T>(T data)
         {
             Writer = new StringBuilder(256);
@@ -154,12 +173,24 @@ namespace JsonGo.Json
             return Writer.ToString();
         }
 
+        /// <summary>
+        /// continue serialization in compile time
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
         public void ContinueSerializeCompile<T>(T data)
         {
             if (GetSerializer(out Action<Serializer, StringBuilder, T> serializer, ref data))
                 serializer(this, Writer, data);
         }
 
+        /// <summary>
+        /// get serializer oof compile time serialization to serialize it faster
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="serializer"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         internal bool GetSerializer<T>(out Action<Serializer, StringBuilder, T> serializer, ref T data)
         {
             serializer = TypeInfo<T>.Serialize;
@@ -180,6 +211,7 @@ namespace JsonGo.Json
             return true;
         }
         #endregion
+
         /// <summary>
         /// serialize an object to a json string
         /// </summary>
@@ -207,9 +239,11 @@ namespace JsonGo.Json
             Func<char, StringBuilder> appendChar = Writer.Append;
             Func<string, StringBuilder> append = Writer.Append;
             appendChar(JsonConstantsString.OpenBraket);
-            for (int i = 0; i < typeGoInfo.SerializeProperties.Length; i++)
+            var properties = typeGoInfo.SerializeProperties;
+            var length = properties.Length;
+            for (int i = 0; i < length; i++)
             {
-                var property = typeGoInfo.SerializeProperties[i];
+                var property = properties[i];
                 var propertyType = property.TypeGoInfo;
                 object propertyValue = property.JsonGetValue(SerializeHandler, data);
                 if (propertyValue == null || propertyValue.Equals(propertyType.DefaultValue))

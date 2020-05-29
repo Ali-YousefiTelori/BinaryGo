@@ -5,12 +5,14 @@ using System.Text;
 
 namespace JsonGo.Json
 {
-    public delegate bool TryGetValue<TKey, TResult>(TKey key, out TResult result);
     /// <summary>
     /// default saved data of serialization and deserialization
     /// </summary>
-    public class JsonOptionInfo : IJson
+    public class JsonOptionInfo : ITypeGo
     {
+        /// <summary>
+        /// set default values from dictionary to actions
+        /// </summary>
         public JsonOptionInfo()
         {
             AddTypes = Types.Add;
@@ -25,11 +27,19 @@ namespace JsonGo.Json
         /// </summary>
         internal Dictionary<object, int> SerializedObjects { get; set; } = new Dictionary<object, int>();
 
+        /// <summary>
+        /// the loop reference generations
+        /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
-
+        /// <summary>
+        /// add type to typeGo dictionary to access  faster
+        /// </summary>
         public Action<Type, TypeGoInfo> AddTypes { get; set; }
 
+        /// <summary>
+        /// get type go value from a type
+        /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
     }
 }

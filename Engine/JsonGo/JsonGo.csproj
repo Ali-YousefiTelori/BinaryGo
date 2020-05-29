@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <LangVersion>7.3</LangVersion>
+    <Authors>Ali Yousefi Telori</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,6 +13,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\JsonGo.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -67,6 +70,12 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\JsonGo.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Deserialize\FastDeserializerExtractor.cs" />
+    <Compile Remove="Deserialize\FastDeserializerExtractor2.cs" />
+    <Compile Remove="Deserialize\JsonSpanReader2.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />

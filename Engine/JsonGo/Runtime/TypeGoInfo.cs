@@ -4,6 +4,7 @@ using JsonGo.Deserialize;
 using JsonGo.Helpers;
 using JsonGo.Interfaces;
 using JsonGo.Json;
+using JsonGo.Runtime.Interfaces;
 using JsonGo.Runtime.Variables;
 using System;
 using System.Buffers.Text;
@@ -20,29 +21,6 @@ using System.Threading.Tasks;
 
 namespace JsonGo.Runtime
 {
-    public delegate T RefFunc<T>(ReadOnlySpan<char> readOnlySpan);
-    /// <summary>
-    /// function for serialize object
-    /// </summary>
-    /// <param name="handler"></param>
-    /// <param name="data">any object to serialize</param>
-    /// <returns>serialized stringbuilder</returns>
-    public delegate void JsonFunctionGo(JsonSerializeHandler handler, ref object data);
-    /// <summary>
-    /// binary serializer
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    public delegate void BinaryFunctionGo(Stream stream, ref object data);
-    /// <summary>
-    /// function for serialize object
-    /// </summary>
-    /// <param name="data">any object to serialize</param>
-    /// <returns>serialized stringbuilder</returns>TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder,
-    public delegate void JsonFunctionTypeGo(TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object data);
-    public delegate void BinaryFunctionTypeGo(TypeGoInfo typeGoInfo, Stream stream, ref object data);
-    public delegate object DeserializeFunc(JsonDeserializer deserializer, ReadOnlySpan<char> data);
-
     /// <summary>
     /// generate type details on memory
     /// </summary>
@@ -123,7 +101,6 @@ namespace JsonGo.Runtime
         /// <summary>
         /// initialize a variable to a typeGo
         /// </summary>
-        /// <param name="serializationVariable"></param>
         /// <param name="typeGoInfo"></param>
         public static void InitializeVariable<T>(TypeGoInfo typeGoInfo) where T : ISerializationVariable, new()
         {
@@ -139,7 +116,7 @@ namespace JsonGo.Runtime
         /// <param name="type"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static TypeGoInfo Generate(Type type, IJson options)
+        public static TypeGoInfo Generate(Type type, ITypeGo options)
         {
             lock (options)
             {
@@ -201,11 +178,11 @@ namespace JsonGo.Runtime
                     if (options.HasGenerateRefrencedTypes)
                     {
                         //add $Id dproperties
-                        typeGoInfo.Properties[JsonConstantsBytes.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+                        typeGoInfo.Properties[JsonConstantsString.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
                         {
                             TypeGoInfo = Generate(typeof(int), options),
                             Type = typeof(int),
-                            Name = JsonConstantsBytes.IdRefrencedTypeNameNoQuotes,
+                            Name = JsonConstantsString.IdRefrencedTypeNameNoQuotes,
                             JsonSetValue = (serializer, instance, value) =>
                             {
                                 serializer.DeSerializedObjects.Add((int)value, instance);
@@ -226,11 +203,11 @@ namespace JsonGo.Runtime
                             }
                         };
 
-                        typeGoInfo.Properties[JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+                        typeGoInfo.Properties[JsonConstantsString.ValuesRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
                         {
                             TypeGoInfo = Generate(type, options),
                             Type = type,
-                            Name = JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes,
+                            Name = JsonConstantsString.ValuesRefrencedTypeNameNoQuotes,
                             JsonSetValue = (serializer, instance, value) =>
                             {
                                 if (Generate(instance.GetType(), options) is TypeGoInfo typeGo)
@@ -246,7 +223,7 @@ namespace JsonGo.Runtime
                                 if (data == null)
                                     return null;
                                 handler.AppendChar(JsonConstantsString.Quotes);
-                                handler.Append(JsonConstantsBytes.ValuesRefrencedTypeNameNoQuotes);
+                                handler.Append(JsonConstantsString.ValuesRefrencedTypeNameNoQuotes);
                                 handler.Append(JsonConstantsString.QuotesColon);
                                 handler.AppendChar(JsonConstantsString.OpenSquareBrackets);
                                 var generic = typeGoInfo.Generics[0];
@@ -254,7 +231,7 @@ namespace JsonGo.Runtime
                                 {
                                     var obj = item;
                                     generic.JsonSerialize(handler, ref obj);
-                                    handler.AppendChar(JsonConstantsBytes.Comma);
+                                    handler.AppendChar(JsonConstantsString.Comma);
                                 }
                                 handler.Serializer.RemoveLastCama();
                                 handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
@@ -311,7 +288,7 @@ namespace JsonGo.Runtime
                                 {
                                     var obj = item;
                                     generic.JsonSerialize(handler, ref obj);
-                                    handler.AppendChar(JsonConstantsBytes.Comma);
+                                    handler.AppendChar(JsonConstantsString.Comma);
                                 }
                                 handler.Serializer.RemoveLastCama();
                                 handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
@@ -350,11 +327,11 @@ namespace JsonGo.Runtime
                     if (options.HasGenerateRefrencedTypes)
                     {
                         //add $Id dproperties
-                        typeGoInfo.Properties[JsonConstantsBytes.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+                        typeGoInfo.Properties[JsonConstantsString.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
                         {
                             TypeGoInfo = Generate(typeof(int), options),
                             Type = typeof(int),
-                            Name = JsonConstantsBytes.IdRefrencedTypeNameNoQuotes,
+                            Name = JsonConstantsString.IdRefrencedTypeNameNoQuotes,
                             JsonSetValue = (serializer, instance, value) =>
                             {
                                 serializer.DeSerializedObjects.Add((int)value, instance);
@@ -432,11 +409,11 @@ namespace JsonGo.Runtime
                         {
                             if (handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
                             {
-                                handler.AppendChar(JsonConstantsBytes.OpenBraket);
-                                handler.Append(JsonConstantsBytes.RefRefrencedTypeName);
+                                handler.AppendChar(JsonConstantsString.OpenBraket);
+                                handler.Append(JsonConstantsString.RefRefrencedTypeName);
                                 handler.AppendChar(JsonConstantsString.Colon);
                                 handler.Append(refrencedId.ToString(CurrentCulture));
-                                handler.AppendChar(JsonConstantsBytes.CloseBracket);
+                                handler.AppendChar(JsonConstantsString.CloseBracket);
                             }
                             else
                                 handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
@@ -516,15 +493,21 @@ namespace JsonGo.Runtime
         {
             AddToCustomTypes(typeof(TType), typeof(TResult));
         }
+
         /// <summary>
         /// add your types or interfaces to automatic custom type
         /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
         public static void AddToCustomTypes(Type type, Type result)
         {
             CustomTypeChanges[type] = result;
         }
+
+        /// <summary>
+        /// get delete of type to make fast way to create instance
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyInfo"></param>
+        /// <returns></returns>
         public static IPropertyCallerInfo GetDelegateInstance(Type type, PropertyInfo propertyInfo)
         {
             var openGetterType = typeof(Func<,>);
@@ -595,33 +578,5 @@ namespace JsonGo.Runtime
         //}
     }
 
-    public interface IPropertyCallerInfo
-    {
-        object GetPropertyValue(object instance);
-        void SetPropertyValue(JsonDeserializer deserializer, object instance, object value);
-    }
-    public class PropertyCallerInfo<TType, TPropertyType> : IPropertyCallerInfo
-    {
-        public PropertyCallerInfo(Func<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
-        {
-            GetValue = funcGetValue;
-            SetValue = funcSetValue;
-        }
-        public Func<TType, TPropertyType> GetValue { get; set; }
-        public Action<TType, TPropertyType> SetValue { get; set; }
 
-        public object GetPropertyValue(object instance)
-        {
-            if (instance == null)
-            {
-
-            }
-            return GetValue((TType)instance);
-        }
-
-        public void SetPropertyValue(JsonDeserializer deserializer, object instance, object value)
-        {
-            SetValue((TType)instance, (TPropertyType)value);
-        }
-    }
 }

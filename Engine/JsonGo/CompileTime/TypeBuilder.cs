@@ -38,6 +38,10 @@ namespace JsonGo.CompileTime
             return this;
         }
 
+        /// <summary>
+        /// create
+        /// </summary>
+        /// <returns></returns>
         public static TypeBuilder<T> Create()
         {
             return new TypeBuilder<T>();
@@ -54,6 +58,12 @@ namespace JsonGo.CompileTime
             SerializeFunction = serialize;
             return this;
         }
+
+        /// <summary>
+        /// type on
+        /// </summary>
+        /// <typeparam name="T2"></typeparam>
+        /// <returns></returns>
         public TypeBuilder<T> On<T2>()
         {
             var type = TypeBuilder<T2>.Create();
@@ -64,7 +74,11 @@ namespace JsonGo.CompileTime
             type.Build();
             return this;
         }
-
+        /// <summary>
+        /// add generics
+        /// </summary>
+        /// <param name="typeInfo"></param>
+        /// <returns></returns>
         public TypeBuilder<T> AddGenericArgument(TypeInfo typeInfo)
         {
             GenericArguments.Add(typeInfo);

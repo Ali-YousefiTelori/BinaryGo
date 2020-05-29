@@ -4,10 +4,13 @@ using System.Text;
 
 namespace JsonGo.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TextHelper
     {
-        public static readonly UTF8Encoding _UTF8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: false);
-        public static string SpanToString(ReadOnlySpan<byte> utf8Unescaped)
+        internal static readonly UTF8Encoding _UTF8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: false);
+        internal static string SpanToString(ReadOnlySpan<byte> utf8Unescaped)
         {
             return _UTF8Encoding.GetString(utf8Unescaped.ToArray());
             //unsafe
@@ -19,7 +22,7 @@ namespace JsonGo.Helpers
             //}
         }
 
-        public static ReadOnlySpan<byte> StringToSpanByteArray(ref string text)
+        internal static ReadOnlySpan<byte> StringToSpanByteArray(ref string text)
         {
             //unsafe
             //{

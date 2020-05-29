@@ -1,22 +1,15 @@
-﻿using JsonGo.Helpers;
-using JsonGo.Json;
+﻿using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace JsonGo.Deserialize
 {
-    //delegate void FastExtractFunction(TypeGoInfo typeGo, ref object instance, Func<object> createInstance, ref ReadOnlySpan<byte> _buffer);
-    delegate object FastExtractFunction(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
 
     /// <summary>
     /// deserializer of json
     /// </summary>
-    public class JsonDeserializer : IJson
+    public class JsonDeserializer : ITypeGo
     {
         static FastExtractFunction FastExtractFunction { get; set; }
 
@@ -27,6 +20,10 @@ namespace JsonGo.Deserialize
             //FastExtractFunction = FastDeserializerExtractor2.Extract;
             FastExtractFunction = FastDeserializerExtractor3.Extract;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public JsonDeserializer()
         {
             Initialize();
@@ -53,7 +50,9 @@ namespace JsonGo.Deserialize
         /// default setting of serializer
         /// </summary>
         public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
-
+        /// <summary>
+        /// has support for loop reference of types
+        /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
         void Initialize()
@@ -88,32 +87,6 @@ namespace JsonGo.Deserialize
             {
                 DeSerializedObjects.Clear();
             }
-
         }
-
-        /// <summary>
-        /// get type of a json parameter name
-        /// </summary>
-        /// <param name="obj">object</param>
-        /// <param name="key">json parameter name</param>
-        /// <returns>type of json parameter</returns>
-        //internal Type GetKeyType(object obj, string key)
-        //{
-        //    if (obj == null)
-        //        return null;
-        //    key = key.Trim('\"');
-        //    Type dataType = obj.GetType();
-        //    if (!TryGetValueOfTypeGo(dataType, out TypeGoInfo typeGoInfo))
-        //    {
-        //        typeGoInfo = TypeGoInfo.Generate(dataType, this);
-        //        AddTypes(dataType, typeGoInfo);
-        //    }
-        //    if (typeGoInfo.Properties.TryGetValue(key, out PropertyGoInfo propertyGo))
-        //    {
-        //        return propertyGo.Type;
-        //    }
-        //    return null;
-        //}
-
     }
 }

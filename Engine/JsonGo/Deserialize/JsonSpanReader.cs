@@ -7,33 +7,14 @@ using System.Text;
 
 namespace JsonGo.Deserialize
 {
+    /// <summary>
+    /// fast struct to read json data
+    /// </summary>
     public ref struct JsonSpanReader
     {
-        //SkipValues = ' ', '\r', '\n', '\t'
-        //EndsValues = '}', ']'
-        //UnSupportedValue = ' ', ',', '\r', '\n', '\t' 
-        //static byte[] SupportedValue { get; set; } = "0123456789.truefalsTRUEFALS-n".Select(x => (byte)x).ToArray();
-
-        #region SkipValues
-        public const char RSpace = '\r';
-        public const char NSpace = '\n';
-        public const char TSpace = '\t';
-        public const char Space = ' ';
-        #endregion
-
-        #region EndsValues
-        public const char CloseBracket = '}';
-        public const char CloseSquareBrackets = ']';
-        #endregion
-
-        #region UnSupportedValues
-        public const char Comma = ',';
-        #endregion
-
-        public const char Quotes = '"';
-        public const char BackSlash = '\\';
-        public const char RNewLine = 'r';
-        public const char NNewLine = 'n';
+        /// <summary>
+        /// is struct read finisnhed or not
+        /// </summary>
         public bool IsFinished
         {
             get
@@ -43,7 +24,7 @@ namespace JsonGo.Deserialize
         }
         private int _Length;
 
-        public ReadOnlySpan<char> _buffer;
+        private ReadOnlySpan<char> _buffer;
         /// <summary>
         /// 
         /// </summary>
@@ -66,8 +47,8 @@ namespace JsonGo.Deserialize
             do
             {
                 _Index++;
-                if (_buffer[_Index] != Space && _buffer[_Index] != RSpace
-                    && _buffer[_Index] != NSpace && _buffer[_Index] != TSpace)
+                if (_buffer[_Index] != JsonConstantsString.Space && _buffer[_Index] != JsonConstantsString.RSpace
+                    && _buffer[_Index] != JsonConstantsString.NSpace && _buffer[_Index] != JsonConstantsString.TSpace)
                     return _buffer[_Index];
             }
             while (true);
@@ -86,21 +67,21 @@ namespace JsonGo.Deserialize
                     max = result.Length + 10;
                     Array.Resize(ref result, max);
                 }
-                if (readOnlySpan[i] == JsonConstantsBytes.Quotes && readOnlySpan[i - 1] != JsonConstantsBytes.BackSlash)
+                if (readOnlySpan[i] == JsonConstantsString.Quotes && readOnlySpan[i - 1] != JsonConstantsString.BackSlash)
                 {
                     _Index += i + 1;
                     Array.Resize(ref result, writeIndex);
                     return result.AsSpan();
                 }
-                else if (readOnlySpan[i] == JsonConstantsBytes.BackSlash && readOnlySpan[i + 1] == JsonConstantsBytes.Quotes)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.Quotes)
                     continue;
-                else if (readOnlySpan[i] == JsonConstantsBytes.BackSlash && readOnlySpan[i + 1] == JsonConstantsBytes.RNewLine)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
                 {
                     result[writeIndex] = '\r';
                     i++;
                     writeIndex++;
                 }
-                else if (readOnlySpan[i] == JsonConstantsBytes.BackSlash && readOnlySpan[i + 1] == JsonConstantsBytes.NNewLine)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
                 {
                     result[writeIndex] = '\n';
                     i++;
@@ -119,6 +100,10 @@ namespace JsonGo.Deserialize
             return result.AsSpan();
         }
 
+        /// <summary>
+        /// extract json string between two quats
+        /// </summary>
+        /// <returns></returns>
         public ReadOnlySpan<char> ExtractString()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -126,35 +111,35 @@ namespace JsonGo.Deserialize
             ReadOnlySpan<char> readOnlySpan = _buffer.Slice(_Index + 1, _Length - _Index);
             for (int i = 0; i < readOnlySpan.Length - 1; i++)
             {
-                if (readOnlySpan[i] == Quotes && readOnlySpan[i - 1] != BackSlash)
+                if (readOnlySpan[i] == JsonConstantsString.Quotes && readOnlySpan[i - 1] != JsonConstantsString.BackSlash)
                 {
                     _Index += i + 1;
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
                     return stringBuilder.ToString().AsSpan();
                 }
-                else if (readOnlySpan[i] == BackSlash && readOnlySpan[i + 1] == Quotes)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.Quotes)
                 {
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
                     i++;
                     index = i;
                 }
-                else if (readOnlySpan[i] == BackSlash && readOnlySpan[i + 1] == RNewLine)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
                 {
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    stringBuilder.Append(RSpace);
+                    stringBuilder.Append(JsonConstantsString.RSpace);
                     i++;
                     index = i + 1;
                 }
-                else if (readOnlySpan[i] == BackSlash && readOnlySpan[i + 1] == NNewLine)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
                 {
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    stringBuilder.Append(NSpace);
+                    stringBuilder.Append(JsonConstantsString.NSpace);
                     i++;
                     index = i + 1;
                 }
             }
             _Index = _Length;
-            if (readOnlySpan[readOnlySpan.Length - 1] == Quotes)
+            if (readOnlySpan[readOnlySpan.Length - 1] == JsonConstantsString.Quotes)
                 stringBuilder.Append(readOnlySpan.Slice(index, 1));
             else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length));
@@ -170,7 +155,7 @@ namespace JsonGo.Deserialize
 
             for (int i = 1; i < readOnlySpan.Length; i++)
             {
-                if (readOnlySpan[i] == Quotes && readOnlySpan[i - 1] != BackSlash)
+                if (readOnlySpan[i] == JsonConstantsString.Quotes && readOnlySpan[i - 1] != JsonConstantsString.BackSlash)
                 {
                     _Index += i + 1;
                     return readOnlySpan.Slice(0, i + 1);
@@ -183,7 +168,6 @@ namespace JsonGo.Deserialize
         /// <summary>
         /// extract value from json
         /// </summary>
-        /// <param name="json"></param>
         /// <returns></returns>
         public ReadOnlySpan<char> ExtractValue()
         {
@@ -191,11 +175,11 @@ namespace JsonGo.Deserialize
             while (_Index < _Length)
             {
                 //UnSupportedValue = ' ', ',', '\r', '\n', '\t' 
-                if (_buffer[_Index] == Space || _buffer[_Index] == Comma || _buffer[_Index] == RSpace || _buffer[_Index] == NSpace
-                    || _buffer[_Index] == TSpace)
+                if (_buffer[_Index] == JsonConstantsString.Space || _buffer[_Index] == JsonConstantsString.Comma || _buffer[_Index] == JsonConstantsString.RSpace || _buffer[_Index] == JsonConstantsString.NSpace
+                    || _buffer[_Index] == JsonConstantsString.TSpace)
                     break;
                 //EndsValues = '}', ']'
-                else if (_buffer[_Index] == CloseBracket || _buffer[_Index] == CloseSquareBrackets)
+                else if (_buffer[_Index] == JsonConstantsString.CloseBracket || _buffer[_Index] == JsonConstantsString.CloseSquareBrackets)
                 {
                     _Index--;
                     return _buffer.Slice(start, _Index - start + 1);
@@ -216,7 +200,7 @@ namespace JsonGo.Deserialize
             while (true)
             {
                 _Index++;
-                if (_buffer[_Index] == JsonConstantsBytes.Quotes)
+                if (_buffer[_Index] == JsonConstantsString.Quotes)
                     break;
             }
             return _buffer.Slice(start, _Index - start);

@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace JsonGo.Binary
 {
-    public class BinarySerializer : IJson
+    /// <summary>
+    /// jsongo binary serializer to serialize your object to byte array or memory stream
+    /// </summary>
+    public class BinarySerializer : ITypeGo
     {
         static BinarySerializer()
         {
@@ -16,7 +19,9 @@ namespace JsonGo.Binary
         }
 
         internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
-
+        /// <summary>
+        /// support for loop reference of objects
+        /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
         /// <summary>
@@ -29,6 +34,9 @@ namespace JsonGo.Binary
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
         //public BinarySerializeHandler SerializeHandler { get; set; } = new BinarySerializeHandler();
         internal JsonOptionInfo Options { get; set; }
+        /// <summary>
+        /// seralizer initialize
+        /// </summary>
         public BinarySerializer()
         {
             Options = DefaultOptions;
@@ -46,6 +54,9 @@ namespace JsonGo.Binary
             //};
         }
 
+        /// <summary>
+        /// seralizer initialize with options
+        /// </summary>
         public BinarySerializer(JsonOptionInfo jsonOptionInfo)
         {
             Options = jsonOptionInfo;
@@ -76,10 +87,6 @@ namespace JsonGo.Binary
         /// single instance of serializer to accesss faster
         /// </summary>
         public static BinarySerializer SingleIntance { get; set; }
-        /// <summary>
-        /// serialize object function
-        /// </summary>
-        //public BinaryFunctionTypeGo SerializeFunction { get; set; }
 
         /// <summary>
         /// string builder of json serialization

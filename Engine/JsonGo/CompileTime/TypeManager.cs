@@ -33,7 +33,6 @@ namespace JsonGo.CompileTime
         /// <summary>
         /// get type info
         /// </summary>
-        /// <param name="type"></param>
         /// <returns></returns>
         public TypeInfo<T> Get<T>()
         {

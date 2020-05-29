@@ -19,15 +19,15 @@ namespace JsonGo.Deserialize
         internal static object Extract(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
         {
             var character = json.Read();
-            if (character == JsonConstantsBytes.Quotes)
+            if (character == JsonConstantsString.Quotes)
             {
                 return typeGo.JsonDeserialize(deserializer, json.ExtractString());
             }
-            else if (character == JsonConstantsBytes.OpenBraket)
+            else if (character == JsonConstantsString.OpenBraket)
             {
                 return ExtractOject(deserializer, typeGo, ref json);
             }
-            else if (character == JsonConstantsBytes.OpenSquareBrackets)
+            else if (character == JsonConstantsString.OpenSquareBrackets)
             {
                 throw new NotSupportedException();
                 //return ExtractArray(deserializer, typeGo, ref json);
@@ -88,10 +88,9 @@ namespace JsonGo.Deserialize
         /// <summary>
         /// extract list of properties from object
         /// </summary>
+        /// <param name="deserializer"></param>
         /// <param name="typeGo"></param>
-        /// <param name="instance"></param>
         /// <param name="json"></param>
-        /// <param name="indexOf"></param>
         /// <returns></returns>
         static object ExtractOject(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
         {
@@ -100,9 +99,9 @@ namespace JsonGo.Deserialize
             {
                 //read tp uneascape char
                 var character = json.Read();
-                if (character == JsonConstantsBytes.Comma)
+                if (character == JsonConstantsString.Comma)
                     continue;
-                else if (character == JsonConstantsBytes.CloseBracket)
+                else if (character == JsonConstantsString.CloseBracket)
                     break;
                 var key = json.ExtractKey();
                 //read to uneascape char

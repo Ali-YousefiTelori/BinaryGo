@@ -27,7 +27,6 @@ namespace JsonGo.CompileTime
     /// <summary>
     /// property info of type
     /// </summary>
-    /// <typeparam name="T">type</typeparam>
     public class PropertyInfo : PropertyInfoBase
     {
         /// <summary>
