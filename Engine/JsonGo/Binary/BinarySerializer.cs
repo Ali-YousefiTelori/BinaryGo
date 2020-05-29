@@ -37,8 +37,8 @@ namespace JsonGo.Binary
             TryGetValueOfTypeGo = Options.Types.TryGetValue;
             //SerializeHandler.Serializer = this;
 
-            HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
-            Setting.HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
+            HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
+            Setting.HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
 
             //SerializeFunction = (TypeGoInfo typeGoInfo, Stream stream, ref object dataRef) =>
             //{
@@ -54,8 +54,8 @@ namespace JsonGo.Binary
             TryGetValueOfTypeGo = Options.Types.TryGetValue;
             //SerializeHandler.Serializer = this;
 
-            HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
-            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
+            HasGenerateRefrencedTypes = jsonOptionInfo.HasGenerateRefrencedTypes;
+            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.HasGenerateRefrencedTypes;
 
             //SerializeFunction = async (TypeGoInfo typeGoInfo, Stream stream, object dataRef) =>
             //{

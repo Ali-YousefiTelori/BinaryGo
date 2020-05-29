@@ -17,7 +17,7 @@ namespace JsonGoPerformance
         {
             for (int i = 0; i < 10; i++)
             {
-                Serializer.SingleIntance.Serialize(obj);
+                Serializer.NormalIntance.Serialize(obj);
                 //Serializer.SingleIntance.SerializeCompile(obj);
                 JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
                 {

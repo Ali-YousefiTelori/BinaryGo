@@ -40,7 +40,7 @@ namespace JsonGo.Deserialize
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
 
-        internal JsonOptionInfo Options { get; set; } = new JsonOptionInfo() { IsGenerateLoopReference = true };
+        internal JsonOptionInfo Options { get; set; } = new JsonOptionInfo() { HasGenerateRefrencedTypes = true };
         /// <summary>
         /// save deserialized objects for referenced type
         /// </summary>
