@@ -17,7 +17,21 @@ namespace JsonGo.Json
     {
         static Serializer()
         {
-            SingleIntance = new Serializer();
+            TypeGoInfo.Generate(typeof(DateTime), DefaultOptions);
+            TypeGoInfo.Generate(typeof(uint), DefaultOptions);
+            TypeGoInfo.Generate(typeof(long), DefaultOptions);
+            TypeGoInfo.Generate(typeof(short), DefaultOptions);
+            TypeGoInfo.Generate(typeof(byte), DefaultOptions);
+            TypeGoInfo.Generate(typeof(double), DefaultOptions);
+            TypeGoInfo.Generate(typeof(float), DefaultOptions);
+            TypeGoInfo.Generate(typeof(decimal), DefaultOptions);
+            TypeGoInfo.Generate(typeof(sbyte), DefaultOptions);
+            TypeGoInfo.Generate(typeof(ulong), DefaultOptions);
+            TypeGoInfo.Generate(typeof(bool), DefaultOptions);
+            TypeGoInfo.Generate(typeof(ushort), DefaultOptions);
+            TypeGoInfo.Generate(typeof(int), DefaultOptions);
+            TypeGoInfo.Generate(typeof(byte[]), DefaultOptions);
+            TypeGoInfo.Generate(typeof(string), DefaultOptions);
         }
 
         internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
@@ -42,8 +56,8 @@ namespace JsonGo.Json
             TryGetValueOfTypeGo = Options.Types.TryGetValue;
             SerializeHandler.Serializer = this;
 
-            HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
-            Setting.HasGenerateRefrencedTypes = Options.IsGenerateLoopReference;
+            HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
+            Setting.HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
 
             SerializeFunction = (TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object dataRef) =>
             {
@@ -59,8 +73,8 @@ namespace JsonGo.Json
             TryGetValueOfTypeGo = Options.Types.TryGetValue;
             SerializeHandler.Serializer = this;
 
-            HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
-            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.IsGenerateLoopReference;
+            HasGenerateRefrencedTypes = jsonOptionInfo.HasGenerateRefrencedTypes;
+            Setting.HasGenerateRefrencedTypes = jsonOptionInfo.HasGenerateRefrencedTypes;
 
             SerializeFunction = (TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object dataRef) =>
             {
@@ -80,7 +94,13 @@ namespace JsonGo.Json
         /// <summary>
         /// single instance of serializer to accesss faster
         /// </summary>
-        public static Serializer SingleIntance { get; set; }
+        public static Serializer NormalIntance
+        {
+            get
+            {
+                return new Serializer();
+            }
+        }
         /// <summary>
         /// serialize object function
         /// </summary>

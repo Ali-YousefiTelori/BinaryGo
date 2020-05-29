@@ -9,37 +9,13 @@ namespace JsonGo.Json
     /// <summary>
     /// default saved data of serialization and deserialization
     /// </summary>
-    public class JsonOptionInfo
+    public class JsonOptionInfo : IJson
     {
-        //internal JsonOptionInfo()
-        //{
-        //    TryGetValueOfTypeGo = Types.TryGetValue;
-        //    TryGetValueOfSerializedObjects = SerializedObjects.TryGetValue;
-        //    ClearSerializedObjects = SerializedObjects.Clear;
-        //    AddSerializedObjects = SerializedObjects.Add;
-        //    AddTypes = Types.Add;
-        //}
-
-        ///// <summary>
-        ///// add new value to types
-        ///// </summary>
-        //internal Action<Type, TypeGoInfo> AddTypes { get; set; }
-        ///// <summary>
-        ///// add new serilized object to memory
-        ///// </summary>
-        //internal Action<object ,int> AddSerializedObjects { get; set; }
-        ///// <summary>
-        ///// clear Serialized Objects
-        ///// </summary>
-        //internal Action ClearSerializedObjects { get; set; }
-        ///// <summary>
-        ///// get typefo value from 
-        ///// </summary>
-        //internal TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
-        ///// <summary>
-        ///// get value from serializedobjects
-        ///// </summary>
-        //internal TryGetValue<object, int> TryGetValueOfSerializedObjects { get; set; }
+        public JsonOptionInfo()
+        {
+            AddTypes = Types.Add;
+            TryGetValueOfTypeGo = Types.TryGetValue;
+        }
         /// <summary>
         /// chached types
         /// </summary>
@@ -49,6 +25,11 @@ namespace JsonGo.Json
         /// </summary>
         internal Dictionary<object, int> SerializedObjects { get; set; } = new Dictionary<object, int>();
 
-        public bool IsGenerateLoopReference { get; set; }
+        public bool HasGenerateRefrencedTypes { get; set; }
+
+
+        public Action<Type, TypeGoInfo> AddTypes { get; set; }
+
+        public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
     }
 }
