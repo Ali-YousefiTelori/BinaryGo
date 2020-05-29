@@ -1,17 +1,17 @@
 ﻿using JsonGoTest.Models;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xunit;
 
 namespace JsonGoTest
 {
     public class NormalObjectsTests
     {
-        [Test]
+        [Fact]
         public void UserInfoTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -22,11 +22,11 @@ namespace JsonGoTest
             };
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"EMP_NO\":56,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
-            Assert.IsTrue(result == equalData);
+            Assert.True(result == equalData);
             var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
-            Assert.IsTrue(deserialized.IsEquals(userInfo));
+            Assert.True(deserialized.IsEquals(userInfo));
         }
-        [Test]
+        [Fact]
         public void UserInfoNullableTest()
         {
             UserInfo userInfo = new UserInfo()
@@ -37,19 +37,19 @@ namespace JsonGoTest
                 FullName = "Ali Yousefi",
                 Id = 1,
             };
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":false,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
-            Assert.IsTrue(result == equalData);
+            Assert.True(result == equalData);
             var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
-            Assert.IsTrue(deserialized.IsEquals(userInfo));
+            Assert.True(deserialized.IsEquals(userInfo));
         }
 
 
-        [Test]
+        [Fact]
         public void UserInfoWithRolesTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -67,9 +67,9 @@ namespace JsonGoTest
 
                 var result = serializer.Serialize(userInfo);
                 var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"UserInfo\":{\"$ref\":1},\"Type\":3},{\"$id\":4,\"Id\":2,\"UserInfo\":{\"$ref\":1},\"Type\":2}]}}";
-                Assert.IsTrue(result == equalData);
+                Assert.True(result == equalData);
                 var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<UserInfo>(result);
-                Assert.IsTrue(deserialized.IsEquals(userInfo));
+                Assert.True(deserialized.IsEquals(userInfo));
             }
             catch (Exception ex)
             {
@@ -79,10 +79,10 @@ namespace JsonGoTest
 
         }
 
-        [Test]
+        [Fact]
         public void UserInfoWithRolesAndCompanyTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { IsGenerateLoopReference = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
             CompanyInfo companyInfo = new CompanyInfo()
             {
                 Id = 14,
@@ -108,10 +108,10 @@ namespace JsonGoTest
 
             var result = serializer.Serialize(companyInfo);
             var equalData = "{\"$id\":1,\"Id\":14,\"Name\":\"company test\",\"Users\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":4,\"$values\":[{\"$id\":5,\"Id\":1,\"UserInfo\":{\"$ref\":3},\"Type\":3},{\"$id\":6,\"Id\":2,\"UserInfo\":{\"$ref\":3},\"Type\":2}]},\"CompanyInfo\":{\"$ref\":1}},{\"$ref\":3}]}}";
-            Assert.IsTrue(result == equalData);
+            Assert.True(result == equalData);
 
             var deserialized = JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<CompanyInfo>(result);
-            Assert.IsTrue(deserialized.IsEquals(companyInfo));
+            Assert.True(deserialized.IsEquals(companyInfo));
 
         }
     }
