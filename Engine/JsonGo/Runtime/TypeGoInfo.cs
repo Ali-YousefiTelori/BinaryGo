@@ -208,10 +208,8 @@ namespace JsonGo.Runtime
                         };
                     }
 
-                    foreach (var property in baseType.GetProperties())
+                    foreach (var property in GetListOfProperties(baseType))
                     {
-                        if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0)
-                            continue;
                         IPropertyCallerInfo del = null;
                         try
                         {
@@ -337,7 +335,24 @@ namespace JsonGo.Runtime
             }
             return type;
         }
-    
+
+        /// <summary>
+        /// get list of propertis of type with inheritance
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> GetListOfProperties(Type type)
+        {
+            List<PropertyInfo> properties = new List<PropertyInfo>();
+            foreach (var property in type.GetProperties())
+            {
+                if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0)
+                    continue;
+                properties.Add(property);
+                properties.AddRange(GetListOfProperties(type.BaseType));
+            }
+            return properties;
+        }
 
         /// <summary>
         /// add your types or interfaces to automatic custom type
