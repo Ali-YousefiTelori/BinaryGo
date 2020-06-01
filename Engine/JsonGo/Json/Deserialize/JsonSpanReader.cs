@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace JsonGo.Deserialize
+namespace JsonGo.Json.Deserialize
 {
     /// <summary>
     /// fast struct to read json data
@@ -52,6 +52,14 @@ namespace JsonGo.Deserialize
                     return _buffer[_Index];
             }
             while (true);
+        }
+
+        /// <summary>
+        /// back index from 1 position
+        /// </summary>
+        public void BackIndex()
+        {
+            _Index--;
         }
 
         private ReadOnlySpan<char> ExtractStringOLD()
@@ -140,7 +148,7 @@ namespace JsonGo.Deserialize
             }
             _Index = _Length;
             if (readOnlySpan[readOnlySpan.Length - 1] == JsonConstantsString.Quotes)
-                stringBuilder.Append(readOnlySpan.Slice(index, 1));
+                stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - index - 1));
             else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length));
             return stringBuilder.ToString().AsSpan();

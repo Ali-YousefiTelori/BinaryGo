@@ -31,10 +31,14 @@ namespace JsonGo.Json
             TypeGoInfo.Generate(typeof(ushort), DefaultOptions);
             TypeGoInfo.Generate(typeof(int), DefaultOptions);
             TypeGoInfo.Generate(typeof(byte[]), DefaultOptions);
+            TypeGoInfo.Generate(typeof(int[]), DefaultOptions);
             TypeGoInfo.Generate(typeof(string), DefaultOptions);
         }
 
-        internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
+        /// <summary>
+        /// default options of serialization
+        /// </summary>
+        public static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
 
         /// <summary>
         /// generate $ref and $values and support for loop reference serialization and deserialization

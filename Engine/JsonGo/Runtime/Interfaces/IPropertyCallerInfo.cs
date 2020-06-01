@@ -1,4 +1,4 @@
-﻿using JsonGo.Deserialize;
+﻿using JsonGo.Json.Deserialize;
 using System;
 using System.Collections.Generic;
 using System.Text;

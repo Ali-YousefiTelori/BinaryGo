@@ -13,11 +13,6 @@ namespace JsonGo.Binary
     /// </summary>
     public class BinarySerializer : ITypeGo
     {
-        static BinarySerializer()
-        {
-            SingleIntance = new BinarySerializer();
-        }
-
         internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
         /// <summary>
         /// support for loop reference of objects
@@ -86,7 +81,13 @@ namespace JsonGo.Binary
         /// <summary>
         /// single instance of serializer to accesss faster
         /// </summary>
-        public static BinarySerializer SingleIntance { get; set; }
+        public static BinarySerializer NormalIntance
+        {
+            get
+            {
+                return new BinarySerializer();
+            }
+        }
 
         /// <summary>
         /// string builder of json serialization
@@ -98,7 +99,7 @@ namespace JsonGo.Binary
         /// </summary>
         /// <param name="data">any object to serialize</param>
         /// <returns>json that serialized from you object</returns>
-        public MemoryStream Serialize(object data)
+        public Span<byte> Serialize(object data)
         {
             Writer = new MemoryStream();
             ReferencedIndex = 0;
@@ -106,7 +107,7 @@ namespace JsonGo.Binary
             //SerializeHandler.AddSerializedObjects = serializedObjects.Add;
             //SerializeHandler.TryGetValueOfSerializedObjects = serializedObjects.TryGetValue;
             SerializeObject(data);
-            return Writer;
+            return Writer.ToArray().AsSpan();
         }
 
         /// <summary>

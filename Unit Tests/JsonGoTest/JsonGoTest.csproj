@@ -19,8 +19,5 @@
     <ProjectReference Include="..\..\Engine\JsonGo\JsonGo.csproj" />
     <ProjectReference Include="..\..\Performance\JsonGoPerformance\JsonGoPerformance.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Binary\" />
-  </ItemGroup>
 
 </Project>

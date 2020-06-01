@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using JsonGo;
-using JsonGo.Deserialize;
+using JsonGo.Json.Deserialize;
 using JsonGoPerformance.Models;
 using Newtonsoft.Json;
 using System;

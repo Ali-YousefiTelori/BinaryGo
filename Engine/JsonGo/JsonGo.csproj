@@ -72,9 +72,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Deserialize\FastDeserializerExtractor.cs" />
-    <Compile Remove="Deserialize\FastDeserializerExtractor2.cs" />
-    <Compile Remove="Deserialize\JsonSpanReader2.cs" />
+    <Compile Remove="Json\Deserialize\FastDeserializerExtractor.cs" />
+    <Compile Remove="Json\Deserialize\FastDeserializerExtractor2.cs" />
+    <Compile Remove="Json\Deserialize\JsonSpanReader2.cs" />
   </ItemGroup>
 
   <ItemGroup>

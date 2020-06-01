@@ -1,4 +1,5 @@
-﻿using JsonGoTest.Models;
+﻿using JsonGo.Runtime;
+using JsonGoTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,15 +20,6 @@ namespace JsonGoTest.Json.Variables
 
         [Fact]
         public (string Result, sbyte Value) SByteTestSerialize()
-        {
-            sbyte value = -5;
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
-            Assert.True(result == $"{value}", $"Your Value: {value} Serialize Value: {result}");
-            return (result, value);
-        }
-
-        [Fact]
-        public (string Result, sbyte Value) SByteTestSerialize2()
         {
             sbyte value = -5;
             var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
@@ -154,6 +146,7 @@ namespace JsonGoTest.Json.Variables
         [Fact]
         public (string Result, TestEnum Value) EnumTestSerialize1()
         {
+            TypeGoInfo.Generate(typeof(TestEnum), JsonGo.Json.Serializer.DefaultOptions);
             TestEnum value = TestEnum.None;
             var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
             Assert.True(result == $"{(int)value}", $"Your Value: {value} Serialize Value: {result}");
@@ -163,6 +156,7 @@ namespace JsonGoTest.Json.Variables
         [Fact]
         public (string Result, TestEnum Value) EnumTestSerialize2()
         {
+            TypeGoInfo.Generate(typeof(TestEnum), JsonGo.Json.Serializer.DefaultOptions);
             var value = TestEnum.Value10;
             var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
             Assert.True(result == $"{(int)value}", $"Your Value: {value} Serialize Value: {result}");

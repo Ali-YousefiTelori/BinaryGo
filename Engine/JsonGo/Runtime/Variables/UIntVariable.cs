@@ -14,7 +14,8 @@ namespace JsonGo.Runtime.Variables
         /// initalize this variable to your typeGo
         /// </summary>
         /// <param name="typeGoInfo">typeGo to initialize variable on it</param>
-        public void Initialize(TypeGoInfo typeGoInfo)
+        /// <param name="options">options of setting of variable serializer or deserializer</param>
+        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
         {
             var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;

@@ -16,7 +16,8 @@ namespace JsonGo.Runtime.Variables
         /// initalize this variable to your typeGo
         /// </summary>
         /// <param name="typeGoInfo">typeGo to initialize variable on it</param>
-        public void Initialize(TypeGoInfo typeGoInfo)
+        /// <param name="options">options of setting of variable serializer or deserializer</param>
+        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
         {
             var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;
@@ -38,9 +39,8 @@ namespace JsonGo.Runtime.Variables
             //binary serialization
             typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
             {
-                stream.Write(BitConverter.GetBytes((sbyte)data).AsSpan());
+                stream.Write(new byte[] { (byte)(sbyte)data });
             };
-
             //set the default value of variable
             typeGoInfo.DefaultValue = default(sbyte);
         }

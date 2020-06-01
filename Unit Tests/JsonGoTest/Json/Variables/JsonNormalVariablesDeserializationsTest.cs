@@ -11,119 +11,112 @@ namespace JsonGoTest.Json.Variables
         public void ByteTestDeserialize()
         {
             var (Result, Value) = ByteTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<byte>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<byte>(Result) == Value);
         }
 
         [Fact]
         public void SByteTestDeserialize()
         {
             var (Result, Value) = SByteTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<sbyte>(Result) == Value);
-        }
-
-        [Fact]
-        public void SByteTestDeserialize2()
-        {
-            var (Result, Value) = SByteTestSerialize2();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<sbyte>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<sbyte>(Result) == Value);
         }
 
         [Fact]
         public void Int16TestDeserialize()
         {
             var (Result, Value) = UInt16TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<short>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<short>(Result) == Value);
         }
 
         [Fact]
         public void UInt16TestDeserialize()
         {
             var (Result, Value) = UInt16TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<ushort>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<ushort>(Result) == Value);
         }
 
         [Fact]
         public void Int32TestDeserialize()
         {
             var (Result, Value) = Int32TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<int>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<int>(Result) == Value);
         }
 
         [Fact]
         public void UInt32TestDeserialize()
         {
             var (Result, Value) = UInt32TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<uint>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<uint>(Result) == Value);
         }
 
         [Fact]
         public void Int64TestDeserialize()
         {
             var (Result, Value) = Int64TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<long>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<long>(Result) == Value);
         }
 
         [Fact]
         public void UInt64TestDeserialize()
         {
             var (Result, Value) = UInt64TestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<ulong>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<ulong>(Result) == Value);
         }
 
         [Fact]
         public void DoubleTestDeserialize()
         {
             var (Result, Value) = DoubleTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<double>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<double>(Result) == Value);
         }
 
         [Fact]
         public void FloatTestDeserialize()
         {
             var (Result, Value) = FloatTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<float>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<float>(Result) == Value);
         }
 
         [Fact]
         public void DecimalTestDeserialize()
         {
             var (Result, Value) = DecimalTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<decimal>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<decimal>(Result) == Value);
         }
 
         [Fact]
         public void StringTestDeserialize()
         {
             var (Result, Value) = StringTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
         }
 
         [Fact]
         public void BoolTestDeserialize()
         {
             var (Result, Value) = BoolTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<bool>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<bool>(Result) == Value);
         }
 
         [Fact]
         public void BoolTestDeserialize2()
         {
             var (Result, Value) = BoolTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<bool>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<bool>(Result) == Value);
         }
 
         [Fact]
         public void DateTimeTestDeserialize()
         {
             var (Result, Value) = DateTimeTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<DateTime>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<DateTime>(Result) == Value);
         }
 
         [Fact]
         public void EnumTestDeserialize1()
         {
             var (Result, Value) = EnumTestSerialize1();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
         }
 
         [Fact]
@@ -131,63 +124,71 @@ namespace JsonGoTest.Json.Variables
         {
             var (Result, Value) = EnumTestSerialize2();
 
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
         }
 
         [Fact]
         public void EnumTestDeserialize3()
         {
             var (Result, Value) = EnumTestSerialize3();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<TestEnum>(Result) == Value);
         }
 
         [Fact]
         public void ByteArrayTestDeserialize()
         {
             var (Result, Value) = ByteArrayTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<byte[]>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<byte[]>(Result).SequenceEqual(Value));
         }
 
         [Fact]
         public void IntArrayTestDeserialize()
         {
             var (Result, Value) = IntArrayTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<int[]>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<int[]>(Result).SequenceEqual(Value));
         }
 
         [Fact]
         public void IntArrayValueReferenceTestDeserialize()
         {
             var (Result, Value) = IntArrayValueReferenceTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<int[]>(Result) == Value);
+            JsonGo.Json.Deserialize.JsonDeserializer deserializer = new JsonGo.Json.Deserialize.JsonDeserializer()
+            {
+                HasGenerateRefrencedTypes = true
+            };
+            Assert.True(deserializer.Deserialize<int[]>(Result).SequenceEqual(Value));
         }
 
         [Fact]
         public void StringArrayTestDeserialize()
         {
             var (Result, Value) = StringArrayTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string[]>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string[]>(Result).SequenceEqual(Value));
         }
 
         [Fact]
         public void StringArrayReferenceTestDeserialize()
         {
             var (Result, Value) = StringArrayReferenceTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string[]>(Result) == Value);
+            JsonGo.Json.Deserialize.JsonDeserializer deserializer = new JsonGo.Json.Deserialize.JsonDeserializer()
+            {
+                HasGenerateRefrencedTypes = true
+            };
+            Assert.True(deserializer.Deserialize<string[]>(Result).SequenceEqual(Value));
         }
 
         [Fact]
         public void StringQuatsTestDeserialize()
         {
             var (Result, Value) = StringQuatsTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
         }
 
         [Fact]
         public void StringWithLineTestDeserialize()
         {
             var (Result, Value) = StringWithLineTestSerialize();
-            Assert.True(JsonGo.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.SingleIntance.Deserialize<string>(Result) == Value);
         }
     }
 }

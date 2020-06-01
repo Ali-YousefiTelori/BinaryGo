@@ -16,7 +16,8 @@ namespace JsonGo.Runtime.Variables
         /// initalize this variable to your typeGo
         /// </summary>
         /// <param name="typeGoInfo">typeGo to initialize variable on it</param>
-        public void Initialize(TypeGoInfo typeGoInfo)
+        /// <param name="options">options of setting of variable serializer or deserializer</param>
+        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
         {
             var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
             if (baseType == null)
@@ -233,7 +234,10 @@ namespace JsonGo.Runtime.Variables
                     stream.Write(BitConverter.GetBytes((int)data).AsSpan());
                 };
             }
-
+            else
+            {
+                throw new Exception($"enum of type {enumType.FullName} not support yet, please contact programmer!");
+            }
             typeGoInfo.DefaultValue = TypeGoInfo.GetActivator(baseType);
         }
     }

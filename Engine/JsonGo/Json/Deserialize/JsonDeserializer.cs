@@ -3,7 +3,7 @@ using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
 
-namespace JsonGo.Deserialize
+namespace JsonGo.Json.Deserialize
 {
 
     /// <summary>
