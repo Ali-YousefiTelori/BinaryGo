@@ -50,7 +50,6 @@ namespace JsonGoTest.Models
                 }
             }
             return true;
-
         }
     }
 }
