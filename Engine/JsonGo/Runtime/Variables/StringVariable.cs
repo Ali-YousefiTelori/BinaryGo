@@ -33,13 +33,17 @@ namespace JsonGo.Runtime.Variables
                     {
                         handler.Append("\\\"");
                     }
-                    else if (result[i] == '\r' && i < result.Length - 1 && result[i + 1] == '\n')
-                    {
-                        handler.Append("\\r\\n");
-                        i++;
-                    }
+                    //else if (result[i] == '\r' && i < result.Length - 1 && result[i + 1] == '\n')
+                    //{
+                    //    handler.Append("\\r\\n");
+                    //    i++;
+                    //}
                     else if (result[i] == '\n')
                         handler.Append("\\n");
+                    else if (result[i] == '\r')
+                        handler.Append("\\r");
+                    else if (result[i] == '\t')
+                        handler.Append("\\t");
                     else
                         handler.AppendChar(result[i]);
                 }
