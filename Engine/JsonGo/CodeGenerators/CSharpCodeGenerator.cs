@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace JsonGo.CodeGenerators
 {
     /// <summary>
-    /// code generator for compile time
+    /// Compile time code generator 
     /// </summary>
     public static class CSharpCodeGenerator
     {
         static List<Type> AllTypes { get; set; } = new List<Type>();
         /// <summary>
-        /// generate compile time codes
+        /// Generates compile time codes
         /// </summary>
         /// <param name="stringBuilder"></param>
         /// <param name="assemblyLoader"></param>
@@ -119,7 +119,7 @@ namespace JsonGo.CodeGenerators
                 return;
             }
             stringBuilder.AppendLine();
-            stringBuilder.AppendLine($"TypeBuilder<{GetFriendlyName(type)}>.Create().SerializeObject((serializer, builder, obj) =>");
+            stringBuilder.AppendLine($"TypeBuilder<{GetFriendlyTypeName(type)}>.Create().SerializeObject((serializer, builder, obj) =>");
             stringBuilder.AppendLine("{");
             stringBuilder.AppendLine("if (obj == null)");
             stringBuilder.AppendLine("return;");
@@ -171,7 +171,7 @@ namespace JsonGo.CodeGenerators
             var properties = type.GetProperties();
             if (properties.Length == 0)
                 return;
-            stringBuilder.AppendLine($"TypeBuilder<{GetFriendlyName(type)}>.Create().SerializeObject(ArrayInitializer).Build();");
+            stringBuilder.AppendLine($"TypeBuilder<{GetFriendlyTypeName(type)}>.Create().SerializeObject(ArrayInitializer).Build();");
             //stringBuilder.AppendLine($"TypeBuilder<{GetFriendlyName(type)}>.Create().SerializeObject((serializer, builder, obj) =>");
             //stringBuilder.AppendLine("{");
             //stringBuilder.AppendLine("if (obj == null)");
@@ -202,11 +202,11 @@ namespace JsonGo.CodeGenerators
             //stringBuilder.AppendLine("}).Build();");
         }
         /// <summary>
-        /// get name of type
+        /// Gets type name
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string GetFriendlyName(this Type type)
+        public static string GetFriendlyTypeName(this Type type)
         {
             if (type == typeof(int))
                 return "int";
@@ -232,10 +232,10 @@ namespace JsonGo.CodeGenerators
             }
             else if (type.BaseType == typeof(Task))
             {
-                return GetFriendlyName(type.GetGenericArguments()[0]);
+                return GetFriendlyTypeName(type.GetGenericArguments()[0]);
             }
             else if (type.GetGenericArguments().Length > 0)
-                return type.Namespace + "." + type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(x => GetFriendlyName(x)).ToArray()) + ">";
+                return type.Namespace + "." + type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(x => GetFriendlyTypeName(x)).ToArray()) + ">";
             else
                 return type.Namespace + "." + type.Name;
         }

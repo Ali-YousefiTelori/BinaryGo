@@ -7,20 +7,20 @@ using System.Text;
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// the interface with a fast way access to add and get type from memory
+    /// This interface ha a fast access from everywhere to add and get type from memory
     /// </summary>
     public interface ITypeGo
     {
         /// <summary>
-        /// add new value to types
+        /// Adds new value to types
         /// </summary>
         Action<Type, TypeGoInfo> AddTypes { get; set; }
         /// <summary>
-        /// get typefo value from 
+        /// Gets typefo value from 
         /// </summary>
         TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
         /// <summary>
-        /// support for loop refereence serialization
+        /// Support for loop refereence serialization
         /// </summary>
         bool HasGenerateRefrencedTypes { get; set; }
     }

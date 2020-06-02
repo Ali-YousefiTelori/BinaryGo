@@ -7,14 +7,14 @@ using System.Text;
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// property value caller
+    /// Property value caller
     /// </summary>
     /// <typeparam name="TType"></typeparam>
     /// <typeparam name="TPropertyType"></typeparam>
     public class PropertyCallerInfo<TType, TPropertyType> : IPropertyCallerInfo
     {
         /// <summary>
-        /// property value caller
+        /// Property value caller
         /// </summary>
         public PropertyCallerInfo(Func<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
         {
@@ -22,15 +22,15 @@ namespace JsonGo.Runtime
             SetValue = funcSetValue;
         }
         /// <summary>
-        /// get value of property
+        /// Gets property value
         /// </summary>
         public Func<TType, TPropertyType> GetValue { get; set; }
         /// <summary>
-        /// set value to peroperty
+        /// Sets property value
         /// </summary>
         public Action<TType, TPropertyType> SetValue { get; set; }
         /// <summary>
-        /// get proeprty value of object
+        /// Gets property value of an object
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
@@ -40,7 +40,7 @@ namespace JsonGo.Runtime
         }
 
         /// <summary>
-        /// set property value of object
+        /// Sets property value of an object
         /// </summary>
         /// <param name="deserializer"></param>
         /// <param name="instance"></param>

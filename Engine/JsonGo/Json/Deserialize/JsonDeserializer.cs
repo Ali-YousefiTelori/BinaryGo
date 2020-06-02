@@ -7,7 +7,7 @@ namespace JsonGo.Json.Deserialize
 {
 
     /// <summary>
-    /// deserializer of json
+    /// Json deserializer
     /// </summary>
     public class JsonDeserializer : ITypeGo
     {
@@ -15,7 +15,7 @@ namespace JsonGo.Json.Deserialize
 
         static JsonDeserializer()
         {
-            SingleIntance = new JsonDeserializer();
+            SingleInstance = new JsonDeserializer();
             //ExtractFunction = DeserializerExtractor.Extract;
             //FastExtractFunction = FastDeserializerExtractor2.Extract;
             FastExtractFunction = FastDeserializerExtractor3.Extract;
@@ -29,29 +29,29 @@ namespace JsonGo.Json.Deserialize
             Initialize();
         }
         /// <summary>
-        /// add new value to types
+        /// Adds new value to types
         /// </summary>
         public Action<Type, TypeGoInfo> AddTypes { get; set; }
         /// <summary>
-        /// get typefo value from 
+        /// Gets typefo value 
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
 
         internal JsonOptionInfo Options { get; set; } = new JsonOptionInfo() { HasGenerateRefrencedTypes = true };
         /// <summary>
-        /// save deserialized objects for referenced type
+        /// Save deserialized objects for referenced type
         /// </summary>
         internal Dictionary<int, object> DeSerializedObjects { get; set; } = new Dictionary<int, object>();
         /// <summary>
-        /// single instance of deserialize to access faster
+        /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
-        public static JsonDeserializer SingleIntance { get; set; }
+        public static JsonDeserializer SingleInstance { get; set; }
         /// <summary>
-        /// default setting of serializer
+        /// Serializer's default settings
         /// </summary>
         public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
         /// <summary>
-        /// has support for loop reference of types
+        /// Support for types' loop reference
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
@@ -65,10 +65,10 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// deserialize a json to a type
+        /// Deserializes a json to a type
         /// </summary>
-        /// <typeparam name="T">type of deserialize</typeparam>
-        /// <param name="json">json to deserialize</param>
+        /// <typeparam name="T">Type to deserialize into</typeparam>
+        /// <param name="json">Json string to deserialize</param>
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(string json)
         {

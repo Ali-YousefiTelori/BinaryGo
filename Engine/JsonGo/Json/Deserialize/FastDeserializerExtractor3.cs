@@ -10,12 +10,12 @@ namespace JsonGo.Json.Deserialize
     internal static class FastDeserializerExtractor3
     {
         /// <summary>
-        /// deserialize json
+        /// Deserialize json
         /// </summary>
         /// <param name="deserializer"></param>
         /// <param name="typeGo"></param>
-        /// <param name="json">json value</param>
-        /// <returns>value deserialized</returns>
+        /// <param name="json">json object to deserialize</param>
+        /// <returns>The deserialized value</returns>
         internal static object Extract(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader json)
         {
             var character = json.Read();
@@ -97,7 +97,7 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// extract list of properties from object
+        /// Extract the list of properties from an object
         /// </summary>
         /// <param name="deserializer"></param>
         /// <param name="typeGo"></param>

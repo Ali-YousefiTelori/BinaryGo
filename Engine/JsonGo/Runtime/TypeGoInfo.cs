@@ -22,12 +22,12 @@ using System.Threading.Tasks;
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// generate type details on memory
+    /// Generate type details in memory
     /// </summary>
     public class TypeGoInfo
     {
         /// <summary>
-        /// current calture
+        /// Current culture
         /// </summary>
         public static CultureInfo CurrentCulture { get; set; }
         static TypeGoInfo()
@@ -41,68 +41,68 @@ namespace JsonGo.Runtime
             AddToCustomTypes(typeof(IList<>), typeof(List<>));
         }
         /// <summary>
-        /// default value of object
+        /// Default value of object
         /// </summary>
         public object DefaultValue { get; set; }
         /// <summary>
-        /// if the type is simple like int,byte,bool,enum they can serialize without quots
+        /// If the type is simple like int, byte, bool, enum it can be serialized without quotes
         /// </summary>
         public bool IsNoQuotesValueType { get; set; } = true;
         /// <summary>
-        /// type of data
+        /// Data type
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// serialize action
+        /// Serialize action
         /// </summary>
         public JsonFunctionGo JsonSerialize { get; set; }
         /// <summary>
-        /// binary serialize
+        /// Binary serialize
         /// </summary>
         public BinaryFunctionGo BinarySerialize { get; set; }
         /// <summary>
-        /// deserialize string to object
+        /// Deserializes string to object
         /// </summary>
         public DeserializeFunc JsonDeserialize { get; set; }
         /// <summary>
-        /// create instance of type
+        /// Creates type instance
         /// </summary>
         public Func<object> CreateInstance { get; set; }
         /// <summary>
-        /// cast to real object
+        /// Casts to real object
         /// </summary>
         public Func<object, object> Cast { get; set; }
         /// <summary>
-        /// add array value to array type go
+        /// Adds array value to TypeGo array
         /// </summary>
         public Action<object, object> AddArrayValue { get; set; }
 
         /// <summary>
-        /// properties of type
+        /// Type properties 
         /// </summary>
         public Dictionary<string, PropertyGoInfo> Properties { get; set; }
         /// <summary>
-        /// properties of type
+        /// Type properties
         /// </summary>
         public Dictionary<string, PropertyGoInfo> DirectProperties { get; set; }
         /// <summary>
-        /// array of all properties for serialize
+        /// Array of all properties to serialize
         /// </summary>
         public PropertyGoInfo[] SerializeProperties { get; set; }
         /// <summary>
-        /// array of all properties for deserialize
+        /// Array of all properties to deserialize
         /// </summary>
         public PropertyGoInfo[] DeserializeProperties { get; set; }
         /// <summary>
-        /// generic types
+        /// Generic types
         /// </summary>
         public List<TypeGoInfo> Generics { get; set; } = new List<TypeGoInfo>();
 
         /// <summary>
-        /// initialize a variable to a typeGo
+        /// Initializes a variable to a TypeGo
         /// </summary>
         /// <param name="typeGoInfo"></param>
-        /// <param name="options">options or settings of variable serializer</param>
+        /// <param name="options">Options or settings for variable serializer</param>
         public static void InitializeVariable<T>(TypeGoInfo typeGoInfo, ITypeGo options) where T : ISerializationVariable, new()
         {
             T variable = new T();
@@ -111,8 +111,8 @@ namespace JsonGo.Runtime
 
 
         /// <summary>
-        /// initialize a typeGo for a runtime type
-        /// the typeGo make everything to use faster with near access
+        /// Initializes a TypeGo for a runtime type
+        /// the typeGo makes use of everything faster with easy access
         /// </summary>
         /// <param name="type"></param>
         /// <param name="options"></param>
@@ -307,7 +307,7 @@ namespace JsonGo.Runtime
         }
         internal static Dictionary<Type, Type> CustomTypeChanges { get; set; } = new Dictionary<Type, Type>();
         /// <summary>
-        /// generate interface ot types to new types
+        /// Generates types interface to new types
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -337,7 +337,7 @@ namespace JsonGo.Runtime
         }
 
         /// <summary>
-        /// get list of propertis of type with inheritance
+        /// Gets list of properties of type, with inheritance
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -355,7 +355,7 @@ namespace JsonGo.Runtime
         }
 
         /// <summary>
-        /// add your types or interfaces to automatic custom type
+        /// Add types or interfaces to automatic custom type
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -365,7 +365,7 @@ namespace JsonGo.Runtime
         }
 
         /// <summary>
-        /// add your types or interfaces to automatic custom type
+        /// Adds types or interfaces to automatic custom type
         /// </summary>
         public static void AddToCustomTypes(Type type, Type result)
         {
@@ -373,7 +373,7 @@ namespace JsonGo.Runtime
         }
 
         /// <summary>
-        /// get delete of type to make fast way to create instance
+        /// Gets type delegate to create instance in an efficient way
         /// </summary>
         /// <param name="type"></param>
         /// <param name="propertyInfo"></param>

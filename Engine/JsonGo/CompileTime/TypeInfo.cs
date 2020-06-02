@@ -6,40 +6,40 @@ using System.Text;
 namespace JsonGo.CompileTime
 {
     /// <summary>
-    /// details of a type
+    /// Type's details
     /// </summary>
     public class TypeInfo
     {
         /// <summary>
-        /// type of builder
+        /// Builder type
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// all of generic arguments
+        /// List with all generic arguments
         /// </summary>
         public List<TypeInfo> GenericArguments { get; set; } = new List<TypeInfo>();
         /// <summary>
-        /// create instance of type
+        /// Createa type instance
         /// </summary>
         public Func<object> CreateInstanceFunction { get; set; }
         /// <summary>
-        /// dynamic serializer function
+        /// Dynamic serializer function
         /// </summary>
         public Action<Serializer, StringBuilder, object> DynamicSerialize { get; set; }
 
     }
 
     /// <summary>
-    /// details of a type
+    /// Type details
     /// </summary>
     public class TypeInfo<T> : TypeInfo
     {
         /// <summary>
-        /// all of properties of type
+        /// Dictionary with all type properties
         /// </summary>
         public Dictionary<string, PropertyInfoBase> Properties { get; set; } = new Dictionary<string, PropertyInfoBase>();
         /// <summary>
-        /// serialize object directly
+        /// Serialize object directly
         /// </summary>
         public static Action<Serializer, StringBuilder, T> Serialize { get; set; }
     }

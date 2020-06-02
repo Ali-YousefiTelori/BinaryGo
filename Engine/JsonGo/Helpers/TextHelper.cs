@@ -5,7 +5,7 @@ using System.Text;
 namespace JsonGo.Helpers
 {
     /// <summary>
-    /// 
+    /// TextHelper class
     /// </summary>
     public class TextHelper
     {

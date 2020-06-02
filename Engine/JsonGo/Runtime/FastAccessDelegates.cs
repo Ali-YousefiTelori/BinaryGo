@@ -16,8 +16,8 @@ namespace JsonGo.Runtime
     /// <returns></returns>
     public delegate object FastExtractFunction(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
     /// <summary>
-    /// try get value from a dictionary
-    /// this is a pointer delegate of method to access faster from everywhere
+    /// Tries to get value from a dictionary
+    /// This is a pointer delegate of a method that can be accessed easy from everywhere
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -33,20 +33,20 @@ namespace JsonGo.Runtime
     /// <returns></returns>
     public delegate T RefFunc<T>(ReadOnlySpan<char> readOnlySpan);
     /// <summary>
-    /// function for serialize object
+    /// Function to serialize object
     /// </summary>
     /// <param name="handler"></param>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>
     public delegate void JsonFunctionGo(JsonSerializeHandler handler, ref object data);
     /// <summary>
-    /// binary serializer
+    /// Binary serializer
     /// </summary>
     /// <param name="stream"></param>
     /// <param name="data"></param>
     public delegate void BinaryFunctionGo(Stream stream, ref object data);
     /// <summary>
-    /// function for serialize object
+    /// Function to serialize object
     /// </summary>
     /// <param name="typeGoInfo"></param>
     /// <param name="handler"></param>
@@ -54,7 +54,7 @@ namespace JsonGo.Runtime
     /// <returns>serialized stringbuilder</returns>TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder,
     public delegate void JsonFunctionTypeGo(TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object data);
     /// <summary>
-    /// function for serialize object as binary
+    /// Function to serialize object as binary
     /// </summary>
     /// <param name="typeGoInfo"></param>
     /// <param name="stream"></param>

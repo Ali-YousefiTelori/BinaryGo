@@ -11,7 +11,7 @@ using System.Text;
 namespace JsonGo.Json
 {
     /// <summary>
-    /// serialize json to an object
+    /// Serializes json to an object
     /// </summary>
     public class Serializer : ITypeGo
     {
@@ -36,30 +36,30 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// default options of serialization
+        /// Serialization's default options
         /// </summary>
         public static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
 
         /// <summary>
-        /// generate $ref and $values and support for loop reference serialization and deserialization
+        /// Generates $ref and $values and support for serialization and deserialization loop reference 
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
         /// <summary>
-        /// add new value to types
+        /// Adds new value to types
         /// </summary>
         public Action<Type, TypeGoInfo> AddTypes { get; set; }
         /// <summary>
-        /// get typefo value from 
+        /// Gets TypeGo value 
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
         /// <summary>
-        /// the serialize handler let the serializer to fast access to pointers
+        /// The serialize handler lets the serializer access faster to the pointers
         /// </summary>
         public JsonSerializeHandler SerializeHandler { get; set; } = new JsonSerializeHandler();
         internal JsonOptionInfo Options { get; set; }
         /// <summary>
-        /// json serializer, serialize your object to json
+        /// JsonGo serializer: serializes object to json
         /// </summary>
         public Serializer()
         {
@@ -79,7 +79,7 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// serialize your object to json
+        /// Serializes object to json
         /// </summary>
         /// <param name="jsonOptionInfo">your json serializer option</param>
         public Serializer(JsonOptionInfo jsonOptionInfo)
@@ -100,16 +100,16 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// default setting of serializer
+        /// Serializer's default settings
         /// </summary>
         public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
 
         /// <summary>
-        /// start of referenced index
+        /// Start value of referenced index
         /// </summary>
         public int ReferencedIndex { get; set; } = 0;
         /// <summary>
-        /// single instance of serializer to accesss faster
+        /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
         public static Serializer NormalIntance
         {
@@ -119,29 +119,29 @@ namespace JsonGo.Json
             }
         }
         /// <summary>
-        /// serialize object function
+        /// Serialize object function
         /// </summary>
         public JsonFunctionTypeGo SerializeFunction { get; set; }
 
         /// <summary>
-        /// string builder of json serialization
+        /// String builder for json serialization
         /// </summary>
         public StringBuilder Writer { get; set; }
 
         /// <summary>
-        /// remove last cama from serialization
+        /// Removes last comma from serialization
         /// </summary>
-        public void RemoveLastCama()
+        public void RemoveLastComma()
         {
             if (Writer[Writer.Length - 1] == JsonConstantsString.Comma)
                 Writer.Length--;
         }
 
         /// <summary>
-        /// serialize an object to a json string
+        /// Serializes an object to a json string
         /// </summary>
-        /// <param name="data">any object to serialize</param>
-        /// <returns>json that serialized from you object</returns>
+        /// <param name="data">Object to serialize</param>
+        /// <returns>Json string returned from your serialized object</returns>
         public string Serialize(object data)
         {
             Writer = new StringBuilder(256);
@@ -162,7 +162,7 @@ namespace JsonGo.Json
 
         #region CompileTimeSerialization
         /// <summary>
-        /// compile time serialization is faster way to serialize your data
+        /// The "compile time" serialization is a faster way to serialize data
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -178,7 +178,7 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// continue serialization in compile time
+        /// Continue serialization in compile time
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -189,7 +189,7 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// get serializer oof compile time serialization to serialize it faster
+        /// Gets "compile time" serializer to serialize data faster
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="serializer"></param>
@@ -217,11 +217,11 @@ namespace JsonGo.Json
         #endregion
 
         /// <summary>
-        /// serialize an object to a json string
+        /// Serializes an object to a json string
         /// </summary>
-        /// <param name="data">any object to serialize</param>
+        /// <param name="data">Object to serialize</param>
         /// <param name="typeGoInfo"></param>
-        /// <returns>json that serialized</returns>
+        /// <returns>Json string from serialized object</returns>
         internal void SerializeObject(ref object data, out TypeGoInfo typeGoInfo)
         {
             Type dataType = data.GetType();
@@ -233,11 +233,11 @@ namespace JsonGo.Json
         }
 
         /// <summary>
-        /// serialize an object to a json string
+        /// Serializes an object to a json string
         /// </summary>
-        /// <param name="data">object to serialize</param>
-        /// <param name="typeGoInfo">typego of jsongo</param>
-        /// <returns>json that serialized</returns>
+        /// <param name="data">Object to serialize</param>
+        /// <param name="typeGoInfo">TypeGo of jsongo</param>
+        /// <returns>Json string from serialized object</returns>
         internal void SerializeObject(ref object data, TypeGoInfo typeGoInfo)
         {
             Func<char, StringBuilder> appendChar = Writer.Append;
@@ -258,7 +258,7 @@ namespace JsonGo.Json
                 propertyType.JsonSerialize(SerializeHandler, ref propertyValue);
                 appendChar(JsonConstantsString.Comma);
             }
-            RemoveLastCama();
+            RemoveLastComma();
             appendChar(JsonConstantsString.CloseBracket);
         }
     }

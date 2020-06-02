@@ -6,29 +6,29 @@ using System.Text;
 namespace JsonGo.CompileTime
 {
     /// <summary>
-    /// build your types 
+    /// This class builds your types 
     /// </summary>
     public class TypeBuilder<T>
     {
         /// <summary>
-        /// created insatnce function
+        /// Created instance function
         /// </summary>
         private Func<object> CreateInstanceFunction { get; set; }
         /// <summary>
-        /// serialize func
+        /// Serialize func
         /// </summary>
         private Action<Serializer, StringBuilder, T> SerializeFunction { get; set; }
         private Action<Serializer, StringBuilder, object> DynamicSerializeFunction { get; set; }
         /// <summary>
-        /// all of properties of type
+        /// Dictionary with all properties' type. Key: name, Value: type as PropertyInfoBase
         /// </summary>
         public Dictionary<string, PropertyInfoBase> Properties { get; set; } = new Dictionary<string, PropertyInfoBase>();
         /// <summary>
-        /// all of generic arguments
+        /// List with every generic argument
         /// </summary>
         public List<TypeInfo> GenericArguments { get; set; } = new List<TypeInfo>();
         /// <summary>
-        /// function of create instance of object
+        /// This function creates object's instance
         /// </summary>
         /// <param name="createInstance"></param>
         /// <returns></returns>
@@ -39,7 +39,7 @@ namespace JsonGo.CompileTime
         }
 
         /// <summary>
-        /// create
+        /// Create
         /// </summary>
         /// <returns></returns>
         public static TypeBuilder<T> Create()
@@ -49,9 +49,9 @@ namespace JsonGo.CompileTime
 
 
 
-        /// <summary>
-        /// add property to type
-        /// </summary>
+        ///<summary>
+        /// Gets property type and returns the proper TypeBuilder       
+        ///</summary>
         /// <returns></returns>
         public TypeBuilder<T> SerializeObject(Action<Serializer, StringBuilder, T> serialize)
         {
@@ -60,7 +60,7 @@ namespace JsonGo.CompileTime
         }
 
         /// <summary>
-        /// type on
+        /// Type on
         /// </summary>
         /// <typeparam name="T2"></typeparam>
         /// <returns></returns>
@@ -75,7 +75,7 @@ namespace JsonGo.CompileTime
             return this;
         }
         /// <summary>
-        /// add generics
+        /// Gets a generic argument type and returns the proper TypeBuilder
         /// </summary>
         /// <param name="typeInfo"></param>
         /// <returns></returns>
@@ -86,7 +86,7 @@ namespace JsonGo.CompileTime
         }
 
         /// <summary>
-        /// build a type
+        /// Builds the TypeBuilder
         /// </summary>
         public TypeBuilder<T> Build()
         {

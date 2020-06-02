@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 namespace JsonGo.Binary
 {
     /// <summary>
-    /// jsongo binary serializer to serialize your object to byte array or memory stream
+    /// JsonGo binary serializer: serializes your object to byte array or memory stream
     /// </summary>
     public class BinarySerializer : ITypeGo
     {
         internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
         /// <summary>
-        /// support for loop reference of objects
+        /// Support for objects' loop reference
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
         /// <summary>
-        /// add new value to types
+        /// Add new value to types
         /// </summary>
         public Action<Type, TypeGoInfo> AddTypes { get; set; }
         /// <summary>
@@ -30,7 +30,7 @@ namespace JsonGo.Binary
         //public BinarySerializeHandler SerializeHandler { get; set; } = new BinarySerializeHandler();
         internal JsonOptionInfo Options { get; set; }
         /// <summary>
-        /// seralizer initialize
+        /// Initialize seralizer 
         /// </summary>
         public BinarySerializer()
         {
@@ -50,7 +50,7 @@ namespace JsonGo.Binary
         }
 
         /// <summary>
-        /// seralizer initialize with options
+        /// Initialize seralizer with options
         /// </summary>
         public BinarySerializer(JsonOptionInfo jsonOptionInfo)
         {
@@ -70,16 +70,16 @@ namespace JsonGo.Binary
         }
 
         /// <summary>
-        /// default setting of serializer
+        /// Default serializer settings
         /// </summary>
         public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
 
         /// <summary>
-        /// start of referenced index
+        /// Start of referenced index
         /// </summary>
         public int ReferencedIndex { get; set; } = 0;
         /// <summary>
-        /// single instance of serializer to accesss faster
+        /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
         public static BinarySerializer NormalIntance
         {
@@ -90,15 +90,15 @@ namespace JsonGo.Binary
         }
 
         /// <summary>
-        /// string builder of json serialization
+        /// The string builder for json serialization
         /// </summary>
         public MemoryStream Writer { get; set; }
 
         /// <summary>
-        /// serialize an object to a json string
+        /// Serializes an object into a json string
         /// </summary>
-        /// <param name="data">any object to serialize</param>
-        /// <returns>json that serialized from you object</returns>
+        /// <param name="data">Any object to serialize into json</param>
+        /// <returns>The json string returned after serialization</returns>
         public Span<byte> Serialize(object data)
         {
             Writer = new MemoryStream();
@@ -111,10 +111,10 @@ namespace JsonGo.Binary
         }
 
         /// <summary>
-        /// serialize an object to a json string
+        /// Serializes an object into a json string
         /// </summary>
-        /// <param name="data">any object to serialize</param>
-        /// <returns>json that serialized</returns>
+        /// <param name="data">Any object to serialize</param>
+        /// <returns>Json string returned after serialization</returns>
         internal void SerializeObject(object data)
         {
             Type dataType = data.GetType();

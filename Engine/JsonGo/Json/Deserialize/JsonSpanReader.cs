@@ -8,7 +8,7 @@ using System.Text;
 namespace JsonGo.Json.Deserialize
 {
     /// <summary>
-    /// fast struct to read json data
+    /// Fast struct to read json data
     /// </summary>
     public ref struct JsonSpanReader
     {
@@ -39,7 +39,7 @@ namespace JsonGo.Json.Deserialize
         private int _Index;
 
         /// <summary>
-        /// Read a character
+        /// Reads a character
         /// </summary>
         /// <returns></returns>
         public char Read()
@@ -55,7 +55,7 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// back index from 1 position
+        /// Moves back _Index of 1 position
         /// </summary>
         public void BackIndex()
         {
@@ -109,7 +109,7 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// extract json string between two quats
+        /// Extract json string surronded by quotes
         /// </summary>
         /// <returns></returns>
         public ReadOnlySpan<char> ExtractString()
@@ -154,7 +154,7 @@ namespace JsonGo.Json.Deserialize
             return stringBuilder.ToString().AsSpan();
         }
         /// <summary>
-        /// Extract string with quotes
+        /// Extracts string with quotes
         /// </summary>
         /// <returns></returns>
         public ReadOnlySpan<char> ExtractStringQuotes()
@@ -174,7 +174,7 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// extract value from json
+        /// Extracts value from json
         /// </summary>
         /// <returns></returns>
         public ReadOnlySpan<char> ExtractValue()
@@ -198,7 +198,7 @@ namespace JsonGo.Json.Deserialize
         }
 
         /// <summary>
-        /// extract json key
+        /// Extract json key
         /// </summary>
         /// <returns></returns>
         public ReadOnlySpan<char> ExtractKey()

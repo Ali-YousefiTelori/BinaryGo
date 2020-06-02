@@ -7,32 +7,32 @@ using System.Text;
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// generate type details on memory
+    /// Generates type details in memory
     /// </summary>
     public class PropertyGoInfo
     {
         /// <summary>
-        /// type of property
+        /// Property type
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// current TypeGoInfo of property type
+        /// Current TypeGoInfo mirror of property type
         /// </summary>
         public TypeGoInfo TypeGoInfo { get; set; }
         /// <summary>
-        /// name of property
+        /// Property Name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// get value of property
+        /// Gets property value
         /// </summary>
         public Func<object, object> GetValue { get; set; }
         /// <summary>
-        /// get value of property
+        /// Gets property value
         /// </summary>
         public Func<JsonSerializeHandler, object, object> JsonGetValue { get; set; }
         /// <summary>
-        /// set value of property
+        /// Sets property value
         /// </summary>
         public Action<JsonDeserializer, object, object> JsonSetValue { get; set; }
     }

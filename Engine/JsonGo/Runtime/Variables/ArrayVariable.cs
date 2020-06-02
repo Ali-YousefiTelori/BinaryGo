@@ -11,15 +11,15 @@ using System.Text;
 namespace JsonGo.Runtime.Variables
 {
     /// <summary>
-    /// bool serializer and deserializer
+    /// Array serializer and deserializer
     /// </summary>
     public class ArrayVariable : ISerializationVariable
     {
         /// <summary>
-        /// initalize this variable to your typeGo
+        /// Initalizes TypeGo variable
         /// </summary>
-        /// <param name="typeGoInfo">typeGo to initialize variable on it</param>
-        /// <param name="options">options of setting of variable serializer or deserializer</param>
+        /// <param name="typeGoInfo">TypeGo variable to initialize</param>
+        /// <param name="options">Serializer or deserializer options</param>
         public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
         {
             var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
@@ -86,7 +86,7 @@ namespace JsonGo.Runtime.Variables
                             generic.JsonSerialize(handler, ref obj);
                             handler.AppendChar(JsonConstantsString.Comma);
                         }
-                        handler.Serializer.RemoveLastCama();
+                        handler.Serializer.RemoveLastComma();
                         handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
                         return null;
                     }
@@ -145,7 +145,7 @@ namespace JsonGo.Runtime.Variables
                             generic.JsonSerialize(handler, ref obj);
                             handler.AppendChar(JsonConstantsString.Comma);
                         }
-                        handler.Serializer.RemoveLastCama();
+                        handler.Serializer.RemoveLastComma();
                         handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
                     }
                     else

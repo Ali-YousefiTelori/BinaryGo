@@ -5,32 +5,32 @@ using System.Text;
 namespace JsonGo.CompileTime
 {
     /// <summary>
-    /// base of property bu
+    /// Base property
     /// </summary>
     public abstract class PropertyInfoBase
     {
         /// <summary>
-        /// name of property
+        /// Property name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// get Value
+        /// Gets the property's value
         /// </summary>
         public Func<object, object> GetValue { get; set; }
         /// <summary>
-        /// set Value
+        /// Set value
         /// </summary>
         public Action<object, object> SetValue { get; set; }
 
     }
 
     /// <summary>
-    /// property info of type
+    /// Type's property info
     /// </summary>
     public class PropertyInfo : PropertyInfoBase
     {
         /// <summary>
-        /// get Value
+        /// Get value
         /// </summary>
         public Action<StringBuilder> Serialize { get; set; }
     }

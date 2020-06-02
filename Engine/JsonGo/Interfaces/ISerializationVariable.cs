@@ -6,15 +6,15 @@ using System.Text;
 namespace JsonGo.Interfaces
 {
     /// <summary>
-    /// an interface tomake initialize method for typego
+    /// This interface is needed to initialize method for TypeGo
     /// </summary>
     public interface ISerializationVariable
     {
         /// <summary>
-        /// initialize yout variable to typeGo
+        /// Initialize variable to typeGo
         /// </summary>
-        /// <param name="typeGoInfo">typego</param>
-        /// <param name="options">options or settings of variable serializer</param>
+        /// <param name="typeGoInfo">TypeGo</param>
+        /// <param name="options">Serializer's options or settings</param>
         void Initialize(TypeGoInfo typeGoInfo, ITypeGo options);
     }
 }

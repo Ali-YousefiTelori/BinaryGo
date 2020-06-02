@@ -3,7 +3,7 @@
 namespace JsonGo.Json
 {
     /// <summary>
-    /// default setting of json serialize and deserialier
+    /// Default settings for serializer and deserialier
     /// </summary>
     public class JsonConstantsString
     {
@@ -14,11 +14,11 @@ namespace JsonGo.Json
 
         #region SkipValues
         /// <summary>
-        /// new line \r Space
+        /// New line \r Space
         /// </summary>
         public const char RSpace = '\r';
         /// <summary>
-        /// new line \n Space
+        /// New line \n Space
         /// </summary>
         public const char NSpace = '\n';
         /// <summary>
@@ -31,15 +31,15 @@ namespace JsonGo.Json
         public const char Space = ' ';
         #endregion
         /// <summary>
-        /// null value in memory
+        /// Null value in memory
         /// </summary>
         public const string Null = "null";
         /// <summary>
-        /// before create object with refrence
+        /// Before create object with refrence
         /// </summary>
         public const string BeforeObjectReference = "{\"$id\":\"";
         /// <summary>
-        /// after array with reference
+        /// After array with reference
         /// </summary>
         public const string AfterArrayObjectReference = "\",\"$values\":[";
         /// <summary>
@@ -55,39 +55,39 @@ namespace JsonGo.Json
         /// </summary>
         public const string CloseSquareBracketsWithBrackets = "]}";
         /// <summary>
-        /// comma
+        /// Comma
         /// </summary>
         public const char Comma = ',';
         /// <summary>
-        /// comma with Quotes
+        /// Comma with quotes
         /// </summary>
         public const string CommaQuotes = "\",";
         /// <summary>
-        /// colon with Quotes
+        /// Colon with quotes
         /// </summary>
         public const string ColonQuotes = ":\"";
         /// <summary>
-        /// comma with Quotes
+        /// Comma with quotes
         /// </summary>
         public const string QuotesColon = "\":";
         /// <summary>
-        /// Quotes then Colon then Quotes
+        /// Quotes then colon, then quotes
         /// </summary>
         public const string QuotesColonQuotes = "\":\"";
         /// <summary>
-        /// colon
+        /// Colon
         /// </summary>
         public const char Colon = ':';
         /// <summary>
-        /// Open Braket
+        /// Open braket
         /// </summary>
         public const char OpenBraket = '{';
         /// <summary>
-        /// Open Braket Colon Quotes with reference
+        /// Open braket colon quotes with reference
         /// </summary>
         public const string OpenBraketColonQuotesReference = "{\"$ref\":\"";
         /// <summary>
-        /// Close Bracket
+        /// Close bracket
         /// </summary>
         public const char CloseBracket = '}';
         /// <summary>
@@ -95,11 +95,11 @@ namespace JsonGo.Json
         /// </summary>
         public const char Quotes = '"';
         /// <summary>
-        /// Quotes Close Bracket
+        /// Quotes close bracket
         /// </summary>
         public const string QuotesCloseBracket = "\"}";
         /// <summary>
-        /// Back Slash
+        /// Back slash
         /// </summary>
         public const char BackSlash = '\\';
         /// <summary>
@@ -111,7 +111,7 @@ namespace JsonGo.Json
         /// </summary>
         public const string IdRefrencedTypeNameNoQuotes = "$id";
         /// <summary>
-        /// $Ref refrenced type name
+        /// $Ref referenced type name
         /// </summary>
         public const string RefRefrencedTypeName = "\"$ref\"";
         /// <summary>
@@ -119,7 +119,7 @@ namespace JsonGo.Json
         /// </summary>
         public const string RefRefrencedTypeNameNoQuotes = "$ref";
         /// <summary>
-        /// $Values refrenced type name
+        /// $Values referenced type name
         /// </summary>
         public const string ValuesRefrencedTypeName = "\"$values\"";
         /// <summary>
@@ -127,7 +127,7 @@ namespace JsonGo.Json
         /// </summary>
         public const string ValuesRefrencedTypeNameNoQuotes = "$values";
         /// <summary>
-        /// support for $id,$ref,$values for serialization
+        /// Support of $id,$ref,$values for serialization
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; } = true;
         /// <summary>

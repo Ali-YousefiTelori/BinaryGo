@@ -7,20 +7,20 @@ using System.Text;
 namespace JsonGo.Binary
 {
     /// <summary>
-    /// binary serializer helper
+    /// Binary serializer helper
     /// </summary>
     public class BinarySerializeHandler
     {
         /// <summary>
-        /// serializer
+        /// The binary serializer
         /// </summary>
         public BinarySerializer Serializer { get; set; }
         /// <summary>
-        /// add object to serialized object for references
+        /// Add an object to serialized objects for references
         /// </summary>
         public Action<object, int> AddSerializedObjects { get; set; }
         /// <summary>
-        /// find object to check is serialized for references
+        /// Find an object to check if is serialized for references
         /// </summary>
         public TryGetValue<object, int> TryGetValueOfSerializedObjects { get; set; }
     }

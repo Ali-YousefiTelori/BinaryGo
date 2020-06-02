@@ -11,13 +11,13 @@ namespace JsonGo.Runtime.Interfaces
     public interface IPropertyCallerInfo
     {
         /// <summary>
-        /// get value of property
+        /// Gets the property value
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
         object GetPropertyValue(object instance);
         /// <summary>
-        /// set value of property
+        /// Sets the property value
         /// </summary>
         /// <param name="deserializer"></param>
         /// <param name="instance"></param>

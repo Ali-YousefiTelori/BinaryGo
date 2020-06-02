@@ -8,15 +8,15 @@ using System.Text;
 namespace JsonGo.Runtime.Variables
 {
     /// <summary>
-    /// string serializer and deserializer
+    /// String serializer and deserializer
     /// </summary>
     public class StringVariable : ISerializationVariable
     {
         /// <summary>
-        /// initalize this variable to your typeGo
+        /// Initalizes TypeGo variable
         /// </summary>
-        /// <param name="typeGoInfo">typeGo to initialize variable on it</param>
-        /// <param name="options">options of setting of variable serializer or deserializer</param>
+        /// <param name="typeGoInfo">TypeGo variable to initialize</param>
+        /// <param name="options">Serializer or deserializer options</param>
         public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
         {
             var currentCulture = TypeGoInfo.CurrentCulture;
