@@ -125,32 +125,35 @@ namespace JsonGo.Json.Deserialize
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
                     return stringBuilder.ToString().AsSpan();
                 }
-                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.Quotes)
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash)
                 {
-                    stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    i++;
-                    index = i;
-                }
-                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
-                {
-                    stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    stringBuilder.Append(JsonConstantsString.RSpace);
-                    i++;
-                    index = i + 1;
-                }
-                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
-                {
-                    stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    stringBuilder.Append(JsonConstantsString.NSpace);
-                    i++;
-                    index = i + 1;
-                }
-                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.TTabLine)
-                {
-                    stringBuilder.Append(readOnlySpan.Slice(index, i - index));
-                    stringBuilder.Append(JsonConstantsString.TSpace);
-                    i++;
-                    index = i + 1;
+                    if (readOnlySpan[i + 1] == JsonConstantsString.Quotes)
+                    {
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                        i++;
+                        index = i;
+                    }
+                    else if (readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
+                    {
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                        stringBuilder.Append(JsonConstantsString.RSpace);
+                        i++;
+                        index = i + 1;
+                    }
+                    else if (readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
+                    {
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                        stringBuilder.Append(JsonConstantsString.NSpace);
+                        i++;
+                        index = i + 1;
+                    }
+                    else if (readOnlySpan[i + 1] == JsonConstantsString.TTabLine)
+                    {
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                        stringBuilder.Append(JsonConstantsString.TSpace);
+                        i++;
+                        index = i + 1;
+                    }
                 }
             }
             _Index = _Length;
