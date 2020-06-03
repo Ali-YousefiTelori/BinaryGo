@@ -1,4 +1,5 @@
-﻿using JsonGo.Interfaces;
+﻿using JsonGo.Binary.Deserialize;
+using JsonGo.Interfaces;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,12 @@ namespace JsonGo.Runtime.Variables
                 {
                     stream.Write(BitConverter.GetBytes((uint)data).AsSpan());
                 };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToUInt32(reader.Read(sizeof(uint))));
+                };
             }
             else if (enumType == typeof(long))
             {
@@ -61,6 +68,12 @@ namespace JsonGo.Runtime.Variables
                 typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((long)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToInt64(reader.Read(sizeof(long))));
                 };
             }
             else if (enumType == typeof(short))
@@ -81,6 +94,12 @@ namespace JsonGo.Runtime.Variables
                 {
                     stream.Write(BitConverter.GetBytes((short)data).AsSpan());
                 };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToInt16(reader.Read(sizeof(short))));
+                };
             }
             else if (enumType == typeof(byte))
             {
@@ -99,6 +118,12 @@ namespace JsonGo.Runtime.Variables
                 typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((byte)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, reader.Read(sizeof(byte))[0]);
                 };
             }
             else if (enumType == typeof(double))
@@ -119,6 +144,12 @@ namespace JsonGo.Runtime.Variables
                 {
                     stream.Write(BitConverter.GetBytes((double)data).AsSpan());
                 };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToDouble(reader.Read(sizeof(double))));
+                };
             }
             else if (enumType == typeof(float))
             {
@@ -134,9 +165,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((float)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToSingle(reader.Read(sizeof(float))));
                 };
             }
             else if (enumType == typeof(decimal))
@@ -153,9 +190,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((double)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, (decimal)BitConverter.ToDouble(reader.Read(sizeof(decimal))));
                 };
             }
             else if (enumType == typeof(sbyte))
@@ -172,9 +215,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((sbyte)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, (sbyte)reader.Read(sizeof(sbyte))[0]);
                 };
             }
             else if (enumType == typeof(ulong))
@@ -191,9 +240,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((ulong)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToUInt64(reader.Read(sizeof(ulong))));
                 };
             }
             else if (enumType == typeof(ushort))
@@ -210,9 +265,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((ushort)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToUInt16(reader.Read(sizeof(ushort))));
                 };
             }
             else if (enumType == typeof(int))
@@ -229,9 +290,15 @@ namespace JsonGo.Runtime.Variables
                 };
 
                 //binary serialization
-                typeGoInfo.BinarySerialize = (Stream stream,ref object data) =>
+                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
                 {
                     stream.Write(BitConverter.GetBytes((int)data).AsSpan());
+                };
+
+                //binary deserialization
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    return Enum.ToObject(baseType, BitConverter.ToInt32(reader.Read(sizeof(int))));
                 };
             }
             else

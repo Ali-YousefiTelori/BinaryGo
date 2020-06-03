@@ -11,7 +11,7 @@ namespace JsonGoTest
         [Fact]
         public void UserInfoTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -23,7 +23,7 @@ namespace JsonGoTest
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"EMP_NO\":56,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.True(result == equalData);
-            var deserialized = JsonGo.Json.Deserialize.JsonDeserializer.SingleInstance.Deserialize<UserInfo>(result);
+            var deserialized = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<UserInfo>(result);
             Assert.True(deserialized.IsEquals(userInfo));
         }
         [Fact]
@@ -37,7 +37,7 @@ namespace JsonGoTest
                 FullName = "Ali Yousefi",
                 Id = 1,
             };
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":false,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.True(result == equalData);
@@ -53,7 +53,7 @@ namespace JsonGoTest
         [Fact]
         public void UserInfoWithRolesTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -83,7 +83,7 @@ namespace JsonGoTest
         [Fact]
         public void UserInfoWithRolesAndCompanyTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Json.JsonOptionInfo() { HasGenerateRefrencedTypes = true });
+            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             CompanyInfo companyInfo = new CompanyInfo()
             {
                 Id = 14,

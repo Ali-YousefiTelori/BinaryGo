@@ -1,4 +1,5 @@
-﻿using JsonGo.Json;
+﻿using JsonGo.Helpers;
+using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,12 @@ namespace JsonGo.Binary
     /// </summary>
     public class BinarySerializer : ITypeGo
     {
-        internal static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
+        static BinarySerializer()
+        {
+            TypeGoInfo.GenerateDefaultVariables(DefaultOptions);
+        }
+
+        internal static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
         /// <summary>
         /// Support for objects' loop reference
         /// </summary>
@@ -28,7 +34,7 @@ namespace JsonGo.Binary
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
         //public BinarySerializeHandler SerializeHandler { get; set; } = new BinarySerializeHandler();
-        internal JsonOptionInfo Options { get; set; }
+        internal BaseOptionInfo Options { get; set; }
         /// <summary>
         /// Initialize seralizer 
         /// </summary>
@@ -52,7 +58,7 @@ namespace JsonGo.Binary
         /// <summary>
         /// Initialize seralizer with options
         /// </summary>
-        public BinarySerializer(JsonOptionInfo jsonOptionInfo)
+        public BinarySerializer(BaseOptionInfo jsonOptionInfo)
         {
             Options = jsonOptionInfo;
 
@@ -81,7 +87,7 @@ namespace JsonGo.Binary
         /// <summary>
         /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
-        public static BinarySerializer NormalIntance
+        public static BinarySerializer NormalInstance
         {
             get
             {

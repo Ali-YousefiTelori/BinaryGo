@@ -23,5 +23,11 @@ namespace JsonGo.Runtime.Interfaces
         /// <param name="instance"></param>
         /// <param name="value"></param>
         void SetPropertyValue(JsonDeserializer deserializer, object instance, object value);
+        /// <summary>
+        /// set value of property
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="value"></param>
+        void SetValue(object instance, object value);
     }
 }

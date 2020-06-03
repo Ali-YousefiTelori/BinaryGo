@@ -1,4 +1,5 @@
 ﻿using JsonGo.CompileTime;
+using JsonGo.Helpers;
 using JsonGo.Runtime;
 using System;
 using System.Collections;
@@ -17,28 +18,13 @@ namespace JsonGo.Json
     {
         static Serializer()
         {
-            TypeGoInfo.Generate(typeof(DateTime), DefaultOptions);
-            TypeGoInfo.Generate(typeof(uint), DefaultOptions);
-            TypeGoInfo.Generate(typeof(long), DefaultOptions);
-            TypeGoInfo.Generate(typeof(short), DefaultOptions);
-            TypeGoInfo.Generate(typeof(byte), DefaultOptions);
-            TypeGoInfo.Generate(typeof(double), DefaultOptions);
-            TypeGoInfo.Generate(typeof(float), DefaultOptions);
-            TypeGoInfo.Generate(typeof(decimal), DefaultOptions);
-            TypeGoInfo.Generate(typeof(sbyte), DefaultOptions);
-            TypeGoInfo.Generate(typeof(ulong), DefaultOptions);
-            TypeGoInfo.Generate(typeof(bool), DefaultOptions);
-            TypeGoInfo.Generate(typeof(ushort), DefaultOptions);
-            TypeGoInfo.Generate(typeof(int), DefaultOptions);
-            TypeGoInfo.Generate(typeof(byte[]), DefaultOptions);
-            TypeGoInfo.Generate(typeof(int[]), DefaultOptions);
-            TypeGoInfo.Generate(typeof(string), DefaultOptions);
+            TypeGoInfo.GenerateDefaultVariables(DefaultOptions);
         }
 
         /// <summary>
         /// Serialization's default options
         /// </summary>
-        public static JsonOptionInfo DefaultOptions { get; set; } = new JsonOptionInfo();
+        public static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
 
         /// <summary>
         /// Generates $ref and $values and support for serialization and deserialization loop reference 
@@ -57,7 +43,7 @@ namespace JsonGo.Json
         /// The serialize handler lets the serializer access faster to the pointers
         /// </summary>
         public JsonSerializeHandler SerializeHandler { get; set; } = new JsonSerializeHandler();
-        internal JsonOptionInfo Options { get; set; }
+        internal BaseOptionInfo Options { get; set; }
         /// <summary>
         /// JsonGo serializer: serializes object to json
         /// </summary>
@@ -82,7 +68,7 @@ namespace JsonGo.Json
         /// Serializes object to json
         /// </summary>
         /// <param name="jsonOptionInfo">your json serializer option</param>
-        public Serializer(JsonOptionInfo jsonOptionInfo)
+        public Serializer(BaseOptionInfo jsonOptionInfo)
         {
             Options = jsonOptionInfo;
 
@@ -111,7 +97,7 @@ namespace JsonGo.Json
         /// <summary>
         /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
-        public static Serializer NormalIntance
+        public static Serializer NormalInstance
         {
             get
             {

@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using JsonGo.Binary.Deserialize;
 
 namespace JsonGo.Runtime
 {
@@ -60,6 +61,10 @@ namespace JsonGo.Runtime
         /// Binary serialize
         /// </summary>
         public BinaryFunctionGo BinarySerialize { get; set; }
+        /// <summary>
+        /// Deserializes binary to object
+        /// </summary>
+        public BinaryDeserializeFunc BinaryDeserialize { get; set; }
         /// <summary>
         /// Deserializes string to object
         /// </summary>
@@ -110,6 +115,7 @@ namespace JsonGo.Runtime
         }
 
 
+        static readonly object _lockobj = new object();
         /// <summary>
         /// Initializes a TypeGo for a runtime type
         /// the typeGo makes use of everything faster with easy access
@@ -119,7 +125,7 @@ namespace JsonGo.Runtime
         /// <returns></returns>
         public static TypeGoInfo Generate(Type type, ITypeGo options)
         {
-            lock (options)
+            lock (_lockobj)
             {
                 if (options.TryGetValueOfTypeGo(type, out TypeGoInfo find))
                     return find;
@@ -231,6 +237,7 @@ namespace JsonGo.Runtime
                             JsonGetValue = (handler, x) => del.GetPropertyValue(x),
                             JsonSetValue = del.SetPropertyValue,
                             GetValue = del.GetPropertyValue,
+                            SetValue= del.SetValue
                         };
                     }
 
@@ -294,6 +301,20 @@ namespace JsonGo.Runtime
                                 else
                                     property.TypeGoInfo.BinarySerialize(stream, ref value);
                             }
+                        };
+
+                        typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                        {
+                            var instance = typeGoInfo.CreateInstance();
+                            var properties = typeGoInfo.SerializeProperties;
+                            var len = properties.Length;
+                            for (int i = 0; i < len; i++)
+                            {
+                                var property = properties[i];
+                                var value = property.TypeGoInfo.BinaryDeserialize(ref reader);
+                                property.SetValue(instance, value);
+                            }
+                            return instance;
                         };
                     }
 
@@ -446,6 +467,31 @@ namespace JsonGo.Runtime
         //    ilGenerator.Emit(OpCodes.Ret);
         //    return (Func<object>)dynamicMethod.CreateDelegate(typeof(Func<object>));
         //}
+
+        /// <summary>
+        /// Generate default variables to an option
+        /// </summary>
+        /// <param name="options"></param>
+        public static void GenerateDefaultVariables(ITypeGo options)
+        {
+            Generate(typeof(DateTime), options);
+            Generate(typeof(uint), options);
+            Generate(typeof(long), options);
+            Generate(typeof(short), options);
+            Generate(typeof(byte), options);
+            Generate(typeof(double), options);
+            Generate(typeof(float), options);
+            Generate(typeof(decimal), options);
+            Generate(typeof(sbyte), options);
+            Generate(typeof(ulong), options);
+            Generate(typeof(bool), options);
+            Generate(typeof(ushort), options);
+            Generate(typeof(int), options);
+            Generate(typeof(byte[]), options);
+            Generate(typeof(int[]), options);
+            Generate(typeof(string), options);
+            Generate(typeof(string[]), options);
+        }
     }
 
 

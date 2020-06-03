@@ -1,4 +1,5 @@
-﻿using JsonGo.Interfaces;
+﻿using JsonGo.Binary.Deserialize;
+using JsonGo.Interfaces;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,12 @@ namespace JsonGo.Runtime.Variables
             typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
             {
                 stream.Write(BitConverter.GetBytes((long)data).AsSpan());
+            };
+
+            //binary deserialization
+            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+            {
+                return BitConverter.ToInt64(reader.Read(sizeof(long)));
             };
 
             //set the default value of variable

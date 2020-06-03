@@ -138,6 +138,10 @@ namespace JsonGo.Json
         /// \n char for new line usage
         /// </summary>
         public const char NNewLine = 'n';
+        /// <summary>
+        ///  \t char for tab usage
+        /// </summary>
+        public const char TTabLine = 't';
     }
 
     //public class JsonConstantsBytes

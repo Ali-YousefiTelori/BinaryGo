@@ -145,6 +145,13 @@ namespace JsonGo.Json.Deserialize
                     i++;
                     index = i + 1;
                 }
+                else if (readOnlySpan[i] == JsonConstantsString.BackSlash && readOnlySpan[i + 1] == JsonConstantsString.TTabLine)
+                {
+                    stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                    stringBuilder.Append(JsonConstantsString.TSpace);
+                    i++;
+                    index = i + 1;
+                }
             }
             _Index = _Length;
             if (readOnlySpan[readOnlySpan.Length - 1] == JsonConstantsString.Quotes)

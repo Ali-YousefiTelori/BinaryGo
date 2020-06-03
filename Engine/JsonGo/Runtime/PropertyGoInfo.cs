@@ -28,6 +28,10 @@ namespace JsonGo.Runtime
         /// </summary>
         public Func<object, object> GetValue { get; set; }
         /// <summary>
+        /// Set value of property
+        /// </summary>
+        public Action<object, object> SetValue { get; set; }
+        /// <summary>
         /// Gets property value
         /// </summary>
         public Func<JsonSerializeHandler, object, object> JsonGetValue { get; set; }

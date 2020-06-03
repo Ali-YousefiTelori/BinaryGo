@@ -185,7 +185,7 @@ namespace JsonGoPerformance
             InitializeChaches(normalSamples.GetComplexObjectSample());
         }
 
-        static Serializer JsonGoSerializer { get; set; } = new Serializer(new JsonGo.Json.JsonOptionInfo());
+        static Serializer JsonGoSerializer { get; set; } = new Serializer(new JsonGo.Helpers.BaseOptionInfo());
 
         [Benchmark]
         public void RunLoopSimpleSampleJsonGo()

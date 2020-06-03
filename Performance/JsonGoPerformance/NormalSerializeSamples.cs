@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using JsonGo;
 using JsonGo.Binary;
+using JsonGo.Binary.Deserialize;
 using JsonGo.Json;
 using JsonGoPerformance.Models;
 using MessagePack;
@@ -13,11 +14,13 @@ namespace JsonGoPerformance
 {
     public class NormalSerializeSamples
     {
+        static byte[] MessagePackBinaryBytes = new byte[] { 148, 1, 178, 65, 108, 105, 32, 89, 111, 117, 115, 101, 102, 105, 32, 84, 101, 108, 111, 114, 105, 28, 215, 255, 200, 183, 30, 32, 94, 215, 210, 47 };
+        static byte[] JsonGoBinaryBytes = new byte[] { 1, 0, 0, 0, 18, 0, 0, 0, 65, 108, 105, 32, 89, 111, 117, 115, 101, 102, 105, 32, 84, 101, 108, 111, 114, 105, 28, 0, 0, 0, 92, 159, 66, 175, 2, 8, 216, 8 };
         public static void InitializeChaches<T>(T obj)
         {
             for (int i = 0; i < 10; i++)
             {
-                Serializer.NormalIntance.Serialize(obj);
+                Serializer.NormalInstance.Serialize(obj);
                 //Serializer.SingleIntance.SerializeCompile(obj);
                 JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
                 {
@@ -160,11 +163,19 @@ namespace JsonGoPerformance
             Serializer serializer = new Serializer();
             serializer.SerializeCompile(GetSimpleSample());
         }
+
         [Benchmark]
         public void RunSimpleBinarySampleMessagePack()
         {
             MessagePackSerializer.Serialize(GetSimpleSample());
         }
+
+        [Benchmark]
+        public void RunSimpleBinaryDeserializeSampleMessagePack()
+        {
+            MessagePackSerializer.Deserialize<SimpleUserInfo>(MessagePackBinaryBytes);
+        }
+
 
         [Benchmark]
         public void RunSimpleBinarySampleJsonGo()
@@ -173,6 +184,12 @@ namespace JsonGoPerformance
             serializer.Serialize(GetSimpleSample()).ToArray();
         }
 
+        [Benchmark]
+        public void RunSimpleBinaryDeserializeSampleJsonGo()
+        {
+            BinaryDeserializer deserializer = new BinaryDeserializer();
+            deserializer.Deserialize<SimpleUserInfo>(JsonGoBinaryBytes);
+        }
 
         [Benchmark]
         public void RunSimpleSampleJsonGo()

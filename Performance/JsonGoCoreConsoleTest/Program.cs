@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace JsonGoCoreConsoleTest
 {
@@ -59,14 +60,16 @@ namespace JsonGoCoreConsoleTest
             {
 
                 NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+                var bytesaaa = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
+                var deserialized = JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<JsonGoPerformance.Models.SimpleUserInfo>(bytesaaa);
+                //var staticdata = GetText(bytesaaa);
+                //var data1 = MessagePackSerializer.Serialize(normalSerializeSamples.GetSimpleSample());
+                //BinarySerializer serializer = new BinarySerializer();
+                //var data2 = serializer.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
 
-                var data1 = MessagePackSerializer.Serialize(normalSerializeSamples.GetSimpleSample());
-                BinarySerializer serializer = new BinarySerializer();
-                var data2 = serializer.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
-
-                var data = normalSerializeSamples.GetSimpleSample();
-                var result = JsonGo.Binary.BinarySerializer.NormalIntance.Serialize(data);
-                var bytes = result.ToArray();
+                //var data = normalSerializeSamples.GetSimpleSample();
+                //var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(data);
+                //var bytes = result.ToArray();
                 //var text = string.Join(Environment.NewLine, TypeGoInfo.Generate(typeof(Profile)).SerializeProperties.Select(x => $"name: {x.Name} , type: {x.Type.FullName}"));
                 Console.WriteLine("Select Option:");
                 Console.WriteLine("1) Normal Serialize Samples");
@@ -127,6 +130,15 @@ namespace JsonGoCoreConsoleTest
             Console.WriteLine("Press enter to run again");
             Console.ReadKey();
             RunApp();
+        }
+        public static string GetText(Span<byte> bytes)
+        {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append($"{bytes[i]},");
+            }
+            return builder.ToString();
         }
     }
 

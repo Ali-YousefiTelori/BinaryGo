@@ -46,7 +46,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize()
         {
             var value = GetSimpleUser();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali\",\"Family\":\"Yousefi Telori\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -55,7 +55,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize2()
         {
             var value = GetSimpleUser2();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -64,7 +64,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize3()
         {
             var value = GetSimpleUser3();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":-9874,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -107,7 +107,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize()
         {
             var value = GetSimpleParentUser();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali\",\"Family\":\"Yousefi Telori\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -116,16 +116,16 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize2()
         {
             var value = GetSimpleParentUser2();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
         [Fact]
-        public (string Result, SimpleParentUserInfo Value) SimpleParentTestSerialize3()
+        public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize3()
         {
             var value = GetSimpleParentUser3();
-            var result = JsonGo.Json.Serializer.NormalIntance.Serialize(value);
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":-9874,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }

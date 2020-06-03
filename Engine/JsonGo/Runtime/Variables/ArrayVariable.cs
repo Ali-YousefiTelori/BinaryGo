@@ -1,4 +1,5 @@
-﻿using JsonGo.Interfaces;
+﻿using JsonGo.Binary.Deserialize;
+using JsonGo.Interfaces;
 using JsonGo.Json;
 using System;
 using System.Collections;
@@ -186,6 +187,20 @@ namespace JsonGo.Runtime.Variables
                     {
                         stream.Write(BitConverter.GetBytes(0));
                     }
+                };
+
+                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+                {
+                    var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+                    if (length == 0)
+                        return null;
+                    var instance = typeGoInfo.CreateInstance();
+                    var generic = typeGoInfo.Generics[0];
+                    for (int i = 0; i < length; i++)
+                    {
+                        typeGoInfo.AddArrayValue(instance, generic.BinaryDeserialize(ref reader));
+                    }
+                    return typeGoInfo.Cast == null ? instance : typeGoInfo.Cast(instance);
                 };
             }
             typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();

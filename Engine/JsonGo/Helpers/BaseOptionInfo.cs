@@ -3,25 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGo.Json
+namespace JsonGo.Helpers
 {
     /// <summary>
     /// Default's saved data of serialization and deserialization
     /// </summary>
-    public class JsonOptionInfo : ITypeGo
+    public class BaseOptionInfo : ITypeGo
     {
         /// <summary>
         /// Set default values from dictionary to actions
         /// </summary>
-        public JsonOptionInfo()
+        public BaseOptionInfo()
         {
             AddTypes = Types.Add;
             TryGetValueOfTypeGo = Types.TryGetValue;
         }
+
+        /// <summary>
+        /// lock object to pervent cocurrent initializer call
+        /// </summary>
+        public object LockObject { get; set; } = new object();
         /// <summary>
         /// Cached types
         /// </summary>
-        internal Dictionary<Type, TypeGoInfo> Types { get; set; } = new Dictionary<Type, TypeGoInfo>();
+        public Dictionary<Type, TypeGoInfo> Types { get; set; } = new Dictionary<Type, TypeGoInfo>();
         /// <summary>
         /// Saves serialized objects to skip stackoverflow exception and for referenced type
         /// </summary>

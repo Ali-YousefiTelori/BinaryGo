@@ -1,36 +1,29 @@
 ﻿using JsonGo.Helpers;
-using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
-namespace JsonGo.Json.Deserialize
+namespace JsonGo.Binary.Deserialize
 {
     /// <summary>
     /// Json deserializer
     /// </summary>
-    public class JsonDeserializer : ITypeGo
+    public class BinaryDeserializer : ITypeGo
     {
         /// <summary>
         /// Serialization's default options
         /// </summary>
         public static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
-
-        static FastExtractFunction FastExtractFunction { get; set; }
-
-        static JsonDeserializer()
-        {
-            //ExtractFunction = DeserializerExtractor.Extract;
-            //FastExtractFunction = FastDeserializerExtractor2.Extract;
-            FastExtractFunction = FastDeserializerExtractor3.Extract;
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        public JsonDeserializer()
+        public BinaryDeserializer()
         {
-            Initialize();
+            Options = DefaultOptions;
+            AddTypes = Options.Types.Add;
+            TryGetValueOfTypeGo = Options.Types.TryGetValue;
         }
 
         /// <summary>
@@ -42,7 +35,7 @@ namespace JsonGo.Json.Deserialize
         /// </summary>
         public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
 
-        internal BaseOptionInfo Options { get; set; } = new BaseOptionInfo() { HasGenerateRefrencedTypes = true };
+        internal BaseOptionInfo Options { get; set; }
         /// <summary>
         /// Save deserialized objects for referenced type
         /// </summary>
@@ -50,38 +43,26 @@ namespace JsonGo.Json.Deserialize
         /// <summary>
         /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
-        public static JsonDeserializer NormalInstance
+        public static BinaryDeserializer NormalInstance
         {
             get
             {
-                return new JsonDeserializer();
+                return new BinaryDeserializer();
             }
         }
-        /// <summary>
-        /// Serializer's default settings
-        /// </summary>
-        public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
+
         /// <summary>
         /// Support for types' loop reference
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
 
-        void Initialize()
-        {
-            AddTypes = Options.Types.Add;
-            //AddSerializedObjects = Options.SerializedObjects.Add;
-            //ClearSerializedObjects = Options.SerializedObjects.Clear;
-            TryGetValueOfTypeGo = Options.Types.TryGetValue;
-            //TryGetValueOfSerializedObjects = Options.SerializedObjects.TryGetValue;
-        }
-
         /// <summary>
-        /// Deserializes a json to a type
+        /// Deserializes a stream to a type
         /// </summary>
         /// <typeparam name="T">Type to deserialize into</typeparam>
-        /// <param name="json">Json string to deserialize</param>
+        /// <param name="reader">SpanReader binary to deserialize</param>
         /// <returns>deserialized type</returns>
-        public T Deserialize<T>(string json)
+        public T Deserialize<T>(ReadOnlySpan<byte> reader)
         {
             try
             {
@@ -90,9 +71,8 @@ namespace JsonGo.Json.Deserialize
                 {
                     typeGoInfo = TypeGoInfo.Generate(dataType, this);
                 }
-                var reader = new JsonSpanReader(json.AsSpan());
-                var result = FastExtractFunction(this, typeGoInfo, ref reader);
-                return (T)result;
+                var binaryReader = new BinarySpanReader(reader);
+                return (T)typeGoInfo.BinaryDeserialize(ref binaryReader);
             }
             finally
             {
@@ -101,3 +81,4 @@ namespace JsonGo.Json.Deserialize
         }
     }
 }
+

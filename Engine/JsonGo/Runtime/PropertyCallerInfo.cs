@@ -18,17 +18,17 @@ namespace JsonGo.Runtime
         /// </summary>
         public PropertyCallerInfo(Func<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
         {
-            GetValue = funcGetValue;
-            SetValue = funcSetValue;
+            GetValueAction = funcGetValue;
+            SetValueAction = funcSetValue;
         }
         /// <summary>
         /// Gets property value
         /// </summary>
-        public Func<TType, TPropertyType> GetValue { get; set; }
+        public Func<TType, TPropertyType> GetValueAction { get; set; }
         /// <summary>
         /// Sets property value
         /// </summary>
-        public Action<TType, TPropertyType> SetValue { get; set; }
+        public Action<TType, TPropertyType> SetValueAction { get; set; }
         /// <summary>
         /// Gets property value of an object
         /// </summary>
@@ -36,7 +36,7 @@ namespace JsonGo.Runtime
         /// <returns></returns>
         public object GetPropertyValue(object instance)
         {
-            return GetValue((TType)instance);
+            return GetValueAction((TType)instance);
         }
 
         /// <summary>
@@ -47,7 +47,17 @@ namespace JsonGo.Runtime
         /// <param name="value"></param>
         public void SetPropertyValue(JsonDeserializer deserializer, object instance, object value)
         {
-            SetValue((TType)instance, (TPropertyType)value);
+            SetValueAction((TType)instance, (TPropertyType)value);
+        }
+
+        /// <summary>
+        /// set value of property
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="value"></param>
+        public void SetValue(object instance, object value)
+        {
+            SetValueAction((TType)instance, (TPropertyType)value);
         }
     }
 }
