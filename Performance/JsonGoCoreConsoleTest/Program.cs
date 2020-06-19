@@ -59,9 +59,9 @@ namespace JsonGoCoreConsoleTest
             try
             {
 
-                NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
-                var bytesaaa = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
-                var deserialized = JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<JsonGoPerformance.Models.SimpleUserInfo>(bytesaaa);
+                //NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+                //var bytesaaa = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
+                //var deserialized = JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<JsonGoPerformance.Models.SimpleUserInfo>(bytesaaa);
                 //var staticdata = GetText(bytesaaa);
                 //var data1 = MessagePackSerializer.Serialize(normalSerializeSamples.GetSimpleSample());
                 //BinarySerializer serializer = new BinarySerializer();

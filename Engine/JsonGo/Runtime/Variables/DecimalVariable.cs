@@ -1,5 +1,6 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Interfaces;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -11,46 +12,82 @@ namespace JsonGo.Runtime.Variables
     /// <summary>
     /// Decimal serializer and deserializer
     /// </summary>
-    public class DecimalVariable : ISerializationVariable
+    public class DecimalVariable : BaseVariable, ISerializationVariable<decimal>
     {
+        /// <summary>
+        /// default constructor to initialize
+        /// </summary>
+        public DecimalVariable() : base(typeof(decimal))
+        {
+
+        }
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<decimal> typeGoInfo, ITypeGo options)
         {
-            var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;
-
-            //json serialize
-            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-            {
-                handler.Append(((decimal)data).ToString(currentCulture));
-            };
-
-            //json deserialize of variable
-            typeGoInfo.JsonDeserialize = (deserializer, x) =>
-            {
-                if (decimal.TryParse(x, out decimal value))
-                    return value;
-                return default(decimal);
-            };
-
-            //binary serialization
-            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-            {
-                stream.Write(BitConverter.GetBytes(Convert.ToDouble((decimal)data)).AsSpan());
-            };
-
-            //binary deserialization
-            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-            {
-                return (decimal)BitConverter.ToDouble(reader.Read(sizeof(double)));
-            };
-
             //set the default value of variable
-            typeGoInfo.DefaultValue = default(decimal);
+            typeGoInfo.DefaultValue = default;
+
+            //set delegates to access faster and make it pointer directly usage
+            typeGoInfo.JsonSerialize = JsonSerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary serializer
+            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+        }
+
+        /// <summary>
+        /// json serialize
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="value"></param>
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref decimal value)
+        {
+            handler.TextWriter.Write(value.ToString(CurrentCulture));
+        }
+
+        /// <summary>
+        /// json deserialize
+        /// </summary>
+        /// <param name="text">json text</param>
+        /// <returns>convert text to type</returns>
+        public decimal JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            if (decimal.TryParse(text, out decimal value))
+                return value;
+            return default;
+        }
+
+        /// <summary>
+        /// Binary serialize
+        /// </summary>
+        /// <param name="stream">stream to write</param>
+        /// <param name="value">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref decimal value)
+        {
+            stream.Write(BitConverter.GetBytes(Convert.ToDouble(value)).AsSpan());
+        }
+
+        /// <summary>
+        /// Binary deserialize
+        /// </summary>
+        /// <param name="reader">Reader of binary</param>
+        public decimal BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            return (decimal)BitConverter.ToDouble(reader.Read(sizeof(double)));
+        }
+
+        /// <summary>
+        /// serialize json as binary
+        /// </summary>
+        /// <param name="handler">binary serializer handler</param>
+        /// <param name="value">value to serialize</param>
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref decimal value)
+        {
+            //handler.Append(handler.EncodingGetBytes(value.ToString(CurrentCulture)));
         }
     }
 }

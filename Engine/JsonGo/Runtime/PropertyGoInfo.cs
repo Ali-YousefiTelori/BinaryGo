@@ -1,43 +1,100 @@
-﻿using JsonGo.Json.Deserialize;
+﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Reflection;
 
 namespace JsonGo.Runtime
 {
     /// <summary>
     /// Generates type details in memory
     /// </summary>
-    public class PropertyGoInfo
+    public class PropertyGoInfo<TObject, TPropertyType> : BasePropertyGoInfo<TObject>
     {
         /// <summary>
-        /// Property type
+        /// property info of a type
         /// </summary>
-        public Type Type { get; set; }
+        public PropertyGoInfo(PropertyInfo property, ITypeGo options)
+        {
+            if (options.TryGetValueOfTypeGo(property.PropertyType, out object typeGoInfoProperty))
+            {
+                TypeGoInfo = (TypeGoInfo<TPropertyType>)typeGoInfoProperty;
+            }
+            else
+            {
+                TypeGoInfo = BaseTypeGoInfo.Generate<TPropertyType>(options);
+            }
+
+            PropertyCallerInfo<TObject, TPropertyType> propertyCaller;
+
+            try
+            {
+                propertyCaller = ReflectionHelper.GetDelegateInstance<TObject, TPropertyType>(property);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Cannot create delegate for property {property.Name} in type {TypeGoInfo.Type.FullName}", ex);
+            }
+            GetValue = propertyCaller.GetValueAction;
+            SetValue = propertyCaller.SetValueAction;
+        }
+
         /// <summary>
         /// Current TypeGoInfo mirror of property type
         /// </summary>
-        public TypeGoInfo TypeGoInfo { get; set; }
-        /// <summary>
-        /// Property Name
-        /// </summary>
-        public string Name { get; set; }
+        public TypeGoInfo<TPropertyType> TypeGoInfo { get; set; }
         /// <summary>
         /// Gets property value
         /// </summary>
-        public Func<object, object> GetValue { get; set; }
+        public Func<TObject, TPropertyType> GetValue { get; set; }
         /// <summary>
         /// Set value of property
         /// </summary>
-        public Action<object, object> SetValue { get; set; }
-        /// <summary>
-        /// Gets property value
-        /// </summary>
-        public Func<JsonSerializeHandler, object, object> JsonGetValue { get; set; }
-        /// <summary>
-        /// Sets property value
-        /// </summary>
-        public Action<JsonDeserializer, object, object> JsonSetValue { get; set; }
+        public Action<TObject, TPropertyType> SetValue { get; set; }
+
+        ///// <summary>
+        ///// Gets property value
+        ///// </summary>
+        //public JsonGetValue<TProperty, TObject> JsonGetValue { get; set; }
+        ///// <summary>
+        ///// Sets property value
+        ///// </summary>
+        //public Action<JsonDeserializer, TObject, TProperty> JsonSetValue { get; set; }
+        internal override object InternalGetValue(ref TObject instance)
+        {
+            return GetValue(instance);
+        }
+
+        internal override void JsonSerialize(ref JsonSerializeHandler handler, ref object value)
+        {
+            var unboxedValue = (TPropertyType)value;
+            TypeGoInfo.JsonSerialize(ref handler, ref unboxedValue);
+        }
+
+        internal override void JsonBainarySerialize(ref JsonSerializeHandler handler, ref object value)
+        {
+            var unboxedValue = (TPropertyType)value;
+            TypeGoInfo.JsonBinarySerialize(ref handler, ref unboxedValue);
+        }
+
+        internal override void InternalSetValue(ref TObject instance, ref object value)
+        {
+            SetValue(instance, (TPropertyType)value);
+        }
+
+        internal override object JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override void BinarySerialize(ref Stream stream, ref object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override object BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

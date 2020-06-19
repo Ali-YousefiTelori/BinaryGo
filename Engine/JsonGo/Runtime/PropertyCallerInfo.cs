@@ -1,5 +1,4 @@
 ﻿using JsonGo.Json.Deserialize;
-using JsonGo.Runtime.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +10,7 @@ namespace JsonGo.Runtime
     /// </summary>
     /// <typeparam name="TType"></typeparam>
     /// <typeparam name="TPropertyType"></typeparam>
-    public class PropertyCallerInfo<TType, TPropertyType> : IPropertyCallerInfo
+    public class PropertyCallerInfo<TType, TPropertyType>
     {
         /// <summary>
         /// Property value caller
@@ -29,35 +28,5 @@ namespace JsonGo.Runtime
         /// Sets property value
         /// </summary>
         public Action<TType, TPropertyType> SetValueAction { get; set; }
-        /// <summary>
-        /// Gets property value of an object
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        public object GetPropertyValue(object instance)
-        {
-            return GetValueAction((TType)instance);
-        }
-
-        /// <summary>
-        /// Sets property value of an object
-        /// </summary>
-        /// <param name="deserializer"></param>
-        /// <param name="instance"></param>
-        /// <param name="value"></param>
-        public void SetPropertyValue(JsonDeserializer deserializer, object instance, object value)
-        {
-            SetValueAction((TType)instance, (TPropertyType)value);
-        }
-
-        /// <summary>
-        /// set value of property
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <param name="value"></param>
-        public void SetValue(object instance, object value)
-        {
-            SetValueAction((TType)instance, (TPropertyType)value);
-        }
     }
 }

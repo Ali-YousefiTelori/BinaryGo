@@ -1,5 +1,6 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Interfaces;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections;
@@ -14,198 +15,337 @@ namespace JsonGo.Runtime.Variables
     /// <summary>
     /// Array serializer and deserializer
     /// </summary>
-    public class ArrayVariable : ISerializationVariable
+    public class ArrayVariable<T> : BaseVariable, ISerializationVariable<T[]>
     {
+        /// <summary>
+        /// default constructor to initialize
+        /// </summary>
+        public ArrayVariable() : base(typeof(T[]))
+        {
+
+        }
+
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
-        /// <param name="typeGoInfo">TypeGo variable to initialize</param>
+        /// <param name="arrayTypeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<T[]> arrayTypeGoInfo, ITypeGo options)
         {
-            var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
-            if (baseType == null)
-                baseType = typeGoInfo.Type;
-            baseType = TypeGoInfo.GenerateTypeFromInterface(baseType);
-            var currentCulture = TypeGoInfo.CurrentCulture;
-            typeGoInfo.IsNoQuotesValueType = false;
-            if (options.HasGenerateRefrencedTypes)
-            {
-                //add $Id dproperties
-                typeGoInfo.Properties[JsonConstantsString.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
-                {
-                    TypeGoInfo = TypeGoInfo.Generate(typeof(int), options),
-                    Type = typeof(int),
-                    Name = JsonConstantsString.IdRefrencedTypeNameNoQuotes,
-                    JsonSetValue = (serializer, instance, value) =>
-                    {
-                        serializer.DeSerializedObjects.Add((int)value, instance);
-                    },
-                    JsonGetValue = (handler, data) =>
-                    {
-                        if (!handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
-                        {
-                            var serializer = handler.Serializer;
-                            serializer.ReferencedIndex++;
-                            handler.AddSerializedObjects(data, serializer.ReferencedIndex);
-                            return serializer.ReferencedIndex;
-                        }
-                        else
-                        {
-                            return refrencedId;
-                        }
-                    }
-                };
+            arrayTypeGoInfo.IsNoQuotesValueType = false;
+            //set the default value of variable
+            arrayTypeGoInfo.DefaultValue = default;
 
-                typeGoInfo.Properties[JsonConstantsString.ValuesRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
-                {
-                    TypeGoInfo = TypeGoInfo.Generate(typeGoInfo.Type, options),
-                    Type = typeGoInfo.Type,
-                    Name = JsonConstantsString.ValuesRefrencedTypeNameNoQuotes,
-                    JsonSetValue = (serializer, instance, value) =>
-                    {
-                        if (TypeGoInfo.Generate(instance.GetType(), options) is TypeGoInfo typeGo)
-                        {
-                            foreach (var item in (IEnumerable)value)
-                            {
-                                typeGo.AddArrayValue(instance, item);
-                            }
-                        }
-                    },
-                    JsonGetValue = (handler, data) =>
-                    {
-                        if (data == null)
-                            return null;
-                        handler.AppendChar(JsonConstantsString.Quotes);
-                        handler.Append(JsonConstantsString.ValuesRefrencedTypeNameNoQuotes);
-                        handler.Append(JsonConstantsString.QuotesColon);
-                        handler.AppendChar(JsonConstantsString.OpenSquareBrackets);
-                        var generic = typeGoInfo.Generics[0];
-                        foreach (var item in (IEnumerable)data)
-                        {
-                            var obj = item;
-                            generic.JsonSerialize(handler, ref obj);
-                            handler.AppendChar(JsonConstantsString.Comma);
-                        }
-                        handler.Serializer.RemoveLastComma();
-                        handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
-                        return null;
-                    }
-                };
-            }
-            foreach (var item in baseType.GetGenericArguments())
-            {
-                if (!options.TryGetValueOfTypeGo(item, out TypeGoInfo typeGoInfoProperty))
-                {
-                    typeGoInfoProperty = TypeGoInfo.Generate(item, options);
-                }
-                typeGoInfo.Generics.Add(typeGoInfoProperty);
-            }
+            if (TryGetValueOfTypeGo(typeof(T), out object result))
+                typeGoInfo = (TypeGoInfo<T>)result;
+            else
+                typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
 
-            if (baseType.IsArray)
+            arrayTypeGoInfo.JsonSerialize = JsonSerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary serializer
+            arrayTypeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+        }
+
+        TypeGoInfo<T> typeGoInfo = null;
+
+        /// <summary>
+        /// json serialize
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="value"></param>
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref T[] value)
+        {
+            if (value != null)
             {
-                var elementType = baseType.GetElementType();
-                var newType = typeof(List<>).MakeGenericType(elementType);
-                if (!options.TryGetValueOfTypeGo(elementType, out TypeGoInfo typeGoInfoProperty))
+                handler.TextWriter.Write(JsonConstantsString.OpenSquareBrackets);
+
+                for (int i = 0; i < value.Length; i++)
                 {
-                    typeGoInfoProperty = TypeGoInfo.Generate(elementType, options);
+                    var obj = value[i];
+                    typeGoInfo.JsonSerialize(ref handler, ref obj);
+                    handler.TextWriter.Write(JsonConstantsString.Comma);
                 }
-                typeGoInfo.Generics.Add(typeGoInfoProperty);
-                typeGoInfo.CreateInstance = TypeGoInfo.GetActivator(newType);
-                var castMethod = typeof(TypeGoInfo).GetMethod("GetArray", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(elementType);
-                typeGoInfo.Cast = (obj) => castMethod.Invoke(null, new object[] { obj });
-                var method = newType.GetMethod("Add");
-                typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
+
+                handler.TextWriter.RemoveLast(JsonConstantsString.Comma);
+                handler.TextWriter.Write(JsonConstantsString.CloseSquareBrackets);
             }
             else
             {
-                typeGoInfo.CreateInstance = TypeGoInfo.GetActivator(baseType);
-                //use add method for deserialization
-                var method = baseType.GetMethod("Add");
-                typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
+                handler.TextWriter.Write(JsonConstantsString.Null);
             }
+        }
 
-            if (options.HasGenerateRefrencedTypes)
+        /// <summary>
+        /// json deserialize
+        /// </summary>
+        /// <param name="text">json text</param>
+        /// <returns>convert text to type</returns>
+        public T[] JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Binary serialize
+        /// </summary>
+        /// <param name="stream">stream to write</param>
+        /// <param name="value">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref T[] value)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Binary deserialize
+        /// </summary>
+        /// <param name="reader">Reader of binary</param>
+        public T[] BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// serialize json as binary
+        /// </summary>
+        /// <param name="handler">binary serializer handler</param>
+        /// <param name="value">value to serialize</param>
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref T[] value)
+        {
+            if (value != null)
             {
-                typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
+                handler.BinaryWriter.Write(JsonConstantsBytes.OpenSquareBrackets);
+
+                for (int i = 0; i < value.Length; i++)
                 {
-                    handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
-                };
+                    var obj = value[i];
+                    typeGoInfo.JsonBinarySerialize(ref handler, ref obj);
+                    handler.BinaryWriter.Write(JsonConstantsBytes.Comma);
+                }
+
+                //handler.RemoveLastCommaCharacter();
+                handler.BinaryWriter.Write(JsonConstantsBytes.CloseSquareBrackets);
             }
             else
             {
-                typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-                {
-                    if (data != null)
-                    {
-                        handler.AppendChar(JsonConstantsString.OpenSquareBrackets);
-                        var generic = typeGoInfo.Generics[0];
-                        foreach (var item in (IEnumerable)data)
-                        {
-                            var obj = item;
-                            generic.JsonSerialize(handler, ref obj);
-                            handler.AppendChar(JsonConstantsString.Comma);
-                        }
-                        handler.Serializer.RemoveLastComma();
-                        handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
-                    }
-                    else
-                    {
-                        handler.Append("null");
-                    }
-                };
-                typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-                {
-                    var generic = typeGoInfo.Generics[0];
-                    if (data != null)
-                    {
-                        if (data is ICollection collection)
-                        {
-                            stream.Write(BitConverter.GetBytes(collection.Count));
-                            foreach (var item in collection)
-                            {
-                                var obj = item;
-                                generic.BinarySerialize(stream, ref obj);
-                            }
-                        }
-                        else if (data is IEnumerable enumerable)
-                        {
-                            int count = 0;
-                            IEnumerator enumerator = enumerable.GetEnumerator();
-                            while (enumerator.MoveNext())
-                                count++;
-                            stream.Write(BitConverter.GetBytes(count));
-                            foreach (var item in enumerable)
-                            {
-                                var obj = item;
-                                generic.BinarySerialize(stream, ref obj);
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        stream.Write(BitConverter.GetBytes(0));
-                    }
-                };
-
-                typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-                {
-                    var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-                    if (length == 0)
-                        return null;
-                    var instance = typeGoInfo.CreateInstance();
-                    var generic = typeGoInfo.Generics[0];
-                    for (int i = 0; i < length; i++)
-                    {
-                        typeGoInfo.AddArrayValue(instance, generic.BinaryDeserialize(ref reader));
-                    }
-                    return typeGoInfo.Cast == null ? instance : typeGoInfo.Cast(instance);
-                };
+                handler.BinaryWriter.Write(JsonConstantsBytes.Null);
             }
-            typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();
-            typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonSetValue != null).ToArray();
-            typeGoInfo.DefaultValue = null;
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//public class alaki
+//{
+//    /// <summary>
+//    /// Initalizes TypeGo variable
+//    /// </summary>
+//    /// <param name="typeGoInfo">TypeGo variable to initialize</param>
+//    /// <param name="options">Serializer or deserializer options</param>
+//    public void Initialize(TypeGoInfo typeGoInfo, IBaseTypeGo options)
+//    {
+//        var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
+//        if (baseType == null)
+//            baseType = typeGoInfo.Type;
+//        baseType = TypeGoInfo.GenerateTypeFromInterface(baseType);
+//        var currentCulture = TypeGoInfo.CurrentCulture;
+//        typeGoInfo.IsNoQuotesValueType = false;
+//        if (options.HasGenerateRefrencedTypes)
+//        {
+//            //add $Id dproperties
+//            typeGoInfo.Properties[JsonConstantsString.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+//            {
+//                TypeGoInfo = TypeGoInfo.Generate(typeof(int), options),
+//                Type = typeof(int),
+//                Name = JsonConstantsString.IdRefrencedTypeNameNoQuotes,
+//                JsonSetValue = (serializer, instance, value) =>
+//                {
+//                    serializer.DeSerializedObjects.Add((int)value, instance);
+//                },
+//                JsonGetValue = (handler, data) =>
+//                {
+//                    if (!handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
+//                    {
+//                        var serializer = handler.Serializer;
+//                        serializer.ReferencedIndex++;
+//                        handler.AddSerializedObjects(data, serializer.ReferencedIndex);
+//                        return serializer.ReferencedIndex;
+//                    }
+//                    else
+//                    {
+//                        return refrencedId;
+//                    }
+//                }
+//            };
+
+//            typeGoInfo.Properties[JsonConstantsString.ValuesRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
+//            {
+//                TypeGoInfo = TypeGoInfo.Generate(typeGoInfo.Type, options),
+//                Type = typeGoInfo.Type,
+//                Name = JsonConstantsString.ValuesRefrencedTypeNameNoQuotes,
+//                JsonSetValue = (serializer, instance, value) =>
+//                {
+//                    if (TypeGoInfo.Generate(instance.GetType(), options) is TypeGoInfo typeGo)
+//                    {
+//                        foreach (var item in (IEnumerable)value)
+//                        {
+//                            typeGo.AddArrayValue(instance, item);
+//                        }
+//                    }
+//                },
+//                JsonGetValue = (handler, data) =>
+//                {
+//                    if (data == null)
+//                        return null;
+//                    handler.AppendChar(JsonConstantsString.Quotes);
+//                    handler.Append(JsonConstantsString.ValuesRefrencedTypeNameNoQuotes);
+//                    handler.Append(JsonConstantsString.QuotesColon);
+//                    handler.AppendChar(JsonConstantsString.OpenSquareBrackets);
+//                    var generic = typeGoInfo.Generics[0];
+//                    foreach (var item in (IEnumerable)data)
+//                    {
+//                        var obj = item;
+//                        generic.JsonSerialize(handler, ref obj);
+//                        handler.AppendChar(JsonConstantsString.Comma);
+//                    }
+//                    handler.Serializer.RemoveLastComma();
+//                    handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
+//                    return null;
+//                }
+//            };
+//        }
+//        foreach (var item in baseType.GetGenericArguments())
+//        {
+//            if (!options.TryGetValueOfTypeGo(item, out TypeGoInfo typeGoInfoProperty))
+//            {
+//                typeGoInfoProperty = TypeGoInfo.Generate(item, options);
+//            }
+//            typeGoInfo.Generics.Add(typeGoInfoProperty);
+//        }
+
+//        if (baseType.IsArray)
+//        {
+//            var elementType = baseType.GetElementType();
+//            var newType = typeof(List<>).MakeGenericType(elementType);
+//            if (!options.TryGetValueOfTypeGo(elementType, out TypeGoInfo typeGoInfoProperty))
+//            {
+//                typeGoInfoProperty = TypeGoInfo.Generate(elementType, options);
+//            }
+//            typeGoInfo.Generics.Add(typeGoInfoProperty);
+//            typeGoInfo.CreateInstance = TypeGoInfo.GetActivator(newType);
+//            var castMethod = typeof(TypeGoInfo).GetMethod("GetArray", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(elementType);
+//            typeGoInfo.Cast = (obj) => castMethod.Invoke(null, new object[] { obj });
+//            var method = newType.GetMethod("Add");
+//            typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
+//        }
+//        else
+//        {
+//            typeGoInfo.CreateInstance = TypeGoInfo.GetActivator(baseType);
+//            //use add method for deserialization
+//            var method = baseType.GetMethod("Add");
+//            typeGoInfo.AddArrayValue = (obj, value) => method.Invoke(obj, new object[] { value });
+//        }
+
+//        if (options.HasGenerateRefrencedTypes)
+//        {
+//            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
+//            {
+//                //handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
+//            };
+//        }
+//        else
+//        {
+//            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
+//            {
+//                if (data != null)
+//                {
+//                    handler.AppendChar(JsonConstantsString.OpenSquareBrackets);
+//                    var generic = typeGoInfo.Generics[0];
+//                    foreach (var item in (IEnumerable)data)
+//                    {
+//                        var obj = item;
+//                        generic.JsonSerialize(handler, ref obj);
+//                        handler.AppendChar(JsonConstantsString.Comma);
+//                    }
+//                    handler.Serializer.RemoveLastComma();
+//                    handler.AppendChar(JsonConstantsString.CloseSquareBrackets);
+//                }
+//                else
+//                {
+//                    handler.Append("null");
+//                }
+//            };
+//            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
+//            {
+//                var generic = typeGoInfo.Generics[0];
+//                if (data != null)
+//                {
+//                    if (data is ICollection collection)
+//                    {
+//                        stream.Write(BitConverter.GetBytes(collection.Count));
+//                        foreach (var item in collection)
+//                        {
+//                            var obj = item;
+//                            generic.BinarySerialize(stream, ref obj);
+//                        }
+//                    }
+//                    else if (data is IEnumerable enumerable)
+//                    {
+//                        int count = 0;
+//                        IEnumerator enumerator = enumerable.GetEnumerator();
+//                        while (enumerator.MoveNext())
+//                            count++;
+//                        stream.Write(BitConverter.GetBytes(count));
+//                        foreach (var item in enumerable)
+//                        {
+//                            var obj = item;
+//                            generic.BinarySerialize(stream, ref obj);
+//                        }
+//                    }
+
+//                }
+//                else
+//                {
+//                    stream.Write(BitConverter.GetBytes(0));
+//                }
+//            };
+
+//            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
+//            {
+//                var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+//                if (length == 0)
+//                    return null;
+//                var instance = typeGoInfo.CreateInstance();
+//                var generic = typeGoInfo.Generics[0];
+//                for (int i = 0; i < length; i++)
+//                {
+//                    typeGoInfo.AddArrayValue(instance, generic.BinaryDeserialize(ref reader));
+//                }
+//                return typeGoInfo.Cast == null ? instance : typeGoInfo.Cast(instance);
+//            };
+//        }
+//        typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();
+//        typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonSetValue != null).ToArray();
+//        typeGoInfo.DefaultValue = null;
+//    }
+//}

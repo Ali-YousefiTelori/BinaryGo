@@ -7,17 +7,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace JsonGo.Runtime.Variables
+namespace JsonGo.Runtime.Variables.Enums
 {
     /// <summary>
-    /// Sbyte serializer and deserializer
+    /// Enum that inheritance ulong
     /// </summary>
-    public class SByteVariable : BaseVariable, ISerializationVariable<sbyte>
+    public class EnumuLongVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
+         where TEnum : struct, Enum
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public SByteVariable() : base(typeof(sbyte))
+        public EnumuLongVariable() : base(typeof(TEnum))
         {
 
         }
@@ -27,10 +28,9 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<sbyte> typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeGo options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
-
             //set the default value of variable
             typeGoInfo.DefaultValue = default;
 
@@ -46,9 +46,9 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref sbyte value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            handler.TextWriter.Write(value.ToString(CurrentCulture));
+            handler.TextWriter.Write(((ulong)(object)value).ToString(CurrentCulture));
         }
 
         /// <summary>
@@ -56,10 +56,10 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public sbyte JsonDeserialize(ref ReadOnlySpan<char> text)
+        public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (sbyte.TryParse(text, out sbyte value))
-                return value;
+            if (ulong.TryParse(text, out ulong value))
+                return (TEnum)(object)value;
             return default;
         }
 
@@ -68,18 +68,18 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref sbyte value)
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
         {
-            stream.Write(new byte[] { (byte)value });
+            stream.Write(BitConverter.GetBytes((ulong)(object)value));
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public sbyte BinaryDeserialize(ref BinarySpanReader reader)
+        public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            return (sbyte)reader.Read(sizeof(sbyte))[0];
+            return (TEnum)(object)BitConverter.ToUInt64(reader.Read(sizeof(ulong)));
         }
 
         /// <summary>
@@ -87,10 +87,9 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="handler">binary serializer handler</param>
         /// <param name="value">value to serialize</param>
-        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref sbyte value)
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            //handler.Append(handler.EncodingGetBytes(value.ToString(CurrentCulture)));
+            //handler.Append(handler.EncodingGetBytes(((ulong)(object)value).ToString(CurrentCulture)));
         }
     }
 }
-

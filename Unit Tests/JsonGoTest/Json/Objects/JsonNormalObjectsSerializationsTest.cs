@@ -108,7 +108,10 @@ namespace JsonGoTest.Json.Objects
         {
             var value = GetSimpleParentUser();
             var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
-            Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali\",\"Family\":\"Yousefi Telori\"}", $"Your Value: {value} Serialize Value: {result}");
+            Assert.True(result == "{\"Id\":2751,\"Family\":\"Yousefi Telori\",\"Name\":\"Ali\"}", $"Your Value: {value} Serialize Value: {result}");
+            var result2 = JsonGo.Json.Serializer.NormalInstance.SerializeToBytes(value);
+            var valueaa = Encoding.UTF8.GetString(result2.ToArray());
+            var iseq = valueaa == result;
             return (result, value);
         }
 
@@ -117,7 +120,7 @@ namespace JsonGoTest.Json.Objects
         {
             var value = GetSimpleParentUser2();
             var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
-            Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result}");
+            Assert.True(result == "{\"Id\":2751,\"Family\":\"Yousefi \\\"Telori\\\"\",\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
@@ -126,7 +129,7 @@ namespace JsonGoTest.Json.Objects
         {
             var value = GetSimpleParentUser3();
             var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
-            Assert.True(result == "{\"Id\":-9874,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\"}", $"Your Value: {value} Serialize Value: {result}");
+            Assert.True(result == "{\"Id\":-9874,\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\",\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
         #endregion

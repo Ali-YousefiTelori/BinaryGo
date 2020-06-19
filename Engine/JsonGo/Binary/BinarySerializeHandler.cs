@@ -19,9 +19,9 @@ namespace JsonGo.Binary
         /// Add an object to serialized objects for references
         /// </summary>
         public Action<object, int> AddSerializedObjects { get; set; }
-        /// <summary>
-        /// Find an object to check if is serialized for references
-        /// </summary>
-        public TryGetValue<object, int> TryGetValueOfSerializedObjects { get; set; }
+        ///// <summary>
+        ///// Find an object to check if is serialized for references
+        ///// </summary>
+        //public TryGetValue<object, int> TryGetValueOfSerializedObjects { get; set; }
     }
 }

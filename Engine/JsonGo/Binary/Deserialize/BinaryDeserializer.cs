@@ -10,7 +10,7 @@ namespace JsonGo.Binary.Deserialize
     /// <summary>
     /// Json deserializer
     /// </summary>
-    public class BinaryDeserializer : ITypeGo
+    public class BinaryDeserializer : ISerializer
     {
         /// <summary>
         /// Serialization's default options
@@ -29,11 +29,11 @@ namespace JsonGo.Binary.Deserialize
         /// <summary>
         /// Adds new value to types
         /// </summary>
-        public Action<Type, TypeGoInfo> AddTypes { get; set; }
+        public Action<Type, object> AddTypes { get; set; }
         /// <summary>
         /// Gets typefo value 
         /// </summary>
-        public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
+        public TryGetValue<Type> TryGetValueOfTypeGo { get; set; }
 
         internal BaseOptionInfo Options { get; set; }
         /// <summary>
@@ -66,13 +66,14 @@ namespace JsonGo.Binary.Deserialize
         {
             try
             {
-                var dataType = typeof(T);
-                if (!TryGetValueOfTypeGo(dataType, out TypeGoInfo typeGoInfo))
-                {
-                    typeGoInfo = TypeGoInfo.Generate(dataType, this);
-                }
-                var binaryReader = new BinarySpanReader(reader);
-                return (T)typeGoInfo.BinaryDeserialize(ref binaryReader);
+                throw new Exception();
+                //var dataType = typeof(T);
+                //if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
+                //{
+                //    typeGoInfo = TypeGoInfo.Generate(dataType, this);
+                //}
+                //var binaryReader = new BinarySpanReader(reader);
+                //return (T)typeGoInfo.BinaryDeserialize(ref binaryReader);
             }
             finally
             {

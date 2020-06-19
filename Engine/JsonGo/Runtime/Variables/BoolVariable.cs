@@ -1,5 +1,6 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Interfaces;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -11,49 +12,85 @@ namespace JsonGo.Runtime.Variables
     /// <summary>
     /// Bool serializer and deserializer
     /// </summary>
-    public class BoolVariable : ISerializationVariable
+    public class BoolVariable : BaseVariable, ISerializationVariable<bool>
     {
+        /// <summary>
+        /// default constructor to initialize
+        /// </summary>
+        public BoolVariable() : base(typeof(bool))
+        {
+
+        }
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<bool> typeGoInfo, ITypeGo options)
         {
-            var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;
-
-            //json serialize
-            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-            {
-                if ((bool)data)
-                    handler.Append("true");
-                else
-                    handler.Append("false");
-            };
-
-            //json deserialize of variable
-            typeGoInfo.JsonDeserialize = (deserializer, x) =>
-            {
-                if (bool.TryParse(x, out bool value))
-                    return value;
-                return default(bool);
-            };
-
-            //binary serialization
-            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-            {
-                stream.Write(BitConverter.GetBytes((bool)data).AsSpan());
-            };
-
-            //binary deserialization
-            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-            {
-                return BitConverter.ToBoolean(reader.Read(sizeof(bool)));
-            };
-
             //set the default value of variable
-            typeGoInfo.DefaultValue = default(bool);
+            typeGoInfo.DefaultValue = default;
+
+            //set delegates to access faster and make it pointer directly usage
+            typeGoInfo.JsonSerialize = JsonSerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary serializer
+            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+        }
+
+        /// <summary>
+        /// json serialize
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="value"></param>
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref bool value)
+        {
+            if (value)
+                handler.TextWriter.Write(JsonConstantsString.True);
+            else
+                handler.TextWriter.Write(JsonConstantsString.False);
+        }
+
+        /// <summary>
+        /// json deserialize
+        /// </summary>
+        /// <param name="text">json text</param>
+        /// <returns>convert text to type</returns>
+        public bool JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            if (bool.TryParse(text, out bool value))
+                return value;
+            return default;
+        }
+
+        /// <summary>
+        /// Binary serialize
+        /// </summary>
+        /// <param name="stream">stream to write</param>
+        /// <param name="value">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref bool value)
+        {
+            stream.Write(BitConverter.GetBytes(value).AsSpan());
+        }
+
+        /// <summary>
+        /// Binary deserialize
+        /// </summary>
+        /// <param name="reader">Reader of binary</param>
+        public bool BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            return BitConverter.ToBoolean(reader.Read(sizeof(bool)));
+        }
+
+        /// <summary>
+        /// serialize json as binary
+        /// </summary>
+        /// <param name="handler">binary serializer handler</param>
+        /// <param name="value">value to serialize</param>
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref bool value)
+        {
+            //handler.Append(handler.EncodingGetBytes(value.ToString(CurrentCulture)));
         }
     }
 }

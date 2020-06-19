@@ -146,7 +146,7 @@ namespace JsonGoTest.Json.Variables
         [Fact]
         public (string Result, TestEnum Value) EnumTestSerialize1()
         {
-            TypeGoInfo.Generate(typeof(TestEnum), JsonGo.Json.Serializer.DefaultOptions);
+            BaseTypeGoInfo.Generate<TestEnum>(JsonGo.Json.Serializer.DefaultOptions);
             TestEnum value = TestEnum.None;
             var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == $"{(int)value}", $"Your Value: {value} Serialize Value: {result}");
@@ -156,7 +156,7 @@ namespace JsonGoTest.Json.Variables
         [Fact]
         public (string Result, TestEnum Value) EnumTestSerialize2()
         {
-            TypeGoInfo.Generate(typeof(TestEnum), JsonGo.Json.Serializer.DefaultOptions);
+            BaseTypeGoInfo.Generate<TestEnum>(JsonGo.Json.Serializer.DefaultOptions);
             var value = TestEnum.Value10;
             var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == $"{(int)value}", $"Your Value: {value} Serialize Value: {result}");

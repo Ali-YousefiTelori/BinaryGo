@@ -12,6 +12,7 @@ using System.Diagnostics;
 
 namespace JsonGoPerformance
 {
+    [MemoryDiagnoser]
     public class NormalSerializeSamples
     {
         static byte[] MessagePackBinaryBytes = new byte[] { 148, 1, 178, 65, 108, 105, 32, 89, 111, 117, 115, 101, 102, 105, 32, 84, 101, 108, 111, 114, 105, 28, 215, 255, 200, 183, 30, 32, 94, 215, 210, 47 };
@@ -161,7 +162,7 @@ namespace JsonGoPerformance
         public void RunSimpleSampleCompileTimeJsonGo()
         {
             Serializer serializer = new Serializer();
-            serializer.SerializeCompile(GetSimpleSample());
+            //serializer.SerializeCompile(GetSimpleSample());
         }
 
         [Benchmark]
@@ -177,14 +178,14 @@ namespace JsonGoPerformance
         }
 
 
-        [Benchmark]
+        //[Benchmark]
         public void RunSimpleBinarySampleJsonGo()
         {
             BinarySerializer serializer = new BinarySerializer();
             serializer.Serialize(GetSimpleSample()).ToArray();
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void RunSimpleBinaryDeserializeSampleJsonGo()
         {
             BinaryDeserializer deserializer = new BinaryDeserializer();
@@ -196,6 +197,13 @@ namespace JsonGoPerformance
         {
             Serializer serializer = new Serializer();
             serializer.Serialize(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunSimpleSampleJsonGoJsonBinary()
+        {
+            Serializer serializer = new Serializer();
+            serializer.SerializeToBytes(GetSimpleSample());
         }
 
         [Benchmark]
@@ -213,6 +221,11 @@ namespace JsonGoPerformance
             System.Text.Json.JsonSerializer.Serialize(GetSimpleSample());
         }
 
+        [Benchmark]
+        public void RunSimpleSampleUTF8Json()
+        {
+            Utf8Json.JsonSerializer.Serialize(GetSimpleSample());
+        }
 
         public static void RunSimple()
         {

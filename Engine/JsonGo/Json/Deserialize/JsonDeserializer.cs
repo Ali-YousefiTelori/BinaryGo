@@ -3,26 +3,27 @@ using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace JsonGo.Json.Deserialize
 {
     /// <summary>
     /// Json deserializer
     /// </summary>
-    public class JsonDeserializer : ITypeGo
+    public class JsonDeserializer : ISerializer
     {
         /// <summary>
         /// Serialization's default options
         /// </summary>
         public static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
 
-        static FastExtractFunction FastExtractFunction { get; set; }
+        //static FastExtractFunction FastExtractFunction { get; set; }
 
         static JsonDeserializer()
         {
             //ExtractFunction = DeserializerExtractor.Extract;
             //FastExtractFunction = FastDeserializerExtractor2.Extract;
-            FastExtractFunction = FastDeserializerExtractor3.Extract;
+            //FastExtractFunction = FastDeserializerExtractor.Extract;
         }
 
         /// <summary>
@@ -36,11 +37,11 @@ namespace JsonGo.Json.Deserialize
         /// <summary>
         /// Adds new value to types
         /// </summary>
-        public Action<Type, TypeGoInfo> AddTypes { get; set; }
+        public Action<Type, object> AddTypes { get; set; }
         /// <summary>
         /// Gets typefo value 
         /// </summary>
-        public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
+        public TryGetValue<Type> TryGetValueOfTypeGo { get; set; }
 
         internal BaseOptionInfo Options { get; set; } = new BaseOptionInfo() { HasGenerateRefrencedTypes = true };
         /// <summary>
@@ -57,6 +58,7 @@ namespace JsonGo.Json.Deserialize
                 return new JsonDeserializer();
             }
         }
+
         /// <summary>
         /// Serializer's default settings
         /// </summary>
@@ -65,7 +67,10 @@ namespace JsonGo.Json.Deserialize
         /// Support for types' loop reference
         /// </summary>
         public bool HasGenerateRefrencedTypes { get; set; }
-
+        /// <summary>
+        /// current serializer Culture
+        /// </summary>
+        public CultureInfo CurrentCulture { get; set; }
         void Initialize()
         {
             AddTypes = Options.Types.Add;
@@ -83,21 +88,22 @@ namespace JsonGo.Json.Deserialize
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(string json)
         {
-            try
-            {
-                var dataType = typeof(T);
-                if (!TryGetValueOfTypeGo(dataType, out TypeGoInfo typeGoInfo))
-                {
-                    typeGoInfo = TypeGoInfo.Generate(dataType, this);
-                }
-                var reader = new JsonSpanReader(json.AsSpan());
-                var result = FastExtractFunction(this, typeGoInfo, ref reader);
-                return (T)result;
-            }
-            finally
-            {
-                DeSerializedObjects.Clear();
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    var dataType = typeof(T);
+            //    if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
+            //    {
+            //        typeGoInfo = TypeGoInfo<T>.Generate(dataType, this);
+            //    }
+            //    var reader = new JsonSpanReader(json.AsSpan());
+            //    var result = FastExtractFunction(this, typeGoInfo, ref reader);
+            //    return (T)result;
+            //}
+            //finally
+            //{
+            //    DeSerializedObjects.Clear();
+            //}
         }
     }
 }

@@ -5,41 +5,99 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JsonGo.Binary.Deserialize;
+using JsonGo.IO;
 
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// 
+    /// get value from json
     /// </summary>
     /// <param name="deserializer"></param>
     /// <param name="typeGo"></param>
-    /// <param name="_buffer"></param>
     /// <returns></returns>
-    public delegate object FastExtractFunction(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
+    public delegate TProperty JsonGetValue<TProperty, TObject>(ref JsonSerializeHandler deserializer, TObject typeGo);
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="deserializer"></param>
+    ///// <param name="typeGo"></param>
+    ///// <param name="_buffer"></param>
+    ///// <returns></returns>
+    ///public delegate object FastExtractFunction(JsonDeserializer deserializer, TypeGoInfo typeGo, ref JsonSpanReader _buffer);
     /// <summary>
     /// Tries to get value from a dictionary
     /// This is a pointer delegate of a method that can be accessed easy from everywhere
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
     /// <param name="key"></param>
     /// <param name="result"></param>
     /// <returns></returns>
-    public delegate bool TryGetValue<TKey, TResult>(TKey key, out TResult result);
+    public delegate bool TryGetValue<TKey>(TKey key, out object result);
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="readOnlySpan"></param>
     /// <returns></returns>
-    public delegate T RefFunc<T>(ReadOnlySpan<char> readOnlySpan);
+    public delegate void CharsBufferBuilderFunc(ReadOnlySpan<char> readOnlySpan);
     /// <summary>
-    /// Function to serialize object
+    /// 
     /// </summary>
-    /// <param name="handler"></param>
+    /// <param name="data"></param>
+    public delegate void CharBufferBuilderFunc(char data);
+    /// <summary>
+    /// remove char
+    /// </summary>
+    /// <param name="data"></param>
+    public delegate void RemoveCharBufferBuilderFunc(char data);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="readOnlySpan"></param>
+    /// <returns></returns>
+    public delegate ReadOnlySpan<byte> RefFuncByte(ReadOnlySpan<byte> readOnlySpan);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="readOnlySpan"></param>
+    /// <returns></returns>
+    public delegate ReadOnlySpan<byte> RefFuncChar(ReadOnlySpan<char> readOnlySpan);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="readOnlySpan"></param>
+    public delegate void RefActionByte(ReadOnlySpan<byte> readOnlySpan);
+    /// <summary>
+    /// one byte write
+    /// </summary>
+    /// <param name="readOnlySpan"></param>
+    public delegate void RefOneByte(byte readOnlySpan);
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="readOnlySpan"></param>
+    //public delegate Memory<byte> RefFuncChar(ReadOnlySpan<byte> readOnlySpan);
+    /// <summary>
+    /// Action to serialize object to json string
+    /// </summary>
+    /// <param name="handler">string serializer handler</param>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>
-    public delegate void JsonFunctionGo(JsonSerializeHandler handler, ref object data);
+    public delegate void JsonActionGo<T>(ref JsonSerializeHandler handler, ref T data);
+    /// <summary>
+    /// Function to serialize object to json string
+    /// </summary>
+    /// <param name="data">any object to serialize</param>
+    /// <returns>serialized string</returns>
+    public delegate ReadOnlySpan<char> JsonFunctionGo<T>(ref T data);
+    /// <summary>
+    /// Function to serialize object as binary
+    /// </summary>
+    /// <param name="handler">binary serializer handler</param>
+    /// <param name="data">any object to serialize</param>
+    /// <returns>serialized stringbuilder</returns>
+    public delegate void JsonBinaryFunctionGo<T>(ref JsonBinarySerializeHandler handler, ref T data);
+
     /// <summary>
     /// Function to serialize object
     /// </summary>
@@ -47,7 +105,7 @@ namespace JsonGo.Runtime
     /// <param name="handler"></param>
     /// <param name="data">any object to serialize</param>
     /// <returns>serialized stringbuilder</returns>TypeGoInfo typeGoInfo, Serializer serializer, StringBuilder stringBuilder,
-    public delegate void JsonFunctionTypeGo(TypeGoInfo typeGoInfo, JsonSerializeHandler handler, ref object data);
+    public delegate void JsonFunctionTypeGo<T>(TypeGoInfo<T> typeGoInfo, JsonSerializeHandler handler, ref T data);
     /// <summary>
     /// 
     /// </summary>
@@ -61,7 +119,7 @@ namespace JsonGo.Runtime
     /// <param name="typeGoInfo"></param>
     /// <param name="stream"></param>
     /// <param name="data"></param>
-    public delegate void BinaryFunctionTypeGo(TypeGoInfo typeGoInfo, Stream stream, ref object data);
+    public delegate void BinaryFunctionTypeGo<T>(TypeGoInfo<T> typeGoInfo, Stream stream, ref T data);
     /// <summary>
     /// Binary serializer
     /// </summary>

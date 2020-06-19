@@ -1,5 +1,6 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Interfaces;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -11,49 +12,85 @@ namespace JsonGo.Runtime.Variables
     /// <summary>
     /// Byte[] serializer and deserializer
     /// </summary>
-    public class ByteArrayVariable : ISerializationVariable
+    public class ByteArrayVariable : BaseVariable, ISerializationVariable<byte[]>
     {
+        /// <summary>
+        /// default constructor to initialize
+        /// </summary>
+        public ByteArrayVariable() : base(typeof(byte[]))
+        {
+
+        }
+
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<byte[]> typeGoInfo, ITypeGo options)
         {
-            var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;
-
-            //json serialize
-            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-            {
-                handler.AppendChar(JsonConstantsString.Quotes);
-                handler.Append(Convert.ToBase64String((byte[])data));
-                handler.AppendChar(JsonConstantsString.Quotes);
-            };
-
-            //json deserialize of variable
-            typeGoInfo.JsonDeserialize = (deserializer, x) =>
-            {
-                return Convert.FromBase64String(new string(x));
-            };
-
-            //binary serialization
-            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-            {
-                var array = ((byte[])data).AsSpan();
-                stream.Write(BitConverter.GetBytes(array.Length));
-                stream.Write(array);
-            };
-
-            //binary deserialization
-            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-            {
-                var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-                return reader.Read(length).ToArray();
-            };
-
             //set the default value of variable
-            typeGoInfo.DefaultValue = default(byte[]);
+            typeGoInfo.DefaultValue = default;
+            typeGoInfo.JsonSerialize = JsonSerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary serializer
+            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+        }
+
+        /// <summary>
+        /// json serialize
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="value"></param>
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref byte[] value)
+        {
+            handler.TextWriter.Write(JsonConstantsString.Quotes);
+            handler.TextWriter.Write(Convert.ToBase64String(value));
+            handler.TextWriter.Write(JsonConstantsString.Quotes);
+        }
+
+        /// <summary>
+        /// json deserialize
+        /// </summary>
+        /// <param name="text">json text</param>
+        /// <returns>convert text to type</returns>
+        public byte[] JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            return Convert.FromBase64String(new string(text));
+        }
+
+        /// <summary>
+        /// Binary serialize
+        /// </summary>
+        /// <param name="stream">stream to write</param>
+        /// <param name="value">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref byte[] value)
+        {
+            stream.Write(BitConverter.GetBytes(value.Length));
+            stream.Write(value);
+        }
+
+        /// <summary>
+        /// Binary deserialize
+        /// </summary>
+        /// <param name="reader">Reader of binary</param>
+        public byte[] BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            return reader.Read(length).ToArray();
+        }
+
+        /// <summary>
+        /// serialize json as binary
+        /// </summary>
+        /// <param name="handler">binary serializer handler</param>
+        /// <param name="value">value to serialize</param>
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref byte[] value)
+        {
+            //handler.AppendByte(JsonConstantsBytes.Quotes);
+            //handler.Append(handler.EncodingGetBytes(Convert.ToBase64String(value)));
+            //handler.AppendByte(JsonConstantsBytes.Quotes);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.Interfaces;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -11,49 +12,84 @@ namespace JsonGo.Runtime.Variables
     /// <summary>
     /// Date and time serializer and deserializer
     /// </summary>
-    public class DateTimeVariable : ISerializationVariable
+    public class DateTimeVariable : BaseVariable, ISerializationVariable<DateTime>
     {
+        /// <summary>
+        /// default constructor to initialize
+        /// </summary>
+        public DateTimeVariable() : base(typeof(DateTime))
+        {
+
+        }
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<DateTime> typeGoInfo, ITypeGo options)
         {
-            var currentCulture = TypeGoInfo.CurrentCulture;
             typeGoInfo.IsNoQuotesValueType = false;
-
-            //json serialize
-            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-            {
-                handler.AppendChar(JsonConstantsString.Quotes);
-                handler.Append(((DateTime)data).ToString(currentCulture));
-                handler.AppendChar(JsonConstantsString.Quotes);
-            };
-
-            //json deserialize of variable
-            typeGoInfo.JsonDeserialize = (deserializer, x) =>
-            {
-                if (DateTime.TryParse(x, out DateTime value))
-                    return value;
-                return default(DateTime);
-            };
-
-            //binary serialization
-            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-            {
-                stream.Write(BitConverter.GetBytes(((DateTime)data).Ticks).AsSpan());
-            };
-
-            //binary deserialization
-            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-            {
-                var ticks = BitConverter.ToInt64(reader.Read(sizeof(long)));
-                return new DateTime(ticks);
-            };
-
             //set the default value of variable
-            typeGoInfo.DefaultValue = default(DateTime);
+            typeGoInfo.DefaultValue = default;
+
+            //set delegates to access faster and make it pointer directly usage
+            typeGoInfo.JsonSerialize = JsonSerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary serializer
+            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+        }
+
+        /// <summary>
+        /// json serialize
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="value"></param>
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref DateTime value)
+        {
+            handler.TextWriter.Write(JsonConstantsString.Quotes);
+            handler.TextWriter.Write(value.ToString(CurrentCulture));
+            handler.TextWriter.Write(JsonConstantsString.Quotes);
+        }
+
+        /// <summary>
+        /// json deserialize
+        /// </summary>
+        /// <param name="text">json text</param>
+        /// <returns>convert text to type</returns>
+        public DateTime JsonDeserialize(ref ReadOnlySpan<char> text)
+        {
+            if (DateTime.TryParse(text, out DateTime value))
+                return value;
+            return default;
+        }
+
+        /// <summary>
+        /// Binary serialize
+        /// </summary>
+        /// <param name="stream">stream to write</param>
+        /// <param name="value">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref DateTime value)
+        {
+            stream.Write(BitConverter.GetBytes(value.Ticks).AsSpan());
+        }
+
+        /// <summary>
+        /// Binary deserialize
+        /// </summary>
+        /// <param name="reader">Reader of binary</param>
+        public DateTime BinaryDeserialize(ref BinarySpanReader reader)
+        {
+            return new DateTime(BitConverter.ToInt64(reader.Read(sizeof(long))));
+        }
+
+        /// <summary>
+        /// serialize json as binary
+        /// </summary>
+        /// <param name="handler">binary serializer handler</param>
+        /// <param name="value">value to serialize</param>
+        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref DateTime value)
+        {
+            //handler.Append(handler.EncodingGetBytes(value.ToString(CurrentCulture)));
         }
     }
 }

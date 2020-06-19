@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace JsonGo.Json
 {
@@ -34,6 +35,23 @@ namespace JsonGo.Json
         /// Null value in memory
         /// </summary>
         public const string Null = "null";
+        /// <summary>
+        /// \n bytes
+        /// </summary>
+        public static readonly string BackSlashN = "\\n";
+        /// <summary>
+        /// \r bytes
+        /// </summary>
+        public static readonly string BackSlashR = "\\r";
+        /// <summary>
+        /// \t bytes
+        /// </summary>
+        public static readonly string BackSlashT = "\\t";
+        /// <summary>
+        /// \\" bytes
+        /// </summary>
+        public static readonly string BackSlashQuotes = "\\\"";
+
         /// <summary>
         /// Before create object with refrence
         /// </summary>
@@ -142,53 +160,180 @@ namespace JsonGo.Json
         ///  \t char for tab usage
         /// </summary>
         public const char TTabLine = 't';
+        /// <summary>
+        /// true value of boolean
+        /// </summary>
+        public const string True = "true";
+        /// <summary>
+        /// false value of boolean
+        /// </summary>
+        public const string False = "false";
     }
 
-    //public class JsonConstantsBytes
-    //{
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    public const string Null = "null";
-    //    public const char Space = ' ';
-    //    public const string BeforeObject = "{\"$id\":\"";
-    //    public const string AfterArrayObject = "\",\"$values\":[";
-    //    public const char OpenSquareBrackets = '[';
-    //    public const char CloseSquareBrackets = ']';
-    //    public const string CloseSquareBracketsWithBrackets = "]}";
-    //    public const char Comma = ',';
-    //    public const string CommaQuotes = "\",";
-    //    public const string ColonQuotes = ":\"";
-    //    public const string QuotesColon = "\":";
-    //    public const string QuotesColonQuotes = "\":\"";
-    //    public const char Colon = ':';
-    //    public const char OpenBraket = '{';
-    //    public const string OpenBraketRefColonQuotes = "{\"$ref\":\"";
-    //    public const char CloseBracket = '}';
-    //    public const char Quotes = '"';
-    //    public const string QuotesCloseBracket = "\"}";
-    //    public const char BackSlash = '\\';
-    //    public const char RNewLine = 'r';
-    //    public const char NNewLine = 'n';
-    //    /// <summary>
-    //    /// $Id refrenced type name
-    //    /// </summary>
-    //    public const string IdRefrencedTypeName = "\"$id\"";
-    //    public const string IdRefrencedTypeNameNoQuotes = "$id";
-    //    /// <summary>
-    //    /// $Ref refrenced type name
-    //    /// </summary>
-    //    public const string RefRefrencedTypeName = "\"$ref\"";
-    //    public const string RefRefrencedTypeNameNoQuotes = "$ref";
-    //    /// <summary>
-    //    /// $Values refrenced type name
-    //    /// </summary>
-    //    public const string ValuesRefrencedTypeName = "\"$values\"";
-    //    public const string ValuesRefrencedTypeNameNoQuotes = "$values";
-    //    /// <summary>
-    //    /// support for $id,$ref,$values for serialization
-    //    /// </summary>
-    //    public bool HasGenerateRefrencedTypes { get; set; } = true;
+    /// <summary>
+    /// Default settings for serializer and deserialier
+    /// </summary>
+    public class JsonConstantsBytes
+    {
+        //SkipValues = ' ', '\r', '\n', '\t'
+        //EndsValues = '}', ']'
+        //UnSupportedValue = ' ', ',', '\r', '\n', '\t' 
+        //static byte[] SupportedValue { get; set; } = "0123456789.truefalsTRUEFALS-n".Select(x => (byte)x).ToArray();
 
-    //}
+        #region SkipValues
+        /// <summary>
+        /// New line \r Space
+        /// </summary>
+        public const byte RSpace = (byte)'\r';
+        /// <summary>
+        /// New line \n Space
+        /// </summary>
+        public const byte NSpace = (byte)'\n';
+        /// <summary>
+        /// \t Space
+        /// </summary>
+        public const byte TSpace = (byte)'\t';
+        /// <summary>
+        /// Space
+        /// </summary>
+        public const byte Space = (byte)' ';
+        #endregion
+        /// <summary>
+        /// Null value in memory
+        /// </summary>
+        public static readonly byte[] Null = Encoding.ASCII.GetBytes("null");
+        /// <summary>
+        /// \n bytes
+        /// </summary>
+        public static readonly byte[] BackSlashN = Encoding.ASCII.GetBytes("\\n");
+        /// <summary>
+        /// \r bytes
+        /// </summary>
+        public static readonly byte[] BackSlashR = Encoding.ASCII.GetBytes("\\r");
+        /// <summary>
+        /// \t bytes
+        /// </summary>
+        public static readonly byte[] BackSlashT = Encoding.ASCII.GetBytes("\\t");
+        /// <summary>
+        /// \\" bytes
+        /// </summary>
+        public static readonly byte[] BackSlashQuotes = Encoding.ASCII.GetBytes("\\\"");
+
+        /// <summary>
+        /// Before create object with refrence
+        /// </summary>
+        public static readonly byte[] BeforeObjectReference = Encoding.ASCII.GetBytes("{\"$id\":\"");
+        /// <summary>
+        /// After array with reference
+        /// </summary>
+        public static readonly byte[] AfterArrayObjectReference = Encoding.ASCII.GetBytes("\",\"$values\":[");
+        /// <summary>
+        /// Open Square Brackets
+        /// </summary>
+        public const byte OpenSquareBrackets = (byte)'[';
+        /// <summary>
+        /// Close Square Brackets
+        /// </summary>
+        public const byte CloseSquareBrackets = (byte)']';
+        /// <summary>
+        /// Close Square Brackets With Brackets
+        /// </summary>
+        public static readonly byte[] CloseSquareBracketsWithBrackets = Encoding.ASCII.GetBytes("]}");
+        /// <summary>
+        /// Comma
+        /// </summary>
+        public const byte Comma = (byte)',';
+        /// <summary>
+        /// Comma with quotes
+        /// </summary>
+        public static readonly byte[] CommaQuotes = Encoding.ASCII.GetBytes("\",");
+        /// <summary>
+        /// Colon with quotes
+        /// </summary>
+        public static readonly byte[] ColonQuotes = Encoding.ASCII.GetBytes(":\"");
+        /// <summary>
+        /// Comma with quotes
+        /// </summary>
+        public static readonly byte[] QuotesColon = Encoding.ASCII.GetBytes("\":");
+        /// <summary>
+        /// Quotes then colon, then quotes
+        /// </summary>
+        public static readonly byte[] QuotesColonQuotes = Encoding.ASCII.GetBytes("\":\"");
+        /// <summary>
+        /// Colon
+        /// </summary>
+        public const byte Colon = (byte)':';
+        /// <summary>
+        /// Open braket
+        /// </summary>
+        public const byte OpenBraket = (byte)'{';
+        /// <summary>
+        /// Open braket colon quotes with reference
+        /// </summary>
+        public static readonly byte[] OpenBraketColonQuotesReference = Encoding.ASCII.GetBytes("{\"$ref\":\"");
+        /// <summary>
+        /// Close bracket
+        /// </summary>
+        public const byte CloseBracket = (byte)'}';
+        /// <summary>
+        /// Quotes
+        /// </summary>
+        public const byte Quotes = (byte)'"';
+        /// <summary>
+        /// Quotes close bracket
+        /// </summary>
+        public static readonly byte[] QuotesCloseBracket = Encoding.ASCII.GetBytes("\"}");
+        /// <summary>
+        /// Back slash
+        /// </summary>
+        public const byte BackSlash = (byte)'\\';
+        /// <summary>
+        /// $Id refrenced type name
+        /// </summary>
+        public static readonly byte[] IdRefrencedTypeName = Encoding.ASCII.GetBytes("\"$id\"");
+        /// <summary>
+        /// $id for reference
+        /// </summary>
+        public static readonly byte[] IdRefrencedTypeNameNoQuotes = Encoding.ASCII.GetBytes("$id");
+        /// <summary>
+        /// $Ref referenced type name
+        /// </summary>
+        public static readonly byte[] RefRefrencedTypeName = Encoding.ASCII.GetBytes("\"$ref\"");
+        /// <summary>
+        /// $ref for reference
+        /// </summary>
+        public static readonly byte[] RefRefrencedTypeNameNoQuotes = Encoding.ASCII.GetBytes("$ref");
+        /// <summary>
+        /// $Values referenced type name
+        /// </summary>
+        public static readonly byte[] ValuesRefrencedTypeName = Encoding.ASCII.GetBytes("\"$values\"");
+        /// <summary>
+        /// $values for reference
+        /// </summary>
+        public static readonly byte[] ValuesRefrencedTypeNameNoQuotes = Encoding.ASCII.GetBytes("$values");
+        /// <summary>
+        /// Support of $id,$ref,$values for serialization
+        /// </summary>
+        public bool HasGenerateRefrencedTypes { get; set; } = true;
+        /// <summary>
+        /// \r char for new line usage
+        /// </summary>
+        public const byte RNewLine = (byte)'r';
+        /// <summary>
+        /// \n char for new line usage
+        /// </summary>
+        public const byte NNewLine = (byte)'n';
+        /// <summary>
+        ///  \t char for tab usage
+        /// </summary>
+        public const byte TTabLine = (byte)'t';
+        /// <summary>
+        /// true value of boolean
+        /// </summary>
+        public static readonly byte[] True = Encoding.ASCII.GetBytes("true");
+        /// <summary>
+        /// false value of boolean
+        /// </summary>
+        public static readonly byte[] False = Encoding.ASCII.GetBytes("false");
+    }
 }

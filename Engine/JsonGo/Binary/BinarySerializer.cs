@@ -12,11 +12,11 @@ namespace JsonGo.Binary
     /// <summary>
     /// JsonGo binary serializer: serializes your object to byte array or memory stream
     /// </summary>
-    public class BinarySerializer : ITypeGo
+    public class BinarySerializer : ISerializer
     {
         static BinarySerializer()
         {
-            TypeGoInfo.GenerateDefaultVariables(DefaultOptions);
+            BaseTypeGoInfo.GenerateDefaultVariables(DefaultOptions);
         }
 
         internal static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
@@ -28,11 +28,11 @@ namespace JsonGo.Binary
         /// <summary>
         /// Add new value to types
         /// </summary>
-        public Action<Type, TypeGoInfo> AddTypes { get; set; }
+        public Action<Type, object> AddTypes { get; set; }
         /// <summary>
         /// get typefo value from 
         /// </summary>
-        public TryGetValue<Type, TypeGoInfo> TryGetValueOfTypeGo { get; set; }
+        public TryGetValue<Type> TryGetValueOfTypeGo { get; set; }
         //public BinarySerializeHandler SerializeHandler { get; set; } = new BinarySerializeHandler();
         internal BaseOptionInfo Options { get; set; }
         /// <summary>
@@ -112,23 +112,8 @@ namespace JsonGo.Binary
             Dictionary<object, int> serializedObjects = new Dictionary<object, int>();
             //SerializeHandler.AddSerializedObjects = serializedObjects.Add;
             //SerializeHandler.TryGetValueOfSerializedObjects = serializedObjects.TryGetValue;
-            SerializeObject(data);
+            //SerializeObject(data);
             return Writer.ToArray().AsSpan();
-        }
-
-        /// <summary>
-        /// Serializes an object into a json string
-        /// </summary>
-        /// <param name="data">Any object to serialize</param>
-        /// <returns>Json string returned after serialization</returns>
-        internal void SerializeObject(object data)
-        {
-            Type dataType = data.GetType();
-            if (!TryGetValueOfTypeGo(dataType, out TypeGoInfo typeGoInfo))
-            {
-                typeGoInfo = TypeGoInfo.Generate(dataType, this);
-            }
-            typeGoInfo.BinarySerialize(Writer, ref data);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using JsonGo.Runtime;
+﻿using JsonGo.IO;
+using JsonGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,16 +9,16 @@ namespace JsonGo.Json
     /// <summary>
     /// Json serializer handler to use serialization and deserialization methods faster
     /// </summary>
-    public class JsonSerializeHandler
+    public ref struct JsonSerializeHandler
     {
         /// <summary>
-        /// Appends a text
+        /// writer of char
         /// </summary>
-        public RefFunc<StringBuilder> Append { get; set; }
+        public BufferBuilder<char> TextWriter;
         /// <summary>
-        /// Appends a character
+        /// writer of char
         /// </summary>
-        public Func<char, StringBuilder> AppendChar { get; set; }
+        public BufferBuilder<byte> BinaryWriter;
         /// <summary>
         /// Serializer
         /// </summary>
@@ -29,6 +30,6 @@ namespace JsonGo.Json
         /// <summary>
         /// Finds serialization object for reference values
         /// </summary>
-        public TryGetValue<object, int> TryGetValueOfSerializedObjects { get; set; }
+        public TryGetValue<object> TryGetValueOfSerializedObjects { get; set; }
     }
 }

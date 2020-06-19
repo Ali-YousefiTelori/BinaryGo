@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JsonGo.Json;
+using JsonGo.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -6,14 +8,11 @@ using System.Text;
 namespace JsonGo.Runtime
 {
     /// <summary>
-    /// type options
+    /// This interface ha a fast access from everywhere to add and get type from memory
+    /// base of any serializer need to impliment data to fast access
     /// </summary>
-    public interface ITypeGo
+    public interface ISerializer
     {
-        /// <summary>
-        /// Encoding of type go options
-        /// </summary>
-        Encoding Encoding { get; set; }
         /// <summary>
         /// Adds new value to types
         /// </summary>
@@ -26,13 +25,6 @@ namespace JsonGo.Runtime
         /// Support for loop refereence serialization
         /// </summary>
         bool HasGenerateRefrencedTypes { get; set; }
-        /// <summary>
-        /// custom types
-        /// </summary>
-        Dictionary<Type, Type> CustomTypeChanges { get; set; }
-        /// <summary>
-        /// CurrentCulture of serializer
-        /// </summary>
-        CultureInfo CurrentCulture { get; set; }
     }
+
 }
