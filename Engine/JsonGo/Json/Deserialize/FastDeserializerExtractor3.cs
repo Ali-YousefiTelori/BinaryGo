@@ -21,7 +21,8 @@ namespace JsonGo.Json.Deserialize
             var character = json.Read();
             if (character == JsonConstantsString.Quotes)
             {
-                return typeGo.JsonDeserialize(deserializer, json.ExtractString());
+                var extract = json.ExtractString();
+                return typeGo.JsonDeserialize(ref extract);
             }
             else if (character == JsonConstantsString.OpenBraket)
             {
@@ -41,14 +42,12 @@ namespace JsonGo.Json.Deserialize
                 {
                     return new string(value);
                 }
-                //json.BackIndex();
-                return typeGo.JsonDeserialize(deserializer, value);
+                return typeGo.JsonDeserialize(ref value);
             }
         }
 
         internal static object ExtractArray(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
         {
-            throw new NotImplementedException();
             //var arrayInstance = typeGo.CreateInstance();
             //var generic = typeGo.Generics.First();
             //while (true)

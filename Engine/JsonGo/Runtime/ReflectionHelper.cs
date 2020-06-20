@@ -112,12 +112,12 @@ namespace JsonGo.Runtime
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static Func<object> GetActivator(Type type)
+        public static Func<T> GetActivator<T>(Type type)
         {
             ConstructorInfo emptyConstructor = type.GetConstructor(Type.EmptyTypes);
             if (emptyConstructor == null)
             {
-                return new Func<object>(() => null);
+                return new Func<T>(() => default);
             }
             //make a NewExpression that calls the
             //ctor with the args we just created
@@ -126,10 +126,10 @@ namespace JsonGo.Runtime
             //create a lambda with the New
             //Expression as body and our param object[] as arg
             LambdaExpression lambda =
-                Expression.Lambda(typeof(Func<object>), newExp);
+                Expression.Lambda(typeof(Func<T>), newExp);
 
             //compile it
-            Func<object> compiled = (Func<object>)lambda.Compile();
+            Func<T> compiled = (Func<T>)lambda.Compile();
             return compiled;
         }
 

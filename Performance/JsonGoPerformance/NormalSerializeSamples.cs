@@ -178,7 +178,7 @@ namespace JsonGoPerformance
         }
 
 
-        //[Benchmark]
+        [Benchmark]
         public void RunSimpleBinarySampleJsonGo()
         {
             BinarySerializer serializer = new BinarySerializer();

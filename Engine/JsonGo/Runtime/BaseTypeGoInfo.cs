@@ -16,6 +16,12 @@ namespace JsonGo.Runtime
         /// maximum size of this type taked from memory used for bufferbuilder 
         /// </summary>
         public int Capacity = 2;
+
+        /// <summary>
+        /// default value of bytes
+        /// </summary>
+        public byte[] DefaultBinaryValue;
+
         /// <summary>
         /// Initializes a variable to a TypeGo
         /// </summary>

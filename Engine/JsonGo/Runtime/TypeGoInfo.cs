@@ -25,37 +25,29 @@ namespace JsonGo.Runtime
         /// </summary>
         public JsonActionGo<TType> JsonSerialize;
         /// <summary>
-        /// get value of serialized
-        /// </summary>
-        public JsonFunctionGo<TType> GetJsonSerialized;
-        /// <summary>
-        /// serialize json as binary to a memory stream action
-        /// </summary>
-        public JsonActionGo<TType> JsonBinarySerialize;
-        /// <summary>
         /// Binary serialize
         /// </summary>
-        public BinaryFunctionGo BinarySerialize;
+        public BinaryFunctionGo<TType> BinarySerialize;
         /// <summary>
         /// Deserializes binary to object
         /// </summary>
-        public BinaryDeserializeFunc BinaryDeserialize;
+        public BinaryDeserializeFunc<TType> BinaryDeserialize;
         /// <summary>
         /// Deserializes string to object
         /// </summary>
-        public DeserializeFunc JsonDeserialize;
+        public DeserializeFunc<TType> JsonDeserialize;
         /// <summary>
         /// Creates type instance
         /// </summary>
-        public Func<object> CreateInstance;
+        public Func<TType> CreateInstance;
         /// <summary>
         /// Casts to real object
         /// </summary>
-        public Func<object, object> Cast;
+        public Func<object, TType> Cast;
         /// <summary>
         /// Adds array value to TypeGo array
         /// </summary>
-        public Action<object, object> AddArrayValue;
+        public Action<List<TType>, TType> AddArrayValue;
 
         /// <summary>
         /// Type properties 

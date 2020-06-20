@@ -1,4 +1,5 @@
 ﻿using JsonGo.Binary.Deserialize;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.Collections.Generic;
@@ -48,21 +49,12 @@ namespace JsonGo.Runtime
         /// Set value of property
         /// </summary>
         internal abstract void InternalSetValue(ref TObject instance, ref object value);
-
-
         /// <summary>
         /// json serialize
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
         internal abstract void JsonSerialize(ref JsonSerializeHandler handler, ref object value);
-        /// <summary>
-        /// json binary serialize
-        /// </summary>
-        /// <param name="handler"></param>
-        /// <param name="value"></param>
-        internal abstract void JsonBainarySerialize(ref JsonSerializeHandler handler, ref object value);
-
         /// <summary>
         /// json deserialize
         /// </summary>
@@ -75,7 +67,7 @@ namespace JsonGo.Runtime
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        internal abstract void BinarySerialize(ref Stream stream, ref object value);
+        internal abstract void BinarySerialize(ref BufferBuilder<byte> stream, ref object value);
 
         /// <summary>
         /// Binary deserialize

@@ -1,4 +1,5 @@
 ﻿using JsonGo.Binary.Deserialize;
+using JsonGo.IO;
 using JsonGo.Json;
 using System;
 using System.IO;
@@ -71,12 +72,6 @@ namespace JsonGo.Runtime
             TypeGoInfo.JsonSerialize(ref handler, ref unboxedValue);
         }
 
-        internal override void JsonBainarySerialize(ref JsonSerializeHandler handler, ref object value)
-        {
-            var unboxedValue = (TPropertyType)value;
-            TypeGoInfo.JsonBinarySerialize(ref handler, ref unboxedValue);
-        }
-
         internal override void InternalSetValue(ref TObject instance, ref object value)
         {
             SetValue(instance, (TPropertyType)value);
@@ -87,14 +82,15 @@ namespace JsonGo.Runtime
             throw new NotImplementedException();
         }
 
-        internal override void BinarySerialize(ref Stream stream, ref object value)
+        internal override void BinarySerialize(ref BufferBuilder<byte> stream, ref object value)
         {
-            throw new NotImplementedException();
+            var unboxedValue = (TPropertyType)value;
+            TypeGoInfo.BinarySerialize(ref stream, ref unboxedValue);
         }
 
         internal override object BinaryDeserialize(ref BinarySpanReader reader)
         {
-            throw new NotImplementedException();
+            return TypeGoInfo.BinaryDeserialize(ref reader);
         }
     }
 }

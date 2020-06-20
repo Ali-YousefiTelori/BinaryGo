@@ -88,22 +88,21 @@ namespace JsonGo.Json.Deserialize
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(string json)
         {
-            throw new NotImplementedException();
-            //try
-            //{
-            //    var dataType = typeof(T);
-            //    if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
-            //    {
-            //        typeGoInfo = TypeGoInfo<T>.Generate(dataType, this);
-            //    }
-            //    var reader = new JsonSpanReader(json.AsSpan());
-            //    var result = FastExtractFunction(this, typeGoInfo, ref reader);
-            //    return (T)result;
-            //}
-            //finally
-            //{
-            //    DeSerializedObjects.Clear();
-            //}
+            try
+            {
+                var dataType = typeof(T);
+                if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
+                {
+                    typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
+                }
+                var reader = new JsonSpanReader(json.AsSpan());
+                var result = FastDeserializerExtractor<T>.Extract(this, (TypeGoInfo<T>)typeGoInfo, ref reader);
+                return (T)result;
+            }
+            finally
+            {
+                //DeSerializedObjects.Clear();
+            }
         }
     }
 }

@@ -35,8 +35,14 @@ namespace JsonGo.Runtime.Variables
             //set delegates to access faster and make it pointer directly usage
             typeGoInfo.JsonSerialize = JsonSerialize;
 
+            //set delegates to access faster and make it pointer directly usage for json deserializer
+            typeGoInfo.JsonDeserialize = JsonDeserialize;
+
             //set delegates to access faster and make it pointer directly usage for binary serializer
-            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+            typeGoInfo.BinarySerialize = BinarySerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary deserializer
+            typeGoInfo.BinaryDeserialize = BinaryDeserialize;
         }
 
         /// <summary>
@@ -78,16 +84,6 @@ namespace JsonGo.Runtime.Variables
         public long BinaryDeserialize(ref BinarySpanReader reader)
         {
             return BitConverter.ToInt64(reader.Read(sizeof(long)));
-        }
-
-        /// <summary>
-        /// serialize json as binary
-        /// </summary>
-        /// <param name="handler">binary serializer handler</param>
-        /// <param name="value">value to serialize</param>
-        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref long value)
-        {
-            //handler.Append(handler.EncodingGetBytes(value.ToString(CurrentCulture)));
         }
     }
 }

@@ -43,10 +43,23 @@ namespace JsonGo.Runtime.Variables
 
             arrayTypeGoInfo.JsonSerialize = JsonSerialize;
 
+            //set delegates to access faster and make it pointer directly usage for json deserializer
+            arrayTypeGoInfo.JsonDeserialize = JsonDeserialize;
+
             //set delegates to access faster and make it pointer directly usage for binary serializer
-            arrayTypeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+            arrayTypeGoInfo.BinarySerialize = BinarySerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary deserializer
+            arrayTypeGoInfo.BinaryDeserialize = BinaryDeserialize;
+
+            //create instance of object
+            //arrayTypeGoInfo.CreateInstance = ReflectionHelper.GetActivator<TObject>(baseType);
+
+            CastToArray = arrayTypeGoInfo.Cast;
         }
 
+        Func<T[], object> CastToArray;
+        //type of one of element
         TypeGoInfo<T> typeGoInfo = null;
 
         /// <summary>
@@ -83,7 +96,52 @@ namespace JsonGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public T[] JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            throw new NotSupportedException();
+            List<T> array = new List<T>();
+            while (true)
+            {
+                var character = json.Read();
+                if (character == JsonConstantsString.OpenBraket)
+                {
+                    var obj = ExtractOject(deserializer, generic, ref json);
+                    typeGo.AddArrayValue(arrayInstance, obj);
+                }
+                else if (character == JsonConstantsString.OpenSquareBrackets)
+                {
+                    var obj = ExtractArray(deserializer, generic, ref json);
+                    typeGo.AddArrayValue(arrayInstance, obj);
+                }
+                else if (character == JsonConstantsString.Comma)
+                {
+                    continue;
+                }
+                else if (character == JsonConstantsString.CloseSquareBrackets)
+                {
+                    break;
+                }
+                else if (character == JsonConstantsString.Quotes)
+                {
+                    var value = json.ExtractString();
+                    typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+                }
+                else
+                {
+                    bool isClosed = false;
+                    var value = json.ExtractValue();
+                    if (value[value.Length - 1] == JsonConstantsString.Comma)
+                        value = value.Slice(0, value.Length - 1);
+                    if (value[value.Length - 1] == JsonConstantsString.CloseSquareBrackets)
+                    {
+                        value = value.Slice(0, value.Length - 1);
+                        isClosed = true;
+                    }
+                    if (generic.JsonDeserialize != null)
+                        typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+                    if (isClosed)
+                        break;
+                }
+            }
+            return typeGo.Cast == null ? arrayInstance : typeGo.Cast(arrayInstance);
+            return array.ToArray();
         }
 
         /// <summary>
@@ -93,7 +151,19 @@ namespace JsonGo.Runtime.Variables
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref T[] value)
         {
-            throw new NotSupportedException();
+            if (value.Length > 0)
+            {
+                stream.Write(BitConverter.GetBytes(value.Length));
+                for (int i = 0; i < value.Length; i++)
+                {
+                    var obj = value[i];
+                    typeGoInfo.BinarySerialize(ref stream, ref obj);
+                }
+            }
+            else
+            {
+                stream.Write(BitConverter.GetBytes(0));
+            }
         }
 
         /// <summary>
@@ -102,34 +172,15 @@ namespace JsonGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public T[] BinaryDeserialize(ref BinarySpanReader reader)
         {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// serialize json as binary
-        /// </summary>
-        /// <param name="handler">binary serializer handler</param>
-        /// <param name="value">value to serialize</param>
-        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref T[] value)
-        {
-            if (value != null)
+            var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            if (length == 0)
+                return null;
+            var instance = new T[length];
+            for (int i = 0; i < length; i++)
             {
-                handler.BinaryWriter.Write(JsonConstantsBytes.OpenSquareBrackets);
-
-                for (int i = 0; i < value.Length; i++)
-                {
-                    var obj = value[i];
-                    typeGoInfo.JsonBinarySerialize(ref handler, ref obj);
-                    handler.BinaryWriter.Write(JsonConstantsBytes.Comma);
-                }
-
-                //handler.RemoveLastCommaCharacter();
-                handler.BinaryWriter.Write(JsonConstantsBytes.CloseSquareBrackets);
+                instance[i] = typeGoInfo.BinaryDeserialize(ref reader);
             }
-            else
-            {
-                handler.BinaryWriter.Write(JsonConstantsBytes.Null);
-            }
+            return instance;
         }
     }
 }

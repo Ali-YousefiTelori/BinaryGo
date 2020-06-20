@@ -20,18 +20,6 @@ namespace JsonGo.Interfaces
         /// <param name="handler"></param>
         /// <param name="value"></param>
         void JsonSerialize(ref JsonSerializeHandler handler, ref TType value);
-        ///// <summary>
-        /////  json serialize as string text and return value
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //ReadOnlySpan<char> GetJsonSerialized(ref TType value);
-        /// <summary>
-        /// json serialize as binary
-        /// </summary>
-        /// <param name="handler"></param>
-        /// <param name="value"></param>
-        void JsonBinarySerialize(ref JsonSerializeHandler handler, ref TType value);
         /// <summary>
         /// json deserialize
         /// </summary>

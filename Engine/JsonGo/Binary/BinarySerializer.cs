@@ -1,4 +1,5 @@
 ﻿using JsonGo.Helpers;
+using JsonGo.IO;
 using JsonGo.Json;
 using JsonGo.Runtime;
 using System;
@@ -105,15 +106,28 @@ namespace JsonGo.Binary
         /// </summary>
         /// <param name="data">Any object to serialize into json</param>
         /// <returns>The json string returned after serialization</returns>
-        public Span<byte> Serialize(object data)
+        public Span<byte> Serialize<T>(T data)
         {
-            Writer = new MemoryStream();
+            TypeGoInfo<T> typeGoInfo;
+            Type dataType = typeof(T);
+
+            if (!TryGetValueOfTypeGo(dataType, out object typeGo))
+                typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
+            else
+                typeGoInfo = (TypeGoInfo<T>)typeGo;
+
+            // The serialize handler lets the serializer access faster to the pointers
+            JsonSerializeHandler serializeHandler = new JsonSerializeHandler
+            {
+                BinaryWriter = new BufferBuilder<byte>(typeGoInfo.Capacity),
+                //AddSerializedObjects = serializedObjects.Add,
+                //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
+            };
+
             ReferencedIndex = 0;
-            Dictionary<object, int> serializedObjects = new Dictionary<object, int>();
-            //SerializeHandler.AddSerializedObjects = serializedObjects.Add;
-            //SerializeHandler.TryGetValueOfSerializedObjects = serializedObjects.TryGetValue;
-            //SerializeObject(data);
-            return Writer.ToArray().AsSpan();
+            typeGoInfo.BinarySerialize(ref serializeHandler.BinaryWriter, ref data);
+            typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.TextWriter.Length);
+            return serializeHandler.BinaryWriter.ToSpan().Slice(0, serializeHandler.BinaryWriter.Length);
         }
     }
 }

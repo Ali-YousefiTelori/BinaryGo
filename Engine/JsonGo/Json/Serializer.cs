@@ -251,19 +251,6 @@ namespace JsonGo.Json
             typeGoInfo.JsonSerialize(ref serializeHandler, ref data);
         }
 
-        /// <summary>
-        /// Serializes an object to a json binary string
-        /// </summary>
-        /// <param name="typeGoInfo"></param>
-        /// <param name="serializeHandler"></param>
-        /// <param name="data">Object to serialize</param>
-        /// <returns>Json string from serialized object</returns>
-        internal void SerializeObjectBinary<T>(TypeGoInfo<T> typeGoInfo, ref JsonSerializeHandler serializeHandler, ref T data)
-        {
-            typeGoInfo.JsonBinarySerialize(ref serializeHandler, ref data);
-        }
-
-
         ///// <summary>
         ///// Serializes an object to a json string
         ///// </summary>

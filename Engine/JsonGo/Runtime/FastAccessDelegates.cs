@@ -109,10 +109,9 @@ namespace JsonGo.Runtime
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="deserializer"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public delegate object DeserializeFunc(JsonDeserializer deserializer, ReadOnlySpan<char> data);
+    public delegate T DeserializeFunc<T>(ref ReadOnlySpan<char> data);
     /// <summary>
     /// Function to serialize object as binary
     /// </summary>
@@ -123,13 +122,13 @@ namespace JsonGo.Runtime
     /// <summary>
     /// Binary serializer
     /// </summary>
-    /// <param name="stream"></param>
+    /// <param name="bufferBuilder"></param>
     /// <param name="data"></param>
-    public delegate void BinaryFunctionGo(Stream stream, ref object data);
+    public delegate void BinaryFunctionGo<T>(ref BufferBuilder<byte> bufferBuilder, ref T data);
     /// <summary>
     /// deserialize span reader to object
     /// </summary>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public delegate object BinaryDeserializeFunc(ref BinarySpanReader reader);
+    public delegate T BinaryDeserializeFunc<T>(ref BinarySpanReader reader);
 }

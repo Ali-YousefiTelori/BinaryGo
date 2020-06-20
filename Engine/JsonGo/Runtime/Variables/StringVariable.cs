@@ -21,6 +21,8 @@ namespace JsonGo.Runtime.Variables
         {
 
         }
+
+        Encoding Encoding;
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
@@ -28,6 +30,7 @@ namespace JsonGo.Runtime.Variables
         /// <param name="options">Serializer or deserializer options</param>
         public void Initialize(TypeGoInfo<string> typeGoInfo, ITypeGo options)
         {
+            Encoding = options.Encoding;
             typeGoInfo.IsNoQuotesValueType = false;
 
             //set the default value of variable
@@ -36,8 +39,14 @@ namespace JsonGo.Runtime.Variables
             //set delegates to access faster and make it pointer directly usage
             typeGoInfo.JsonSerialize = JsonSerialize;
 
+            //set delegates to access faster and make it pointer directly usage for json deserializer
+            typeGoInfo.JsonDeserialize = JsonDeserialize;
+
             //set delegates to access faster and make it pointer directly usage for binary serializer
-            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+            typeGoInfo.BinarySerialize = BinarySerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary deserializer
+            typeGoInfo.BinaryDeserialize = BinaryDeserialize;
         }
 
         /// <summary>
@@ -91,7 +100,7 @@ namespace JsonGo.Runtime.Variables
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref string value)
         {
             stream.Write(BitConverter.GetBytes(value.Length));
-            stream.Write(Encoding.UTF8.GetBytes(value));
+            stream.Write(Encoding.GetBytes(value));
         }
 
         /// <summary>
@@ -101,35 +110,7 @@ namespace JsonGo.Runtime.Variables
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
             var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-            return Encoding.UTF8.GetString(reader.Read(length));
-        }
-
-        /// <summary>
-        /// serialize json as binary
-        /// </summary>
-        /// <param name="handler">binary serializer handler</param>
-        /// <param name="value">value to serialize</param>
-        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref string value)
-        {
-            //var bytes = handler.EncodingGetBytes(value.ToString(CurrentCulture));
-            //handler.AppendByte(JsonConstantsBytes.Quotes);
-            //var len = bytes.Length;
-            //for (int i = 0; i < len; i++)
-            //{
-            //    if (bytes[i] == JsonConstantsBytes.Quotes)
-            //    {
-            //        handler.Append(JsonConstantsBytes.BackSlashQuotes);
-            //    }
-            //    else if (bytes[i] == JsonConstantsBytes.NSpace)
-            //        handler.Append(JsonConstantsBytes.BackSlashN);
-            //    else if (bytes[i] == JsonConstantsBytes.RSpace)
-            //        handler.Append(JsonConstantsBytes.BackSlashR);
-            //    else if (bytes[i] == JsonConstantsBytes.TSpace)
-            //        handler.Append(JsonConstantsBytes.BackSlashT);
-            //    else
-            //        handler.AppendByte(bytes[i]);
-            //}
-            //handler.AppendByte(JsonConstantsBytes.Quotes);
+            return Encoding.GetString(reader.Read(length));
         }
     }
 }

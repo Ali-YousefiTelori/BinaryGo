@@ -66,14 +66,13 @@ namespace JsonGo.Binary.Deserialize
         {
             try
             {
-                throw new Exception();
-                //var dataType = typeof(T);
-                //if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
-                //{
-                //    typeGoInfo = TypeGoInfo.Generate(dataType, this);
-                //}
-                //var binaryReader = new BinarySpanReader(reader);
-                //return (T)typeGoInfo.BinaryDeserialize(ref binaryReader);
+                var dataType = typeof(T);
+                if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
+                {
+                    typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
+                }
+                var binaryReader = new BinarySpanReader(reader);
+                return ((TypeGoInfo<T>)typeGoInfo).BinaryDeserialize(ref binaryReader);
             }
             finally
             {

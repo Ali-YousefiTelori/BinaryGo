@@ -22,8 +22,9 @@ namespace JsonGo.Runtime.Variables
         {
 
         }
-        BasePropertyGoInfo<TObject>[] Properties { get; set; }
 
+        BasePropertyGoInfo<TObject>[] Properties { get; set; }
+        TypeGoInfo<TObject> TypeGoInfo;
         /// <summary>
         /// static serialized value one time calculated
         /// </summary>
@@ -35,6 +36,7 @@ namespace JsonGo.Runtime.Variables
         /// <param name="options">Serializer or deserializer options</param>
         public void Initialize(TypeGoInfo<TObject> typeGoInfo, ITypeGo options)
         {
+            TypeGoInfo = typeGoInfo;
             typeGoInfo.IsNoQuotesValueType = false;
             var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
             if (baseType == null)
@@ -53,12 +55,25 @@ namespace JsonGo.Runtime.Variables
                 propertyInfo.NameBytes = options.Encoding.GetBytes(property.Name);
                 Properties[i] = propertyInfo;
             }
+            typeGoInfo.DefaultBinaryValue = new byte[] { 0 };
 
             //set delegates to access faster and make it pointer directly usgae
             typeGoInfo.JsonSerialize = JsonSerialize;
 
+            //set delegates to access faster and make it pointer directly usage for json deserializer
+            typeGoInfo.JsonDeserialize = JsonDeserialize;
+
             //set delegates to access faster and make it pointer directly usage for binary serializer
-            typeGoInfo.JsonBinarySerialize = JsonBinarySerialize;
+            typeGoInfo.BinarySerialize = BinarySerialize;
+
+            //set delegates to access faster and make it pointer directly usage for binary deserializer
+            typeGoInfo.BinaryDeserialize = BinaryDeserialize;
+
+            //create instance of object
+            typeGoInfo.CreateInstance = ReflectionHelper.GetActivator<TObject>(baseType);
+
+            typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.ToArray();
+            typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.ToArray();
 
             //cache serialization data to memory to use it always without calculation
             //StringBuilder stringBuilder = new StringBuilder();
@@ -135,10 +150,24 @@ namespace JsonGo.Runtime.Variables
         /// Binary serialize
         /// </summary>
         /// <param name="stream">stream to write</param>
-        /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject value)
+        /// <param name="data">value to serialize</param>
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject data)
         {
-            throw new NotSupportedException();
+            if (data == null)
+            {
+                //flag this object is null
+                stream.Write(0);
+                return;
+            }
+            //flag this object is not null
+            stream.Write(1);
+            var len = Properties.Length;
+            for (int i = 0; i < len; i++)
+            {
+                var property = Properties[i];
+                var value = property.InternalGetValue(ref data);
+                property.BinarySerialize(ref stream, ref value);
+            }
         }
 
         /// <summary>
@@ -147,34 +176,18 @@ namespace JsonGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public TObject BinaryDeserialize(ref BinarySpanReader reader)
         {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// serialize json as binary
-        /// </summary>
-        /// <param name="handler">binary serializer handler</param>
-        /// <param name="value">value to serialize</param>
-        public void JsonBinarySerialize(ref JsonSerializeHandler handler, ref TObject value)
-        {
-            //handler.AppendByte(JsonConstantsBytes.OpenBraket);
-            //for (int i = 0; i < Properties.Length; i++)
-            //{
-            //    var property = Properties[i];
-            //    object propertyValue = property.InternalGetValue(ref value);
-            //    if (propertyValue == null || propertyValue.Equals(property.DefaultValue))
-            //        continue;
-            //    handler.AppendByte(JsonConstantsBytes.Quotes);
-            //    handler.Append(property.NameBytes);
-            //    handler.Append(JsonConstantsBytes.QuotesColon);
-            //    property.JsonBainarySerialize(ref handler, ref propertyValue);
-            //    handler.AppendByte(JsonConstantsBytes.Comma);
-            //}
-
-            ////Remove Last Comma
-            ////handler.RemoveLastCommaCharacter();
-
-            //handler.AppendByte(JsonConstantsBytes.CloseBracket);
+            if (reader.Read(1)[0] == 0)
+                return default;
+            var instance = TypeGoInfo.CreateInstance();
+            var properties = TypeGoInfo.DeserializeProperties;
+            var len = properties.Length;
+            for (int i = 0; i < len; i++)
+            {
+                var property = properties[i];
+                var value = property.BinaryDeserialize(ref reader);
+                property.InternalSetValue(ref instance, ref value);
+            }
+            return instance;
         }
     }
 }
@@ -352,16 +365,7 @@ namespace JsonGo.Runtime.Variables
 
 //            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
 //            {
-//                var instance = typeGoInfo.CreateInstance();
-//                var properties = typeGoInfo.SerializeProperties;
-//                var len = properties.Length;
-//                for (int i = 0; i < len; i++)
-//                {
-//                    var property = properties[i];
-//                    var value = property.TypeGoInfo.BinaryDeserialize(ref reader);
-//                    property.SetValue(instance, value);
-//                }
-//                return instance;
+
 //            };
 //        }
 
