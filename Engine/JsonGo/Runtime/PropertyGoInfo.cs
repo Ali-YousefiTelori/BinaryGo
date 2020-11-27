@@ -1,6 +1,7 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.IO;
 using JsonGo.Json;
+using JsonGo.Json.Deserialize;
 using System;
 using System.IO;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// property info of a type
         /// </summary>
-        public PropertyGoInfo(PropertyInfo property, ITypeGo options)
+        public PropertyGoInfo(PropertyInfo property, ITypeOptions options)
         {
             if (options.TryGetValueOfTypeGo(property.PropertyType, out object typeGoInfoProperty))
             {
@@ -77,9 +78,21 @@ namespace JsonGo.Runtime
             SetValue(instance, (TPropertyType)value);
         }
 
-        internal override object JsonDeserialize(ref ReadOnlySpan<char> text)
+        internal override void JsonDeserializeString(ref TObject instance, ref JsonSpanReader reader)
         {
-            throw new NotImplementedException();
+            var extract = reader.ExtractString();
+            SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
+        }
+
+        /// <summary>
+        /// json deserialize values of number or bool
+        /// </summary>
+        /// <param name="instance">instance of property to set value</param>
+        /// <param name="reader">json text reader</param>
+        internal override void JsonDeserializeValue(ref TObject instance, ref JsonSpanReader reader)
+        {
+            var extract = reader.ExtractValue();
+            SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
 
         internal override void BinarySerialize(ref BufferBuilder<byte> stream, ref object value)

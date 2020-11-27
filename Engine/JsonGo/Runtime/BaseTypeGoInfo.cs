@@ -25,7 +25,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// Initializes a variable to a TypeGo
         /// </summary>
-        public static TVariable InitializeVariable<TVariable>(object typeGoInfo, ITypeGo options)
+        public static TVariable InitializeVariable<TVariable>(object typeGoInfo, ITypeOptions options)
             where TVariable : BaseVariable, new()
         {
             TVariable variable = new TVariable();
@@ -40,7 +40,7 @@ namespace JsonGo.Runtime
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static TypeGoInfo<T> Generate<T>(ITypeGo options)
+        public static TypeGoInfo<T> Generate<T>(ITypeOptions options)
         {
             lock (_lockobj)
             {
@@ -121,7 +121,7 @@ namespace JsonGo.Runtime
         /// Generate default variables to an option
         /// </summary>
         /// <param name="options"></param>
-        public static void GenerateDefaultVariables(ITypeGo options)
+        public static void GenerateDefaultVariables(ITypeOptions options)
         {
             Generate<DateTime>(options);
             Generate<uint>(options);

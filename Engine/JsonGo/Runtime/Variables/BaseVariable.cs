@@ -27,7 +27,7 @@ namespace JsonGo.Runtime.Variables
         /// <summary>
         /// default options of variable type go
         /// </summary>
-        public ITypeGo Options { get; set; }
+        public ITypeOptions Options { get; set; }
         /// <summary>
         /// Adds new value to types
         /// </summary>
@@ -49,7 +49,7 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="typeGoInfo">TypeGo</param>
         /// <param name="options">Serializer's options or settings</param>
-        public void InitializeBase(object typeGoInfo, ITypeGo options)
+        public void InitializeBase(object typeGoInfo, ITypeOptions options)
         {
             CurrentCulture = options.CurrentCulture;
             Options = options;

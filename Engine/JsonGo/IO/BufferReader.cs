@@ -32,8 +32,9 @@ namespace JsonGo.IO
         /// <param name="length"></param>
         public Span<T> Read(int length)
         {
-            var result = _Buffer.Slice(_position)
+            var result = _Buffer.Slice(_position);
             _position += length;
+            return result;
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ namespace JsonGo.Json.Deserialize
         /// <param name="typeGo"></param>
         /// <param name="json">json object to deserialize</param>
         /// <returns>The deserialized value</returns>
-        internal static object Extract(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
+        internal static T Extract(ref JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
         {
             var character = json.Read();
             if (character == JsonConstantsString.Quotes)
@@ -34,20 +34,43 @@ namespace JsonGo.Json.Deserialize
             }
             else
             {
-
                 var value = json.ExtractValue();
-                if (value[value.Length - 1] == JsonConstantsString.Comma)
-                    value = value.Slice(0, value.Length - 1);
-                if (typeGo == null || typeGo.JsonDeserialize == null)
-                {
-                    return new string(value);
-                }
                 return typeGo.JsonDeserialize(ref value);
             }
         }
 
-        internal static object ExtractArray(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
+        internal static void ExtractProperty(ref T instance ,ref JsonDeserializer deserializer, BasePropertyGoInfo<T> basePropertyGo, ref JsonSpanReader json)
         {
+            var character = json.Read();
+            if (character == JsonConstantsString.Quotes)
+            {
+                basePropertyGo.JsonDeserializeString(ref instance, ref json);
+                //return typeGo.JsonDeserialize(ref extract);
+            }
+            else if (character == JsonConstantsString.OpenBraket)
+            {
+                //return ExtractOject(deserializer, typeGo, ref json);
+            }
+            else if (character == JsonConstantsString.OpenSquareBrackets)
+            {
+                return ExtractArray(deserializer, typeGo, ref json);
+            }
+            else
+            {
+                basePropertyGo.JsonDeserializeValue(ref instance, ref json);
+                //var value = json.ExtractValue();
+                //if (value[value.Length - 1] == JsonConstantsString.Comma)
+                //    value = value.Slice(0, value.Length - 1);
+                //if (typeGo == null || typeGo.JsonDeserialize == null)
+                //{
+                //    return new string(value);
+                //}
+                //return typeGo.JsonDeserialize(ref value);
+            }
+        }
+        internal static T ExtractArray(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
+        {
+            throw new NotSupportedException();
             //var arrayInstance = typeGo.CreateInstance();
             //var generic = typeGo.Generics.First();
             //while (true)
@@ -101,49 +124,50 @@ namespace JsonGo.Json.Deserialize
         /// </summary>
         /// <param name="deserializer"></param>
         /// <param name="typeGo"></param>
-        /// <param name="json"></param>
+        /// <param name="jsonReader"></param>
         /// <returns></returns>
-        static object ExtractOject(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
+        static T ExtractOject(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader jsonReader)
         {
-            throw new NotImplementedException();
-            //object instance = null;
-            //while (!json.IsFinished)
-            //{
-            //    //read tp uneascape char
-            //    var character = json.Read();
-            //    if (character == JsonConstantsString.Comma)
-            //        continue;
-            //    else if (character == JsonConstantsString.CloseBracket)
-            //        break;
-            //    var key = json.ExtractKey();
-            //    //read to uneascape char
-            //    json.Read();
-            //    var propertyname = new string(key);
-            //    if (typeGo.Properties.TryGetValue(propertyname, out BasePropertyGoInfo<T> propertyGo))
-            //    {
-            //        if (instance == null)
-            //            instance = typeGo.CreateInstance();
-            //        var value = Extract(deserializer, propertyGo.TypeGoInfo, ref json);
-            //        propertyGo.JsonSetValue(deserializer, instance, value);
-            //    }
-            //    else if (propertyname == JsonConstantsString.ValuesRefrencedTypeNameNoQuotes)
-            //    {
-            //        instance = Extract(deserializer, typeGo, ref json);
-            //    }
-            //    else if (propertyname == JsonConstantsString.RefRefrencedTypeNameNoQuotes)
-            //    {
-            //        var value = Extract(deserializer, typeGo, ref json);
+            T instance = default;
+            while (!jsonReader.IsFinished)
+            {
+                //read tp uneascape char
+                var character = jsonReader.Read();
+                if (character == JsonConstantsString.Comma)
+                    continue;
+                else if (character == JsonConstantsString.CloseBracket)
+                    break;
+                var key = jsonReader.ExtractKey();
+                //read to uneascape char
+                jsonReader.Read();
+                var propertyname = new string(key);
+                if (typeGo.Properties.TryGetValue(propertyname, out BasePropertyGoInfo<T> basePropertyGo))
+                {
+                    if (instance == null)
+                        instance = typeGo.CreateInstance();
 
-            //        var type = TypeGoInfo.Generate(typeof(int), deserializer);
-            //        var result = (int)type.JsonDeserialize(deserializer, (string)value);
-            //        deserializer.DeSerializedObjects.TryGetValue(result, out instance);
-            //    }
-            //    else
-            //    {
-            //        Extract(deserializer, propertyGo?.TypeGoInfo, ref json);
-            //    }
-            //}
-            //return typeGo.Cast == null ? instance : typeGo.Cast(instance);
+                    ExtractProperty(ref instance,ref deserializer, basePropertyGo, ref jsonReader);
+                    //var value = Extract(deserializer, basePropertyGo.GetTypeGoInfo<T>(), ref json);
+                    //basePropertyGo.InternalSetValue(ref instance,ref value);
+                }
+                else if (propertyname == JsonConstantsString.ValuesRefrencedTypeNameNoQuotes)
+                {
+                    instance = Extract(ref deserializer, typeGo, ref jsonReader);
+                }
+                else if (propertyname == JsonConstantsString.RefRefrencedTypeNameNoQuotes)
+                {
+                    //var value = Extract(deserializer, typeGo, ref json);
+
+                    //var type = TypeGoInfo.Generate(typeof(int), deserializer);
+                    //var result = (int)type.JsonDeserialize(deserializer, (string)value);
+                    //deserializer.DeSerializedObjects.TryGetValue(result, out instance);
+                }
+                else
+                {
+                    //Extract(deserializer, basePropertyGo?.TypeGoInfo, ref json);
+                }
+            }
+            return typeGo.Cast == null ? instance : typeGo.Cast(instance);
         }
     }
 }

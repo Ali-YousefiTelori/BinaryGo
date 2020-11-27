@@ -30,7 +30,7 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="arrayTypeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<T[]> arrayTypeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<T[]> arrayTypeGoInfo, ITypeOptions options)
         {
             arrayTypeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -96,52 +96,53 @@ namespace JsonGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public T[] JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            List<T> array = new List<T>();
-            while (true)
-            {
-                var character = json.Read();
-                if (character == JsonConstantsString.OpenBraket)
-                {
-                    var obj = ExtractOject(deserializer, generic, ref json);
-                    typeGo.AddArrayValue(arrayInstance, obj);
-                }
-                else if (character == JsonConstantsString.OpenSquareBrackets)
-                {
-                    var obj = ExtractArray(deserializer, generic, ref json);
-                    typeGo.AddArrayValue(arrayInstance, obj);
-                }
-                else if (character == JsonConstantsString.Comma)
-                {
-                    continue;
-                }
-                else if (character == JsonConstantsString.CloseSquareBrackets)
-                {
-                    break;
-                }
-                else if (character == JsonConstantsString.Quotes)
-                {
-                    var value = json.ExtractString();
-                    typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
-                }
-                else
-                {
-                    bool isClosed = false;
-                    var value = json.ExtractValue();
-                    if (value[value.Length - 1] == JsonConstantsString.Comma)
-                        value = value.Slice(0, value.Length - 1);
-                    if (value[value.Length - 1] == JsonConstantsString.CloseSquareBrackets)
-                    {
-                        value = value.Slice(0, value.Length - 1);
-                        isClosed = true;
-                    }
-                    if (generic.JsonDeserialize != null)
-                        typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
-                    if (isClosed)
-                        break;
-                }
-            }
-            return typeGo.Cast == null ? arrayInstance : typeGo.Cast(arrayInstance);
-            return array.ToArray();
+            throw new NotSupportedException();
+            //List<T> array = new List<T>();
+            //while (true)
+            //{
+            //    var character = text.Read();
+            //    if (character == JsonConstantsString.OpenBraket)
+            //    {
+            //        var obj = ExtractOject(deserializer, generic, ref json);
+            //        typeGo.AddArrayValue(arrayInstance, obj);
+            //    }
+            //    else if (character == JsonConstantsString.OpenSquareBrackets)
+            //    {
+            //        var obj = ExtractArray(deserializer, generic, ref json);
+            //        typeGo.AddArrayValue(arrayInstance, obj);
+            //    }
+            //    else if (character == JsonConstantsString.Comma)
+            //    {
+            //        continue;
+            //    }
+            //    else if (character == JsonConstantsString.CloseSquareBrackets)
+            //    {
+            //        break;
+            //    }
+            //    else if (character == JsonConstantsString.Quotes)
+            //    {
+            //        var value = json.ExtractString();
+            //        typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+            //    }
+            //    else
+            //    {
+            //        bool isClosed = false;
+            //        var value = json.ExtractValue();
+            //        if (value[value.Length - 1] == JsonConstantsString.Comma)
+            //            value = value.Slice(0, value.Length - 1);
+            //        if (value[value.Length - 1] == JsonConstantsString.CloseSquareBrackets)
+            //        {
+            //            value = value.Slice(0, value.Length - 1);
+            //            isClosed = true;
+            //        }
+            //        if (generic.JsonDeserialize != null)
+            //            typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+            //        if (isClosed)
+            //            break;
+            //    }
+            //}
+            //return typeGo.Cast == null ? arrayInstance : typeGo.Cast(arrayInstance);
+            //return array.ToArray();
         }
 
         /// <summary>

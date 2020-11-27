@@ -29,7 +29,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable

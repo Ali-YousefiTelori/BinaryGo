@@ -8,7 +8,7 @@ namespace JsonGo.Runtime
     /// <summary>
     /// type options
     /// </summary>
-    public interface ITypeGo
+    public interface ITypeOptions
     {
         /// <summary>
         /// Encoding of type go options

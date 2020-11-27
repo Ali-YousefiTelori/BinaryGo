@@ -1,10 +1,8 @@
 ﻿using JsonGo.Binary.Deserialize;
 using JsonGo.IO;
 using JsonGo.Json;
+using JsonGo.Json.Deserialize;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace JsonGo.Runtime
 {
@@ -56,11 +54,17 @@ namespace JsonGo.Runtime
         /// <param name="value"></param>
         internal abstract void JsonSerialize(ref JsonSerializeHandler handler, ref object value);
         /// <summary>
-        /// json deserialize
+        /// json deserialize text string inside of double quats
         /// </summary>
-        /// <param name="text">json text</param>
-        /// <returns>convert text to type</returns>
-        internal abstract object JsonDeserialize(ref ReadOnlySpan<char> text);
+        /// <param name="instance">instance of property to set value</param>
+        /// <param name="reader">json text reader</param>
+        internal abstract void JsonDeserializeString(ref TObject instance , ref JsonSpanReader reader);
+        /// <summary>
+        /// json deserialize values of number or bool
+        /// </summary>
+        /// <param name="instance">instance of property to set value</param>
+        /// <param name="reader">json text reader</param>
+        internal abstract void JsonDeserializeValue(ref TObject instance, ref JsonSpanReader reader);
 
         /// <summary>
         /// Binary serialize

@@ -30,7 +30,7 @@ namespace JsonGo.Runtime
         /// <param name="type"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        internal static Type GenerateTypeFromInterface(Type type, ITypeGo options)
+        internal static Type GenerateTypeFromInterface(Type type, ITypeOptions options)
         {
             Type[] genericTypes = null;
             if (type.GenericTypeArguments.Length > 0)

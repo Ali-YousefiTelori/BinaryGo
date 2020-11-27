@@ -195,7 +195,10 @@ namespace JsonGo.Json.Deserialize
                 //UnSupportedValue = ' ', ',', '\r', '\n', '\t' 
                 if (_buffer[_Index] == JsonConstantsString.Space || _buffer[_Index] == JsonConstantsString.Comma || _buffer[_Index] == JsonConstantsString.RSpace || _buffer[_Index] == JsonConstantsString.NSpace
                     || _buffer[_Index] == JsonConstantsString.TSpace)
-                    break;
+                {
+                    _Index--;
+                    return _buffer.Slice(start, _Index - start + 1);
+                }
                 //EndsValues = '}', ']'
                 else if (_buffer[_Index] == JsonConstantsString.CloseBracket || _buffer[_Index] == JsonConstantsString.CloseSquareBrackets)
                 {

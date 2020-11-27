@@ -96,8 +96,9 @@ namespace JsonGo.Json.Deserialize
                     typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
                 }
                 var reader = new JsonSpanReader(json.AsSpan());
-                var result = FastDeserializerExtractor<T>.Extract(this, (TypeGoInfo<T>)typeGoInfo, ref reader);
-                return (T)result;
+                JsonDeserializer deserializer = this;
+                var result = FastDeserializerExtractor<T>.Extract(ref deserializer, (TypeGoInfo<T>)typeGoInfo, ref reader);
+                return result;
             }
             finally
             {

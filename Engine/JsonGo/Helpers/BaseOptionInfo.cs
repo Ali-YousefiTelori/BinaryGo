@@ -10,7 +10,7 @@ namespace JsonGo.Helpers
     /// <summary>
     /// Default's saved data of serialization and deserialization
     /// </summary>
-    public class BaseOptionInfo : ITypeGo
+    public class BaseOptionInfo : ITypeOptions
     {
         /// <summary>
         /// Set default values from dictionary to actions

@@ -26,7 +26,7 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<int> typeGoInfo, ITypeGo options)
+        public void Initialize(TypeGoInfo<int> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
 
