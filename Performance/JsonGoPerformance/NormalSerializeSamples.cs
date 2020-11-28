@@ -166,48 +166,49 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
-        public void RunSimpleBinarySampleMessagePack()
+        public void RunSimple_Binary_MessagePack()
         {
             MessagePackSerializer.Serialize(GetSimpleSample());
         }
 
-        [Benchmark]
-        public void RunSimpleBinaryDeserializeSampleMessagePack()
+        //[Benchmark]
+        public void RunSimple_Binary_Deserialize_MessagePack()
         {
             MessagePackSerializer.Deserialize<SimpleUserInfo>(MessagePackBinaryBytes);
         }
 
 
+        static BinarySerializer _jsonGo_Binary_serializer = new BinarySerializer();
         [Benchmark]
-        public void RunSimpleBinarySampleJsonGo()
+        public void RunSimple_Binary_JsonGo()
         {
-            BinarySerializer serializer = new BinarySerializer();
-            serializer.Serialize(GetSimpleSample()).ToArray();
+            _jsonGo_Binary_serializer.Serialize(GetSimpleSample()).ToArray();
         }
 
         //[Benchmark]
-        public void RunSimpleBinaryDeserializeSampleJsonGo()
+        public void RunSimple_Binary_Deserialize_JsonGo()
         {
             BinaryDeserializer deserializer = new BinaryDeserializer();
             deserializer.Deserialize<SimpleUserInfo>(JsonGoBinaryBytes);
         }
 
+        static Serializer _jsonGo_serializer = new Serializer();
+
         [Benchmark]
-        public void RunSimpleSampleJsonGo()
+        public void RunSimple_Json_JsonGo()
         {
-            Serializer serializer = new Serializer();
-            serializer.Serialize(GetSimpleSample());
+            _jsonGo_serializer.Serialize(GetSimpleSample());
         }
 
         [Benchmark]
-        public void RunSimpleSampleJsonGoJsonBinary()
+        public void RunSimple_JsonGo_JsonBinary()
         {
             Serializer serializer = new Serializer();
             serializer.SerializeToBytes(GetSimpleSample());
         }
 
         [Benchmark]
-        public void RunSimpleSampleJsonNet()
+        public void RunSimple_Json_JsonNet()
         {
             JsonConvert.SerializeObject(GetSimpleSample(), new JsonSerializerSettings()
             {
@@ -216,13 +217,13 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
-        public void RunSimpleSampleTextJson()
+        public void RunSimple_Json_TextJson()
         {
             System.Text.Json.JsonSerializer.Serialize(GetSimpleSample());
         }
 
         [Benchmark]
-        public void RunSimpleSampleUTF8Json()
+        public void RunSimple_Json_UTF8Json()
         {
             Utf8Json.JsonSerializer.Serialize(GetSimpleSample());
         }

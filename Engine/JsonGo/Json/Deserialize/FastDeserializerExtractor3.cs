@@ -53,7 +53,7 @@ namespace JsonGo.Json.Deserialize
             }
             else if (character == JsonConstantsString.OpenSquareBrackets)
             {
-                return ExtractArray(deserializer, typeGo, ref json);
+                //return ExtractArray(deserializer, typeGo, ref json);
             }
             else
             {
