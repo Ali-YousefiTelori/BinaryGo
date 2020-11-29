@@ -102,12 +102,13 @@ namespace JsonGo.Runtime.Variables
             for (int i = 0; i < Properties.Length; i++)
             {
                 var property = Properties[i];
-                object propertyValue = property.InternalGetValue(ref value);
-                if (propertyValue == null || propertyValue.Equals(property.DefaultValue))
-                    continue;
-                handler.TextWriter.Write(property.NameSerialized);
-                property.JsonSerialize(ref handler, ref propertyValue);
-                handler.TextWriter.Write(JsonConstantsString.Comma);
+                property.TypedJsonSerialize(ref handler, ref value);
+                //object propertyValue = property.InternalGetValue(ref value);
+                //if (propertyValue == null || propertyValue.Equals(property.DefaultValue))
+                //    continue;
+                //handler.TextWriter.Write(property.NameSerialized);
+                //property.JsonSerialize(ref handler, ref propertyValue);
+                //handler.TextWriter.Write(JsonConstantsString.Comma);
             }
             handler.TextWriter.RemoveLast(JsonConstantsString.Comma);
             handler.TextWriter.Write(JsonConstantsString.CloseBracket);
@@ -165,8 +166,8 @@ namespace JsonGo.Runtime.Variables
             for (int i = 0; i < len; i++)
             {
                 var property = Properties[i];
-                var value = property.InternalGetValue(ref data);
-                property.BinarySerialize(ref stream, ref value);
+                //var value = property.InternalGetValue(ref data);
+                property.BinarySerialize(ref stream, ref data);
             }
         }
 
@@ -184,8 +185,9 @@ namespace JsonGo.Runtime.Variables
             for (int i = 0; i < len; i++)
             {
                 var property = properties[i];
-                var value = property.BinaryDeserialize(ref reader);
-                property.InternalSetValue(ref instance, ref value);
+                //var value = property.BinaryDeserialize(ref reader);
+                property.BinaryDeserialize(ref reader, ref instance);
+                //property.InternalSetValue(ref instance, ref value);
             }
             return instance;
         }

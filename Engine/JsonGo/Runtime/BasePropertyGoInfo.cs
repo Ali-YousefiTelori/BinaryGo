@@ -39,26 +39,32 @@ namespace JsonGo.Runtime
         /// default value of object
         /// </summary>
         public object DefaultValue;
+        ///// <summary>
+        ///// Gets property value
+        ///// </summary>
+        //internal abstract object InternalGetValue(ref TObject instance);
+        ///// <summary>
+        ///// Set value of property
+        ///// </summary>
+        //internal abstract void InternalSetValue(ref TObject instance, ref object value);
+        ///// <summary>
+        ///// json serialize
+        ///// </summary>
+        ///// <param name="handler"></param>
+        ///// <param name="value"></param>
+        //internal abstract void JsonSerialize(ref JsonSerializeHandler handler, ref object value);
         /// <summary>
-        /// Gets property value
-        /// </summary>
-        internal abstract object InternalGetValue(ref TObject instance);
-        /// <summary>
-        /// Set value of property
-        /// </summary>
-        internal abstract void InternalSetValue(ref TObject instance, ref object value);
-        /// <summary>
-        /// json serialize
+        /// type safe json serialize
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        internal abstract void JsonSerialize(ref JsonSerializeHandler handler, ref object value);
+        internal abstract void TypedJsonSerialize(ref JsonSerializeHandler handler, ref TObject value);
         /// <summary>
         /// json deserialize text string inside of double quats
         /// </summary>
         /// <param name="instance">instance of property to set value</param>
         /// <param name="reader">json text reader</param>
-        internal abstract void JsonDeserializeString(ref TObject instance , ref JsonSpanReader reader);
+        internal abstract void JsonDeserializeString(ref TObject instance, ref JsonSpanReader reader);
         /// <summary>
         /// json deserialize values of number or bool
         /// </summary>
@@ -71,12 +77,13 @@ namespace JsonGo.Runtime
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        internal abstract void BinarySerialize(ref BufferBuilder<byte> stream, ref object value);
+        internal abstract void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject value);
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        internal abstract object BinaryDeserialize(ref BinarySpanReader reader);
+        /// <param name="value"></param>
+        internal abstract void BinaryDeserialize(ref BinarySpanReader reader, ref TObject value);
     }
 }
