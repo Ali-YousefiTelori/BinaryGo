@@ -11,7 +11,7 @@ namespace JsonGo.Runtime.Variables.Enums
     /// <summary>
     /// Enum serializer and deserializer
     /// </summary>
-    public class EnumVariable<TEnum> where TEnum : struct, Enum
+    public class EnumNullableVariable<TEnum> where TEnum : struct, Enum
     {
         /// <summary>
         /// Initalizes TypeGo variable
@@ -22,35 +22,35 @@ namespace JsonGo.Runtime.Variables.Enums
             var enumType = Enum.GetUnderlyingType(type);
             if (enumType == typeof(uint))
             {
-                return new EnumUIntVariable<TEnum>();
+                return new EnumNullableUIntVariable<TEnum>();
             }
             else if (enumType == typeof(long))
             {
-                return new EnumLongVariable<TEnum>();
+                return new EnumNullableLongVariable<TEnum>();
             }
             else if (enumType == typeof(short))
             {
-                return new EnumShortVariable<TEnum>();
+                return new EnumNullableShortVariable<TEnum>();
             }
             else if (enumType == typeof(sbyte))
             {
-                return new EnumSByteVariable<TEnum>();
+                return new EnumNullableSByteVariable<TEnum>();
             }
             else if (enumType == typeof(ulong))
             {
-                return new EnumULongVariable<TEnum>();
+                return new EnumNullableULongVariable<TEnum>();
             }
             else if (enumType == typeof(ushort))
             {
-                return new EnumUShortVariable<TEnum>();
+                return new EnumNullableUShortVariable<TEnum>();
             }
             else if (enumType == typeof(int))
             {
-                return new EnumIntVariable<TEnum>();
+                return new EnumNullableIntVariable<TEnum>();
             }
             else
             {
-                throw new Exception($"Enum of type {enumType.FullName} not support yet, please contact programmer!");
+                throw new Exception($"enum of type {enumType.FullName} not support yet, please contact programmer!");
             }
         }
     }

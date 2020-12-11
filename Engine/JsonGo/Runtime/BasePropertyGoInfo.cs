@@ -60,6 +60,14 @@ namespace JsonGo.Runtime
         /// <param name="value"></param>
         internal abstract void TypedJsonSerialize(ref JsonSerializeHandler handler, ref TObject value);
         /// <summary>
+        /// deserialize json object
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="deserializer"></param>
+        /// <param name="reader"></param>
+        internal abstract void JsonDeserializeObject(ref TObject instance, ref JsonDeserializer deserializer, ref JsonSpanReader reader);
+
+        /// <summary>
         /// json deserialize text string inside of double quats
         /// </summary>
         /// <param name="instance">instance of property to set value</param>

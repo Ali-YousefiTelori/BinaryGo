@@ -26,7 +26,7 @@ namespace JsonGo.Json.Deserialize
             }
             else if (character == JsonConstantsString.OpenBraket)
             {
-                return ExtractOject(deserializer, typeGo, ref json);
+                return ExtractOject(ref deserializer, ref typeGo, ref json);
             }
             else if (character == JsonConstantsString.OpenSquareBrackets)
             {
@@ -39,7 +39,7 @@ namespace JsonGo.Json.Deserialize
             }
         }
 
-        internal static void ExtractProperty(ref T instance ,ref JsonDeserializer deserializer, BasePropertyGoInfo<T> basePropertyGo, ref JsonSpanReader json)
+        internal static void ExtractProperty(ref T instance, ref JsonDeserializer deserializer, BasePropertyGoInfo<T> basePropertyGo, ref JsonSpanReader json)
         {
             var character = json.Read();
             if (character == JsonConstantsString.Quotes)
@@ -49,7 +49,7 @@ namespace JsonGo.Json.Deserialize
             }
             else if (character == JsonConstantsString.OpenBraket)
             {
-                //return ExtractOject(deserializer, typeGo, ref json);
+                basePropertyGo.JsonDeserializeObject(ref instance, ref deserializer, ref json);
             }
             else if (character == JsonConstantsString.OpenSquareBrackets)
             {
@@ -126,7 +126,7 @@ namespace JsonGo.Json.Deserialize
         /// <param name="typeGo"></param>
         /// <param name="jsonReader"></param>
         /// <returns></returns>
-        static T ExtractOject(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader jsonReader)
+        public static T ExtractOject(ref JsonDeserializer deserializer, ref TypeGoInfo<T> typeGo, ref JsonSpanReader jsonReader)
         {
             T instance = default;
             while (!jsonReader.IsFinished)
@@ -146,7 +146,7 @@ namespace JsonGo.Json.Deserialize
                     if (instance == null)
                         instance = typeGo.CreateInstance();
 
-                    ExtractProperty(ref instance,ref deserializer, basePropertyGo, ref jsonReader);
+                    ExtractProperty(ref instance, ref deserializer, basePropertyGo, ref jsonReader);
                     //var value = Extract(deserializer, basePropertyGo.GetTypeGoInfo<T>(), ref json);
                     //basePropertyGo.InternalSetValue(ref instance,ref value);
                 }

@@ -76,7 +76,7 @@ namespace JsonGo.Runtime.Variables
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref sbyte value)
         {
-            stream.Write(new byte[] { (byte)value });
+            stream.Write((byte)value);
         }
 
         /// <summary>

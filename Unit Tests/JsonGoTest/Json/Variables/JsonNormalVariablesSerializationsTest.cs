@@ -238,5 +238,15 @@ then yousefi"" so we are good now""";
             Assert.True(result == "\"test hello: \\\"my name is\\r\\nali\\r\\nthen yousefi\\\" so we are good now\\\"\"", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
+
+
+        [Fact]
+        public (string Result, Guid Value) GuidTestSerialize()
+        {
+            Guid value = Guid.NewGuid();
+            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            Assert.True(result == $"\"{value.ToString().ToLower()}\"", $"Your Value: {value} Serialize Value: {result}");
+            return (result, value);
+        }
     }
 }

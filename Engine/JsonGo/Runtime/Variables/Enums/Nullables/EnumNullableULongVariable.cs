@@ -11,15 +11,15 @@ using System.Text;
 namespace JsonGo.Runtime.Variables.Enums
 {
     /// <summary>
-    /// Enum that inheritance uint
+    /// Enum that inheritance ulong
     /// </summary>
-    public class EnumUIntVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
-        where TEnum : struct, Enum
+    public class EnumNullableULongVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum?>
+         where TEnum : struct, Enum
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumUIntVariable() : base(typeof(TEnum))
+        public EnumNullableULongVariable() : base(typeof(TEnum?))
         {
 
         }
@@ -29,7 +29,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeOptions options)
+        public void Initialize(TypeGoInfo<TEnum?> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -53,9 +53,17 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum? value)
         {
-            handler.TextWriter.Write(Unsafe.As<TEnum, uint>(ref value).ToString(CurrentCulture));
+            if (value.HasValue)
+            {
+                var data = value.Value;
+                handler.TextWriter.Write(Unsafe.As<TEnum, ulong>(ref data).ToString(CurrentCulture));
+            }
+            else
+            {
+                handler.TextWriter.Write(JsonConstantsString.Null);
+            }
         }
 
         /// <summary>
@@ -63,10 +71,10 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
+        public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (uint.TryParse(text, out uint value))
-                return Unsafe.As<uint, TEnum>(ref value);
+            if (ulong.TryParse(text, out ulong value))
+                return Unsafe.As<ulong, TEnum>(ref value);
             return default;
         }
 
@@ -75,19 +83,31 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum? value)
         {
-            stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, uint>(ref value)));
+            if (value.HasValue)
+            {
+                var data = value.Value;
+                stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, ulong>(ref data)));
+            }
+            else
+            {
+                stream.Write(0);
+            }
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public TEnum BinaryDeserialize(ref BinarySpanReader reader)
+        public TEnum? BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var value = BitConverter.ToUInt32(reader.Read(sizeof(uint)));
-            return Unsafe.As<uint, TEnum>(ref value);
+            if (reader.Read() == 1)
+            {
+                var value = BitConverter.ToUInt64(reader.Read(sizeof(ulong)));
+                return Unsafe.As<ulong, TEnum>(ref value);
+            }
+            return default;
         }
     }
 }

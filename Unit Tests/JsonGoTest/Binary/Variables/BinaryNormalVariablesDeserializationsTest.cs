@@ -169,5 +169,12 @@ namespace JsonGoTest.Binary.Variables
             var (Result, Value) = StringWithLineTestSerialize();
             Assert.True(JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<string>(Result) == Value);
         }
+
+        [Fact]
+        public void GuidTestDeserialize()
+        {
+            var (Result, Value) = GuidTestSerialize();
+            Assert.True(JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<Guid>(Result) == Value);
+        }
     }
 }

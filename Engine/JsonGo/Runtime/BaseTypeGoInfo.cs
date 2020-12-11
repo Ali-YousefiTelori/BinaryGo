@@ -1,5 +1,6 @@
 ﻿using JsonGo.Runtime.Variables;
 using JsonGo.Runtime.Variables.Enums;
+using JsonGo.Runtime.Variables.Nullables;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -48,11 +49,15 @@ namespace JsonGo.Runtime
                 if (options.TryGetValueOfTypeGo(type, out object find))
                     return (TypeGoInfo<T>)find;
                 var baseType = Nullable.GetUnderlyingType(type);
-
+                bool isNullable = false;
                 //when type is not nullable
                 if (baseType == null)
                 {
                     baseType = type;
+                }
+                else
+                {
+                    isNullable = true;
                 }
 
                 TypeGoInfo<T> typeGoInfo = new TypeGoInfo<T>
@@ -63,56 +68,101 @@ namespace JsonGo.Runtime
 
                 options.AddTypes(type, typeGoInfo);
 
-
-                if (baseType == typeof(bool))
-                    InitializeVariable<BoolVariable>(typeGoInfo, options);
-                else if (baseType == typeof(DateTime))
-                    InitializeVariable<DateTimeVariable>(typeGoInfo, options);
-                else if (baseType == typeof(uint))
-                    InitializeVariable<UIntVariable>(typeGoInfo, options);
-                else if (baseType == typeof(long))
-                    InitializeVariable<LongVariable>(typeGoInfo, options);
-                else if (baseType == typeof(short))
-                    InitializeVariable<ShortVariable>(typeGoInfo, options);
-                else if (baseType == typeof(byte))
-                    InitializeVariable<ByteVariable>(typeGoInfo, options);
-                else if (baseType == typeof(double))
-                    InitializeVariable<DoubleVariable>(typeGoInfo, options);
-                else if (baseType == typeof(float))
-                    InitializeVariable<FloatVariable>(typeGoInfo, options);
-                else if (baseType == typeof(decimal))
-                    InitializeVariable<DecimalVariable>(typeGoInfo, options);
-                else if (baseType == typeof(sbyte))
-                    InitializeVariable<SByteVariable>(typeGoInfo, options);
-                else if (baseType == typeof(ulong))
-                    InitializeVariable<ULongVariable>(typeGoInfo, options);
-                else if (baseType == typeof(ushort))
-                    InitializeVariable<UShortVariable>(typeGoInfo, options);
-                else if (baseType == typeof(int))
-                    InitializeVariable<IntVariable>(typeGoInfo, options);
-                else if (baseType == typeof(byte[]))
-                    InitializeVariable<ByteArrayVariable>(typeGoInfo, options);
-                else if (baseType == typeof(string))
-                    InitializeVariable<StringVariable>(typeGoInfo, options);
-                else if (baseType.IsEnum)
+                if (isNullable)
                 {
-                    BaseVariable variable = (BaseVariable)typeof(EnumVariable<>).MakeGenericType(typeof(T))
-                        .GetMethod("Initialize", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                        .Invoke(null, new object[] { });
-                    variable.InitializeBase(typeGoInfo, options);
+                    if (baseType == typeof(bool))
+                        InitializeVariable<BoolNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(DateTime))
+                        InitializeVariable<DateTimeNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(uint))
+                        InitializeVariable<UIntNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(long))
+                        InitializeVariable<LongNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(short))
+                        InitializeVariable<ShortNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(byte))
+                        InitializeVariable<ByteNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(double))
+                        InitializeVariable<DoubleNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(float))
+                        InitializeVariable<FloatNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(decimal))
+                        InitializeVariable<DecimalNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(sbyte))
+                        InitializeVariable<SByteNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(ulong))
+                        InitializeVariable<ULongNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(ushort))
+                        InitializeVariable<UShortNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(int))
+                        InitializeVariable<IntNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(Guid))
+                        InitializeVariable<GuidNullableVariable>(typeGoInfo, options);
+                    //else if (baseType == typeof(byte[]))
+                    //    InitializeVariable<ByteArrayNullableVariable>(typeGoInfo, options);
+                    else if (baseType.IsEnum)
+                    {
+                        BaseVariable variable = (BaseVariable)typeof(EnumNullableVariable<>).MakeGenericType(baseType)
+                            .GetMethod("Initialize", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                            .Invoke(null, new object[] { });
+                        variable.InitializeBase(typeGoInfo, options);
+                    }
                 }
-                //array data
-                else if (baseType.IsArray)
-                {
-                    var elementType = baseType.GetElementType();
-                    var method = typeof(BaseTypeGoInfo)
-                        .GetMethod("InitializeVariable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                        .MakeGenericMethod(typeof(ArrayVariable<>).MakeGenericType(elementType));
-                    method.Invoke(null, new object[] { typeGoInfo, options });
-                }
-                //object daat
                 else
-                    InitializeVariable<ObjectVariable<T>>(typeGoInfo, options);
+                {
+                    if (baseType == typeof(bool))
+                        InitializeVariable<BoolVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(DateTime))
+                        InitializeVariable<DateTimeVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(uint))
+                        InitializeVariable<UIntVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(long))
+                        InitializeVariable<LongVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(short))
+                        InitializeVariable<ShortVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(byte))
+                        InitializeVariable<ByteVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(double))
+                        InitializeVariable<DoubleVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(float))
+                        InitializeVariable<FloatVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(decimal))
+                        InitializeVariable<DecimalVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(sbyte))
+                        InitializeVariable<SByteVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(ulong))
+                        InitializeVariable<ULongVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(ushort))
+                        InitializeVariable<UShortVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(int))
+                        InitializeVariable<IntVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(byte[]))
+                        InitializeVariable<ByteArrayVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(string))
+                        InitializeVariable<StringVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(Guid))
+                        InitializeVariable<GuidVariable>(typeGoInfo, options);
+                    else if (baseType.IsEnum)
+                    {
+                        BaseVariable variable = (BaseVariable)typeof(EnumVariable<>).MakeGenericType(typeof(T))
+                            .GetMethod("Initialize", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                            .Invoke(null, new object[] { });
+                        variable.InitializeBase(typeGoInfo, options);
+                    }
+                    //array data
+                    else if (baseType.IsArray)
+                    {
+                        var elementType = baseType.GetElementType();
+                        var method = typeof(BaseTypeGoInfo)
+                            .GetMethod("InitializeVariable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                            .MakeGenericMethod(typeof(ArrayVariable<>).MakeGenericType(elementType));
+                        method.Invoke(null, new object[] { typeGoInfo, options });
+                    }
+                    //object daat
+                    else
+                        InitializeVariable<ObjectVariable<T>>(typeGoInfo, options);
+                }
+               
                 return typeGoInfo;
             }
         }

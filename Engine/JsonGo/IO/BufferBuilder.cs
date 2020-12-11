@@ -43,6 +43,22 @@ namespace JsonGo.IO
             buffer.CopyTo(new Span<T>(_Buffer, Length, buffer.Length));
             Length += buffer.Length;
         }
+        /// <summary>
+        /// add new bytes to buffer
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void Write(ref ReadOnlySpan<T> buffer)
+        {
+            if (buffer.Length + Length > _Buffer.Length)
+            {
+                _capacity += buffer.Length;
+                T[] newBuffer = new T[_Buffer.Length + _capacity];
+                _Buffer.CopyTo(new Span<T>(newBuffer, 0, _Buffer.Length));
+                _Buffer = newBuffer;
+            }
+            buffer.CopyTo(new Span<T>(_Buffer, Length, buffer.Length));
+            Length += buffer.Length;
+        }
 
         /// <summary>
         /// add new bytes to buffer
@@ -59,6 +75,23 @@ namespace JsonGo.IO
             }
             buffer.CopyTo(new Span<T>(_Buffer, Length, buffer.Length));
             Length += buffer.Length;
+        }
+
+        /// <summary>
+        /// write single data
+        /// </summary>
+        /// <param name="data"></param>
+        public void Write(ref T data)
+        {
+            if (Length + 1 > _Buffer.Length)
+            {
+                _capacity++;
+                T[] newBuffer = new T[_Buffer.Length + _capacity];
+                _Buffer.CopyTo(new Span<T>(newBuffer, 0, _Buffer.Length));
+                _Buffer = newBuffer;
+            }
+            _Buffer[Length] = data;
+            Length++;
         }
 
         /// <summary>

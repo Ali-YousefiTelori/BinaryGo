@@ -5,6 +5,7 @@ using JsonGo.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JsonGo.Runtime.Variables.Enums
@@ -54,7 +55,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            handler.TextWriter.Write(((short)(object)value).ToString(CurrentCulture));
+            handler.TextWriter.Write(Unsafe.As<TEnum, short>(ref value).ToString(CurrentCulture));
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace JsonGo.Runtime.Variables.Enums
         public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
             if (short.TryParse(text, out short value))
-                return (TEnum)(object)value;
+                return Unsafe.As<short, TEnum>(ref value);
             return default;
         }
 
@@ -76,7 +77,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
         {
-            stream.Write(BitConverter.GetBytes((short)(object)value));
+            stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, short>(ref value)));
         }
 
         /// <summary>
@@ -85,7 +86,8 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="reader">Reader of binary</param>
         public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            return (TEnum)(object)BitConverter.ToInt16(reader.Read(sizeof(short)));
+            var value = BitConverter.ToInt16(reader.Read(sizeof(short)));
+            return Unsafe.As<short, TEnum>(ref value);
         }
     }
 }

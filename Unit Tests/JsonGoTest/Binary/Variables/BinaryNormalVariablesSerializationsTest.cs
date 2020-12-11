@@ -248,5 +248,14 @@ then yousefi"" so we are good now""";
             Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
+
+        [Fact]
+        public (byte[] Result, Guid Value) GuidTestSerialize()
+        {
+            Guid value = Guid.NewGuid();
+            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
+            Assert.True(result.SequenceEqual(value.ToByteArray()), $"Your Value: {value} Serialize Value: {result}");
+            return (result, value);
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace JsonGoTest.Json.Variables
         [Fact]
         public void Int16TestDeserialize()
         {
-            var (Result, Value) = UInt16TestSerialize();
+            var (Result, Value) = Int16TestSerialize();
             Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<short>(Result) == Value);
         }
 
@@ -189,6 +189,13 @@ namespace JsonGoTest.Json.Variables
         {
             var (Result, Value) = StringWithLineTestSerialize();
             Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<string>(Result) == Value);
+        }
+
+        [Fact]
+        public void GuidTestDeserialize()
+        {
+            var (Result, Value) = GuidTestSerialize();
+            Assert.True(JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<Guid>(Result) == Value);
         }
     }
 }

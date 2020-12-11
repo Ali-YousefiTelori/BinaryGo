@@ -48,15 +48,15 @@ namespace JsonGo.Runtime
         /// <summary>
         /// Current TypeGoInfo mirror of property type
         /// </summary>
-        public TypeGoInfo<TPropertyType> TypeGoInfo { get; set; }
+        public TypeGoInfo<TPropertyType> TypeGoInfo;
         /// <summary>
         /// Gets property value
         /// </summary>
-        public Func<TObject, TPropertyType> GetValue { get; set; }
+        public Func<TObject, TPropertyType> GetValue;
         /// <summary>
         /// Set value of property
         /// </summary>
-        public Action<TObject, TPropertyType> SetValue { get; set; }
+        public Action<TObject, TPropertyType> SetValue;
 
         ///// <summary>
         ///// Gets property value
@@ -98,7 +98,11 @@ namespace JsonGo.Runtime
             var extract = reader.ExtractString();
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
-
+        internal override void JsonDeserializeObject(ref TObject instance,ref JsonDeserializer deserializer, ref JsonSpanReader reader)
+        {
+            var deserializedObject = FastDeserializerExtractor<TPropertyType>.ExtractOject(ref deserializer, ref TypeGoInfo, ref reader);
+            SetValue(instance, deserializedObject);
+        }
         /// <summary>
         /// json deserialize values of number or bool
         /// </summary>

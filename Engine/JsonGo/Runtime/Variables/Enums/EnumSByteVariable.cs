@@ -55,7 +55,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            handler.TextWriter.Write(((sbyte)(object)value).ToString(CurrentCulture));
+            handler.TextWriter.Write(Unsafe.As<TEnum, sbyte>(ref value).ToString(CurrentCulture));
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace JsonGo.Runtime.Variables.Enums
         public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
             if (sbyte.TryParse(text, out sbyte value))
-                return (TEnum)(object)value;
+                return Unsafe.As<sbyte, TEnum>(ref value);
             return default;
         }
 
@@ -77,7 +77,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
         {
-            stream.Write(new byte[] { (byte)(object)value });
+            stream.Write((byte)Unsafe.As<TEnum, sbyte>(ref value));
         }
 
         /// <summary>
@@ -86,7 +86,8 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="reader">Reader of binary</param>
         public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            return (TEnum)(object)reader.Read(sizeof(sbyte))[0];
+            var value = (sbyte)reader.Read();
+            return Unsafe.As<sbyte, TEnum>(ref value);
         }
     }
 }

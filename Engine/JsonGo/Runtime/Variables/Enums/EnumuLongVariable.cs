@@ -5,6 +5,7 @@ using JsonGo.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JsonGo.Runtime.Variables.Enums
@@ -12,13 +13,13 @@ namespace JsonGo.Runtime.Variables.Enums
     /// <summary>
     /// Enum that inheritance ulong
     /// </summary>
-    public class EnumuLongVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
+    public class EnumULongVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
          where TEnum : struct, Enum
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumuLongVariable() : base(typeof(TEnum))
+        public EnumULongVariable() : base(typeof(TEnum))
         {
 
         }
@@ -54,7 +55,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            handler.TextWriter.Write(((ulong)(object)value).ToString(CurrentCulture));
+            handler.TextWriter.Write(Unsafe.As<TEnum, ulong>(ref value).ToString(CurrentCulture));
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace JsonGo.Runtime.Variables.Enums
         public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
             if (ulong.TryParse(text, out ulong value))
-                return (TEnum)(object)value;
+                return Unsafe.As<ulong, TEnum>(ref value);
             return default;
         }
 
@@ -76,7 +77,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
         {
-            stream.Write(BitConverter.GetBytes((ulong)(object)value));
+            stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, ulong>(ref value)));
         }
 
         /// <summary>
@@ -85,7 +86,8 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="reader">Reader of binary</param>
         public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            return (TEnum)(object)BitConverter.ToUInt64(reader.Read(sizeof(ulong)));
+            var value = BitConverter.ToUInt64(reader.Read(sizeof(ulong)));
+            return Unsafe.As<ulong, TEnum>(ref value);
         }
     }
 }

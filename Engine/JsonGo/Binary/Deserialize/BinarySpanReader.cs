@@ -44,5 +44,16 @@ namespace JsonGo.Binary.Deserialize
             _Index += length;
             return result;
         }
+
+        /// <summary>
+        /// read one byte
+        /// </summary>
+        /// <returns></returns>
+        public byte Read()
+        {
+            var result = _buffer.Slice(_Index, 1);
+            _Index++;
+            return result[0];
+        }
     }
 }

@@ -11,15 +11,15 @@ using System.Text;
 namespace JsonGo.Runtime.Variables.Enums
 {
     /// <summary>
-    /// Enum that inheritance uint
+    /// Enum that inheritance sbyte
     /// </summary>
-    public class EnumUIntVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
+    public class EnumNullableSByteVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
         where TEnum : struct, Enum
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumUIntVariable() : base(typeof(TEnum))
+        public EnumNullableSByteVariable() : base(typeof(TEnum))
         {
 
         }
@@ -55,7 +55,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
-            handler.TextWriter.Write(Unsafe.As<TEnum, uint>(ref value).ToString(CurrentCulture));
+            handler.TextWriter.Write(((sbyte)(object)value).ToString(CurrentCulture));
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <returns>convert text to type</returns>
         public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (uint.TryParse(text, out uint value))
-                return Unsafe.As<uint, TEnum>(ref value);
+            if (sbyte.TryParse(text, out sbyte value))
+                return (TEnum)(object)value;
             return default;
         }
 
@@ -77,7 +77,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
         {
-            stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, uint>(ref value)));
+            stream.Write(new byte[] { (byte)(object)value });
         }
 
         /// <summary>
@@ -86,8 +86,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// <param name="reader">Reader of binary</param>
         public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var value = BitConverter.ToUInt32(reader.Read(sizeof(uint)));
-            return Unsafe.As<uint, TEnum>(ref value);
+            return (TEnum)(object)reader.Read(sizeof(sbyte))[0];
         }
     }
 }

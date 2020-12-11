@@ -3,33 +3,27 @@ using JsonGo.Interfaces;
 using JsonGo.IO;
 using JsonGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace JsonGo.Runtime.Variables.Enums
+namespace JsonGo.Runtime.Variables.Nullables
 {
     /// <summary>
-    /// Enum that inheritance uint
+    /// Nullable Bool serializer and deserializer
     /// </summary>
-    public class EnumUIntVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
-        where TEnum : struct, Enum
+    public class BoolNullableVariable : BaseVariable, ISerializationVariable<bool?>
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumUIntVariable() : base(typeof(TEnum))
+        public BoolNullableVariable() : base(typeof(bool?))
         {
 
         }
-
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeOptions options)
+        public void Initialize(TypeGoInfo<bool?> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -53,9 +47,18 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref bool? value)
         {
-            handler.TextWriter.Write(Unsafe.As<TEnum, uint>(ref value).ToString(CurrentCulture));
+            if (value.HasValue)
+            {
+                if (value.Value)
+                    handler.TextWriter.Write(JsonConstantsString.True);
+                else
+                    handler.TextWriter.Write(JsonConstantsString.False);
+            }
+            else
+                handler.TextWriter.Write(JsonConstantsString.Null);
+
         }
 
         /// <summary>
@@ -63,10 +66,10 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
+        public bool? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (uint.TryParse(text, out uint value))
-                return Unsafe.As<uint, TEnum>(ref value);
+            if (bool.TryParse(text, out bool value))
+                return value;
             return default;
         }
 
@@ -75,19 +78,24 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
+        public void BinarySerialize(ref BufferBuilder<byte> stream, ref bool? value)
         {
-            stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, uint>(ref value)));
+            if (value.HasValue)
+            {
+                stream.Write(1);
+                stream.Write(BitConverter.GetBytes(value.Value));
+            }
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public TEnum BinaryDeserialize(ref BinarySpanReader reader)
+        public bool? BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var value = BitConverter.ToUInt32(reader.Read(sizeof(uint)));
-            return Unsafe.As<uint, TEnum>(ref value);
+            if (reader.Read() == 1)
+                return BitConverter.ToBoolean(reader.Read(sizeof(bool)));
+            return default;
         }
     }
 }
