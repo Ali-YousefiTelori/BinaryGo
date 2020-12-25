@@ -75,7 +75,7 @@ namespace JsonGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TEnum value)
+        public void BinarySerialize(ref BufferBuilder stream, ref TEnum value)
         {
             stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, long>(ref value)));
         }

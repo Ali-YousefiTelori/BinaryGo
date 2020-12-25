@@ -9,6 +9,15 @@ using System.Reflection;
 namespace JsonGo.Runtime
 {
     /// <summary>
+    /// delegate for get property value of objects
+    /// </summary>
+    /// <typeparam name="TObject"></typeparam>
+    /// <typeparam name="TProperty"></typeparam>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public delegate TProperty GetPropertyValue<TObject, TProperty>(ref TObject obj);
+
+    /// <summary>
     /// Generates type details in memory
     /// </summary>
     public class PropertyGoInfo<TObject, TPropertyType> : BasePropertyGoInfo<TObject>
@@ -52,7 +61,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// Gets property value
         /// </summary>
-        public Func<TObject, TPropertyType> GetValue;
+        public GetPropertyValue<TObject, TPropertyType> GetValue;
         /// <summary>
         /// Set value of property
         /// </summary>
@@ -80,7 +89,7 @@ namespace JsonGo.Runtime
 
         internal override void TypedJsonSerialize(ref JsonSerializeHandler handler, ref TObject value)
         {
-            TPropertyType propertyValue = GetValue(value);
+            TPropertyType propertyValue = GetValue(ref value);
             if (propertyValue == null || propertyValue.Equals(DefaultValue))
                 return;
             handler.TextWriter.Write(NameSerialized);
@@ -98,7 +107,7 @@ namespace JsonGo.Runtime
             var extract = reader.ExtractString();
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
-        internal override void JsonDeserializeObject(ref TObject instance,ref JsonDeserializer deserializer, ref JsonSpanReader reader)
+        internal override void JsonDeserializeObject(ref TObject instance, ref JsonDeserializer deserializer, ref JsonSpanReader reader)
         {
             var deserializedObject = FastDeserializerExtractor<TPropertyType>.ExtractOject(ref deserializer, ref TypeGoInfo, ref reader);
             SetValue(instance, deserializedObject);
@@ -114,9 +123,9 @@ namespace JsonGo.Runtime
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
 
-        internal override void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject value)
+        internal override void BinarySerialize(ref BufferBuilder stream, ref TObject value)
         {
-            TPropertyType propertyValue = GetValue(value);
+            TPropertyType propertyValue = GetValue(ref value);
             TypeGoInfo.BinarySerialize(ref stream, ref propertyValue);
         }
 
@@ -125,7 +134,7 @@ namespace JsonGo.Runtime
             SetValue(value, TypeGoInfo.BinaryDeserialize(ref reader));
         }
 
-        //internal override void BinarySerialize(ref BufferBuilder<byte> stream, ref object value)
+        //internal override void BinarySerialize(ref BufferBuilder stream, ref object value)
         //{
         //    var unboxedValue = (TPropertyType)value;
         //    TypeGoInfo.BinarySerialize(ref stream, ref unboxedValue);

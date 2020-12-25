@@ -23,7 +23,8 @@ namespace JsonGo.Runtime.Variables
 
         }
 
-        BasePropertyGoInfo<TObject>[] Properties { get; set; }
+        BasePropertyGoInfo<TObject>[] Properties;
+        int PropertiesLength;
         TypeGoInfo<TObject> TypeGoInfo;
         /// <summary>
         /// static serialized value one time calculated
@@ -44,6 +45,7 @@ namespace JsonGo.Runtime.Variables
             baseType = ReflectionHelper.GenerateTypeFromInterface(baseType, options);
             var properties = ReflectionHelper.GetListOfProperties(baseType).ToList();
             Properties = new BasePropertyGoInfo<TObject>[properties.Count];
+            PropertiesLength = properties.Count;
             for (int i = 0; i < properties.Count; i++)
             {
                 var property = properties[i];
@@ -152,22 +154,22 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="data">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject data)
+        public void BinarySerialize(ref BufferBuilder stream, ref TObject data)
         {
             if (data == null)
             {
                 //flag this object is null
                 stream.Write(0);
-                return;
             }
-            //flag this object is not null
-            stream.Write(1);
-            var len = Properties.Length;
-            for (int i = 0; i < len; i++)
+            else
             {
-                var property = Properties[i];
-                //var value = property.InternalGetValue(ref data);
-                property.BinarySerialize(ref stream, ref data);
+                //flag this object is not null
+                stream.Write(1);
+                for (int i = 0; i < PropertiesLength; i++)
+                {
+                    //var value = property.InternalGetValue(ref data);
+                    Properties[i].BinarySerialize(ref stream, ref data);
+                }
             }
         }
 

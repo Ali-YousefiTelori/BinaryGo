@@ -3,12 +3,14 @@ using JsonGo;
 using JsonGo.Binary;
 using JsonGo.Binary.Deserialize;
 using JsonGo.Json;
+using JsonGo.Runtime;
 using JsonGoPerformance.Models;
 using MessagePack;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ZeroFormatter;
 
 namespace JsonGoPerformance
 {
@@ -151,8 +153,9 @@ namespace JsonGoPerformance
         public void Initialize()
         {
             Console.WriteLine("initializer runned");
+            //compile time jsonGo
             JsonGoModelBuilder.Initialize();
-
+            //InitJsonGo();
             NormalSerializeSamples normalSamples = new NormalSerializeSamples();
             NormalSerializeSamples.InitializeChaches(normalSamples.GetSimpleSample());
             NormalSerializeSamples.InitializeChaches(normalSamples.GetSimpleArraySample());
@@ -171,6 +174,24 @@ namespace JsonGoPerformance
             MessagePackSerializer.Serialize(GetSimpleSample());
         }
 
+        [Benchmark]
+        public void RunComplex_Binary_MessagePack()
+        {
+            MessagePackSerializer.Serialize(GetComplexObjectSample());
+        }
+
+        [Benchmark]
+        public void RunSimple_Binary_ZeroFormatter()
+        {
+            ZeroFormatterSerializer.Serialize(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunComplex_Binary_ZeroFormatter()
+        {
+            ZeroFormatterSerializer.Serialize(GetComplexObjectSample());
+        }
+
         //[Benchmark]
         public void RunSimple_Binary_Deserialize_MessagePack()
         {
@@ -179,10 +200,152 @@ namespace JsonGoPerformance
 
 
         static BinarySerializer _jsonGo_Binary_serializer = new BinarySerializer();
+        static BinaryDeserializer _jsonGo_Binary_Deserializer = new BinaryDeserializer();
+
         [Benchmark]
         public void RunSimple_Binary_JsonGo()
         {
-            _jsonGo_Binary_serializer.Serialize(GetSimpleSample()).ToArray();
+            _jsonGo_Binary_serializer.Serialize(GetSimpleSample());
+        }
+
+        //public void InitJsonGo()
+        //{
+        //    InitComapny();
+        //    InitUser();
+        //    InitProduct();
+        //    InitRole();
+        //    InitCar();
+        //}
+
+        //static void InitRole()
+        //{
+        //    TypeGoInfo<RoleInfo> typeGoInfo;
+        //    Type dataType = typeof(RoleInfo);
+
+        //    if (!_jsonGo_Binary_serializer.TryGetValueOfTypeGo(dataType, out object typeGo))
+        //        typeGoInfo = BaseTypeGoInfo.Generate<RoleInfo>(BinarySerializer.DefaultOptions);
+        //    else
+        //        typeGoInfo = (TypeGoInfo<RoleInfo>)typeGo;
+
+        //    var id = (PropertyGoInfo<RoleInfo, int>)typeGoInfo.Properties[nameof(RoleInfo.Id)];
+        //    id.GetValue = x => x.Id;
+        //    id.SetValue = (x, v) => x.Id = v;
+
+        //    var type = (PropertyGoInfo<RoleInfo, RoleType>)typeGoInfo.Properties[nameof(RoleInfo.Type)];
+        //    type.GetValue = x => x.Type;
+        //    type.SetValue = (x, v) => x.Type = v;
+        //}
+
+        //static void InitProduct()
+        //{
+        //    TypeGoInfo<ProductInfo> typeGoInfo;
+        //    Type dataType = typeof(ProductInfo);
+
+        //    if (!_jsonGo_Binary_serializer.TryGetValueOfTypeGo(dataType, out object typeGo))
+        //        typeGoInfo = BaseTypeGoInfo.Generate<ProductInfo>(BinarySerializer.DefaultOptions);
+        //    else
+        //        typeGoInfo = (TypeGoInfo<ProductInfo>)typeGo;
+
+        //    var id = (PropertyGoInfo<ProductInfo, int>)typeGoInfo.Properties[nameof(ProductInfo.Id)];
+        //    id.GetValue = x => x.Id;
+        //    id.SetValue = (x, v) => x.Id = v;
+
+        //    var name = (PropertyGoInfo<ProductInfo, string>)typeGoInfo.Properties[nameof(ProductInfo.Name)];
+        //    name.GetValue = x => x.Name;
+        //    name.SetValue = (x, v) => x.Name = v;
+
+        //    var createDate = (PropertyGoInfo<ProductInfo, DateTime>)typeGoInfo.Properties[nameof(ProductInfo.CreatedDate)];
+        //    createDate.GetValue = x => x.CreatedDate;
+        //    createDate.SetValue = (x, v) => x.CreatedDate = v;
+        //}
+
+
+        //static void InitUser()
+        //{
+        //    TypeGoInfo<UserInfo> typeGoInfo;
+        //    Type dataType = typeof(UserInfo);
+
+        //    if (!_jsonGo_Binary_serializer.TryGetValueOfTypeGo(dataType, out object typeGo))
+        //        typeGoInfo = BaseTypeGoInfo.Generate<UserInfo>(BinarySerializer.DefaultOptions);
+        //    else
+        //        typeGoInfo = (TypeGoInfo<UserInfo>)typeGo;
+
+        //    var id = (PropertyGoInfo<UserInfo, int>)typeGoInfo.Properties[nameof(UserInfo.Id)];
+        //    id.GetValue = x => x.Id;
+        //    id.SetValue = (x, v) => x.Id = v;
+
+        //    var age = (PropertyGoInfo<UserInfo, int>)typeGoInfo.Properties[nameof(UserInfo.Age)];
+        //    age.GetValue = x => x.Age;
+        //    age.SetValue = (x, v) => x.Age = v;
+
+        //    var createDate = (PropertyGoInfo<UserInfo,DateTime>)typeGoInfo.Properties[nameof(UserInfo.CreatedDate)];
+        //    createDate.GetValue = x => x.CreatedDate;
+        //    createDate.SetValue = (x, v) => x.CreatedDate = v;
+
+        //    var fullname = (PropertyGoInfo<UserInfo, string>)typeGoInfo.Properties[nameof(UserInfo.FullName)];
+        //    fullname.GetValue = x => x.FullName;
+        //    fullname.SetValue = (x, v) => x.FullName = v;
+
+        //    var products = (PropertyGoInfo<UserInfo, List<ProductInfo>>)typeGoInfo.Properties[nameof(UserInfo.Products)];
+        //    products.GetValue = x => x.Products;
+        //    products.SetValue = (x, v) => x.Products = v;
+
+        //    var roles = (PropertyGoInfo<UserInfo, List<RoleInfo>>)typeGoInfo.Properties[nameof(UserInfo.Roles)];
+        //    roles.GetValue = x => x.Roles;
+        //    roles.SetValue = (x, v) => x.Roles = v;
+        //}
+
+
+        //static void InitCar()
+        //{
+        //    TypeGoInfo<CarInfo> typeGoInfo;
+        //    Type dataType = typeof(CarInfo);
+
+        //    if (!_jsonGo_Binary_serializer.TryGetValueOfTypeGo(dataType, out object typeGo))
+        //        typeGoInfo = BaseTypeGoInfo.Generate<CarInfo>(BinarySerializer.DefaultOptions);
+        //    else
+        //        typeGoInfo = (TypeGoInfo<CarInfo>)typeGo;
+
+        //    var id = (PropertyGoInfo<CarInfo, int>)typeGoInfo.Properties[nameof(CarInfo.Id)];
+        //    id.GetValue = x => x.Id;
+        //    id.SetValue = (x, v) => x.Id = v;
+
+        //    var name = (PropertyGoInfo<CarInfo, string>)typeGoInfo.Properties[nameof(CarInfo.Name)];
+        //    name.GetValue = x => x.Name;
+        //    name.SetValue = (x, v) => x.Name = v;
+        //}
+
+        //static void InitComapny()
+        //{
+        //    TypeGoInfo<CompanyInfo> typeGoInfo;
+        //    Type dataType = typeof(CompanyInfo);
+
+        //    if (!_jsonGo_Binary_serializer.TryGetValueOfTypeGo(dataType, out object typeGo))
+        //        typeGoInfo = BaseTypeGoInfo.Generate<CompanyInfo>(BinarySerializer.DefaultOptions);
+        //    else
+        //        typeGoInfo = (TypeGoInfo<CompanyInfo>)typeGo;
+
+        //    var id = (PropertyGoInfo<CompanyInfo, int>)typeGoInfo.Properties[nameof(CompanyInfo.Id)];
+        //    id.GetValue = x => x.Id;
+        //    id.SetValue = (x, v) => x.Id = v;
+
+        //    var name = (PropertyGoInfo<CompanyInfo, string>)typeGoInfo.Properties[nameof(CompanyInfo.Name)];
+        //    name.GetValue = x => x.Name;
+        //    name.SetValue = (x, v) => x.Name = v;
+
+        //    var users = (PropertyGoInfo<CompanyInfo, List<UserInfo>>)typeGoInfo.Properties[nameof(CompanyInfo.Users)];
+        //    users.GetValue = x => x.Users;
+        //    users.SetValue = (x, v) => x.Users = v;
+
+        //    var cars = (PropertyGoInfo<CompanyInfo, List<CarInfo>>)typeGoInfo.Properties[nameof(CompanyInfo.Cars)];
+        //    cars.GetValue = x => x.Cars;
+        //    cars.SetValue = (x, v) => x.Cars = v;
+        //}
+
+        [Benchmark]
+        public void RunComplex_Binary_JsonGo()
+        {
+            _jsonGo_Binary_serializer.Serialize(GetComplexObjectSample());
         }
 
         //[Benchmark]
@@ -201,10 +364,23 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
+        public void RunComplex_Json_JsonGo()
+        {
+            _jsonGo_serializer.Serialize(GetComplexObjectSample());
+        }
+
+        [Benchmark]
         public void RunSimple_JsonGo_JsonBinary()
         {
             Serializer serializer = new Serializer();
             serializer.SerializeToBytes(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunComplex_JsonGo_JsonBinary()
+        {
+            Serializer serializer = new Serializer();
+            serializer.SerializeToBytes(GetComplexObjectSample());
         }
 
         [Benchmark]
@@ -217,15 +393,36 @@ namespace JsonGoPerformance
         }
 
         [Benchmark]
+        public void RunComplex_Json_JsonNet()
+        {
+            JsonConvert.SerializeObject(GetComplexObjectSample(), new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            });
+        }
+
+        [Benchmark]
         public void RunSimple_Json_TextJson()
         {
             System.Text.Json.JsonSerializer.Serialize(GetSimpleSample());
         }
 
         [Benchmark]
+        public void RunComplex_Json_TextJson()
+        {
+            System.Text.Json.JsonSerializer.Serialize(GetComplexObjectSample());
+        }
+
+        [Benchmark]
         public void RunSimple_Json_UTF8Json()
         {
             Utf8Json.JsonSerializer.Serialize(GetSimpleSample());
+        }
+
+        [Benchmark]
+        public void RunComplex_Json_UTF8Json()
+        {
+            Utf8Json.JsonSerializer.Serialize(GetComplexObjectSample());
         }
 
         public static void RunSimple()

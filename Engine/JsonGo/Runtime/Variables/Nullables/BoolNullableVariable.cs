@@ -78,7 +78,7 @@ namespace JsonGo.Runtime.Variables.Nullables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref bool? value)
+        public void BinarySerialize(ref BufferBuilder stream, ref bool? value)
         {
             if (value.HasValue)
             {

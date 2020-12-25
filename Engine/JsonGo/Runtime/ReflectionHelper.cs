@@ -81,22 +81,29 @@ namespace JsonGo.Runtime
         public static PropertyCallerInfo<TObjectType, TPropertyType> GetDelegateInstance<TObjectType, TPropertyType>(PropertyInfo propertyInfo)
         {
             Type type = typeof(TObjectType);
-            var openGetterType = typeof(Func<,>);
-            var concreteGetterType = openGetterType
-                .MakeGenericType(type, propertyInfo.PropertyType);
+
+            ParameterExpression arg = Expression.Parameter(type.MakeByRefType(), "x");
+            Expression expr = Expression.Property(arg, propertyInfo.Name);
+
+            var propertyResolver = Expression.Lambda<GetPropertyValue<TObjectType, TPropertyType>>(expr, arg).Compile();
+
+
+            //var openGetterType = typeof(GetPropertyValue<,>);
+            //var concreteGetterType = openGetterType
+            //    .MakeGenericType(type, propertyInfo.PropertyType);
 
             var openSetterType = typeof(Action<,>);
             var concreteSetterType = openSetterType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
-            Delegate getterInvocation = Delegate.CreateDelegate(concreteGetterType, null, propertyInfo.GetGetMethod());
+            //Delegate getterInvocation = Delegate.CreateDelegate(concreteGetterType, null, propertyInfo.GetGetMethod());
             Delegate setterInvocation = Delegate.CreateDelegate(concreteSetterType, null, propertyInfo.GetSetMethod());
 
             var callerType = typeof(PropertyCallerInfo<,>);
             var callerGenericType = callerType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
-            return (PropertyCallerInfo<TObjectType, TPropertyType>)Activator.CreateInstance(callerGenericType, getterInvocation, setterInvocation);
+            return (PropertyCallerInfo<TObjectType, TPropertyType>)Activator.CreateInstance(callerGenericType, propertyResolver, setterInvocation);
         }
 
         static T[] GetArray<T>(IEnumerable<T> iList)

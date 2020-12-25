@@ -2,6 +2,7 @@
 using JsonGo.Interfaces;
 using JsonGo.IO;
 using JsonGo.Json;
+using JsonGo.Runtime.Variables.Structures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,9 +76,9 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref bool value)
+        public void BinarySerialize(ref BufferBuilder stream, ref bool value)
         {
-            stream.Write(BitConverter.GetBytes(value));
+            stream.Write(ref value);
         }
 
         /// <summary>

@@ -22,7 +22,10 @@ namespace JsonGoPerformance
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                     PreserveReferencesHandling = PreserveReferencesHandling.Arrays
                 });
-                System.Text.Json.JsonSerializer.Serialize(obj, new System.Text.Json.JsonSerializerOptions() { ReferenceHandling = System.Text.Json.Serialization.ReferenceHandling.Preserve });
+                System.Text.Json.JsonSerializer.Serialize(obj, new System.Text.Json.JsonSerializerOptions()
+                {
+                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
+                });
             }
         }
 
@@ -40,7 +43,7 @@ namespace JsonGoPerformance
                 CreatedDate = DateTime.Now,
                 FullName = "Ali Yousefi Telori",
                 Id = 1,
-                CompanyInfo = companyInfo
+                //CompanyInfo = companyInfo
             };
             companyInfo.Users.Add(userInfo);
             return companyInfo;
@@ -63,7 +66,7 @@ namespace JsonGoPerformance
                     CreatedDate = DateTime.Now.AddMinutes(i),
                     FullName = "Ali Yousefi Telori " + i,
                     Id = i,
-                    CompanyInfo = companyInfo
+                    //CompanyInfo = companyInfo
                 };
                 companyInfo.Users.Add(user);
                 result.Add(companyInfo);
@@ -78,21 +81,21 @@ namespace JsonGoPerformance
             {
                 Id = 1,
                 Type = RoleType.Admin,
-                UserInfo = userInfo
+                //UserInfo = userInfo
             };
             result.Add(roleInfo);
             RoleInfo roleInfo2 = new RoleInfo()
             {
                 Id = 2,
                 Type = RoleType.Normal,
-                UserInfo = userInfo
+                //UserInfo = userInfo
             };
             result.Add(roleInfo2);
             RoleInfo roleInfo3 = new RoleInfo()
             {
                 Id = 3,
                 Type = RoleType.Viewer,
-                UserInfo = userInfo
+                //UserInfo = userInfo
             };
             result.Add(roleInfo3);
             return result;
@@ -108,7 +111,7 @@ namespace JsonGoPerformance
                     Id = i,
                     Name = "product" + i,
                     CreatedDate = DateTime.Now,
-                    UserInfo = userInfo
+                    ///UserInfo = userInfo
                 };
                 result.Add(product);
             }
@@ -124,7 +127,7 @@ namespace JsonGoPerformance
                 {
                     Id = i,
                     Name = "car" + i,
-                    CompanyInfo = companyInfo
+                    //CompanyInfo = companyInfo
                 };
                 result.Add(car);
             }
@@ -198,7 +201,7 @@ namespace JsonGoPerformance
         {
             System.Text.Json.JsonSerializer.Serialize(GetSimpleSample(), new System.Text.Json.JsonSerializerOptions()
             {
-              ReferenceHandling = System.Text.Json.Serialization.ReferenceHandling.Preserve
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
             });
         }
 
@@ -232,7 +235,7 @@ namespace JsonGoPerformance
         {
             System.Text.Json.JsonSerializer.Serialize(GetComplexObjectSample(), new System.Text.Json.JsonSerializerOptions()
             {
-                ReferenceHandling = System.Text.Json.Serialization.ReferenceHandling.Preserve
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
             });
         }
 
@@ -260,7 +263,7 @@ namespace JsonGoPerformance
         {
             var options = new System.Text.Json.JsonSerializerOptions
             {
-                ReferenceHandling = System.Text.Json.Serialization.ReferenceHandling.Preserve
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
             };
             Console.WriteLine("******* Newtonsoft.JsonNET *****");
             Console.WriteLine($"Count {count}");

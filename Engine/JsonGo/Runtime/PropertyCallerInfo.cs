@@ -15,7 +15,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// Property value caller
         /// </summary>
-        public PropertyCallerInfo(Func<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
+        public PropertyCallerInfo(GetPropertyValue<TType, TPropertyType> funcGetValue, Action<TType, TPropertyType> funcSetValue)
         {
             GetValueAction = funcGetValue;
             SetValueAction = funcSetValue;
@@ -23,7 +23,7 @@ namespace JsonGo.Runtime
         /// <summary>
         /// Gets property value
         /// </summary>
-        public Func<TType, TPropertyType> GetValueAction { get; set; }
+        public GetPropertyValue<TType, TPropertyType> GetValueAction { get; set; }
         /// <summary>
         /// Sets property value
         /// </summary>

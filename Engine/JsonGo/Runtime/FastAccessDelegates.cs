@@ -124,7 +124,7 @@ namespace JsonGo.Runtime
     /// </summary>
     /// <param name="bufferBuilder"></param>
     /// <param name="data"></param>
-    public delegate void BinaryFunctionGo<T>(ref BufferBuilder<byte> bufferBuilder, ref T data);
+    public delegate void BinaryFunctionGo<T>(ref BufferBuilder bufferBuilder, ref T data);
     /// <summary>
     /// deserialize span reader to object
     /// </summary>

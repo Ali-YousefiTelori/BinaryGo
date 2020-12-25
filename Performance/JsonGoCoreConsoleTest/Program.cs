@@ -5,6 +5,7 @@ using JsonGo.CodeGenerators;
 using JsonGo.Json.Deserialize;
 using JsonGo.Runtime;
 using JsonGoPerformance;
+using JsonGoPerformance.Models;
 using MessagePack;
 using Newtonsoft.Json;
 using System;
@@ -58,8 +59,16 @@ namespace JsonGoCoreConsoleTest
         {
             try
             {
-
-                //NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+                NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+                //normalSerializeSamples.InitJsonGo();
+                normalSerializeSamples.RunComplex_Binary_JsonGo();
+                normalSerializeSamples.RunComplex_Binary_MessagePack();
+                normalSerializeSamples.RunComplex_Binary_ZeroFormatter();
+                normalSerializeSamples.RunComplex_JsonGo_JsonBinary();
+                normalSerializeSamples.RunComplex_Json_JsonGo();
+                normalSerializeSamples.RunComplex_Json_JsonNet();
+                normalSerializeSamples.RunComplex_Json_TextJson();
+                normalSerializeSamples.RunComplex_Json_UTF8Json();
                 //var bytesaaa = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
                 //var deserialized = JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<JsonGoPerformance.Models.SimpleUserInfo>(bytesaaa);
                 //var staticdata = GetText(bytesaaa);

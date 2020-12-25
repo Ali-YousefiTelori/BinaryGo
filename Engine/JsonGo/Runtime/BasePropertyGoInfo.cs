@@ -85,7 +85,7 @@ namespace JsonGo.Runtime
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        internal abstract void BinarySerialize(ref BufferBuilder<byte> stream, ref TObject value);
+        internal abstract void BinarySerialize(ref BufferBuilder stream, ref TObject value);
 
         /// <summary>
         /// Binary deserialize

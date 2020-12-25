@@ -20,7 +20,10 @@ namespace JsonGo.Binary
             BaseTypeGoInfo.GenerateDefaultVariables(DefaultOptions);
         }
 
-        internal static BaseOptionInfo DefaultOptions { get; set; } = new BaseOptionInfo();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static BaseOptionInfo DefaultOptions { get; internal set; } = new BaseOptionInfo();
         /// <summary>
         /// Support for objects' loop reference
         /// </summary>
@@ -35,7 +38,10 @@ namespace JsonGo.Binary
         /// </summary>
         public TryGetValue<Type> TryGetValueOfTypeGo { get; set; }
         //public BinarySerializeHandler SerializeHandler { get; set; } = new BinarySerializeHandler();
-        internal BaseOptionInfo Options { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public BaseOptionInfo Options;
         /// <summary>
         /// Initialize seralizer 
         /// </summary>
@@ -119,14 +125,14 @@ namespace JsonGo.Binary
             // The serialize handler lets the serializer access faster to the pointers
             JsonSerializeHandler serializeHandler = new JsonSerializeHandler
             {
-                BinaryWriter = new BufferBuilder<byte>(typeGoInfo.Capacity),
+                BinaryWriter = new BufferBuilder(typeGoInfo.Capacity),
                 //AddSerializedObjects = serializedObjects.Add,
                 //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
             };
 
             ReferencedIndex = 0;
             typeGoInfo.BinarySerialize(ref serializeHandler.BinaryWriter, ref data);
-            typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.TextWriter.Length);
+            typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.BinaryWriter.Length);
             return serializeHandler.BinaryWriter.ToSpan().Slice(0, serializeHandler.BinaryWriter.Length);
         }
     }

@@ -14,11 +14,11 @@ namespace JsonGo.Json
         /// <summary>
         /// writer of char
         /// </summary>
-        public BufferBuilder<char> TextWriter;
+        public BufferCharBuilder TextWriter;
         /// <summary>
         /// writer of char
         /// </summary>
-        public BufferBuilder<byte> BinaryWriter;
+        public BufferBuilder BinaryWriter;
         /// <summary>
         /// Serializer
         /// </summary>

@@ -1,14 +1,20 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using ZeroFormatter;
 
 namespace JsonGoPerformance.Models
 {
+    [ZeroFormattable]
+    [MessagePackObject]
     public class CarInfo
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public CompanyInfo CompanyInfo { get; set; }
+        [Key(0)]
+        [Index(0)]
+        public virtual int Id { get; set; }
+        [Key(1)]
+        [Index(1)]
+        public virtual string Name { get; set; }
     }
 }

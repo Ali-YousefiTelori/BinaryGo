@@ -72,9 +72,9 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref double value)
+        public void BinarySerialize(ref BufferBuilder stream, ref double value)
         {
-            stream.Write(BitConverter.GetBytes(value).AsSpan());
+            stream.Write(ref value);
         }
 
         /// <summary>

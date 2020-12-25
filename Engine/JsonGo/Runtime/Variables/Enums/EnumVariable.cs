@@ -48,6 +48,10 @@ namespace JsonGo.Runtime.Variables.Enums
             {
                 return new EnumIntVariable<TEnum>();
             }
+            else if (enumType == typeof(byte))
+            {
+                return new EnumByteVariable<TEnum>();
+            }
             else
             {
                 throw new Exception($"Enum of type {enumType.FullName} not support yet, please contact programmer!");

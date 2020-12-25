@@ -5,6 +5,7 @@ using JsonGo.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace JsonGo.Runtime.Variables
@@ -97,10 +98,13 @@ namespace JsonGo.Runtime.Variables
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder<byte> stream, ref string value)
+        public void BinarySerialize(ref BufferBuilder stream, ref string value)
         {
-            stream.Write(BitConverter.GetBytes(value.Length));
-            stream.Write(Encoding.GetBytes(value));
+            var serialized = MemoryMarshal.Cast<char, byte>(value);
+            int len = serialized.Length;
+            stream.Write(ref len);
+            //stream.Write(Encoding.GetBytes(value));
+            stream.Write(serialized);
         }
 
         /// <summary>
@@ -110,7 +114,8 @@ namespace JsonGo.Runtime.Variables
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
             var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-            return Encoding.GetString(reader.Read(length));
+            //return Encoding.GetString(reader.Read(length));
+            return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));
         }
     }
 }

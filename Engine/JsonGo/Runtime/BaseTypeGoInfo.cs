@@ -1,9 +1,12 @@
 ﻿using JsonGo.Runtime.Variables;
+using JsonGo.Runtime.Variables.Collections;
 using JsonGo.Runtime.Variables.Enums;
 using JsonGo.Runtime.Variables.Nullables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace JsonGo.Runtime
@@ -158,11 +161,20 @@ namespace JsonGo.Runtime
                             .MakeGenericMethod(typeof(ArrayVariable<>).MakeGenericType(elementType));
                         method.Invoke(null, new object[] { typeGoInfo, options });
                     }
+                    //enumrable list data
+                    else if (baseType.GetGenericArguments().Length > 0 && baseType.GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        var elementType = baseType.GetGenericArguments()[0];
+                        var method = typeof(BaseTypeGoInfo)
+                            .GetMethod("InitializeVariable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                            .MakeGenericMethod(typeof(GenericListVariable<>).MakeGenericType(elementType));
+                        method.Invoke(null, new object[] { typeGoInfo, options });
+                    }
                     //object daat
                     else
                         InitializeVariable<ObjectVariable<T>>(typeGoInfo, options);
                 }
-               
+
                 return typeGoInfo;
             }
         }

@@ -2,32 +2,49 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ZeroFormatter;
 
 namespace JsonGoPerformance.Models
 {
+    [ZeroFormattable]
+    [MessagePackObject]
     public class UserInfo
     {
-        public int Id { get; set; }
-        public string FullName { get; set; }
-        public int Age { get; set; }
-        public DateTime CreatedDate { get; set; }
-
-        public List<ProductInfo> Products { get; set; }
-        public List<RoleInfo> Roles { get; set; }
-
-        public CompanyInfo CompanyInfo { get; set; }
+        [Key(0)]
+        [Index(0)]
+        public virtual int Id { get; set; }
+        [Key(1)]
+        [Index(1)]
+        public virtual string FullName { get; set; }
+        [Key(2)]
+        [Index(2)]
+        public virtual int Age { get; set; }
+        [Key(3)]
+        [Index(3)]
+        public virtual DateTime CreatedDate { get; set; }
+        [Key(4)]
+        [Index(4)]
+        public virtual List<ProductInfo> Products { get; set; }
+        [Key(5)]
+        [Index(5)]
+        public virtual List<RoleInfo> Roles { get; set; }
     }
 
+    [ZeroFormattable]
     [MessagePackObject]
     public class SimpleUserInfo
     {
         [Key(0)]
-        public int Id { get; set; }
+        [Index(0)]
+        public virtual int Id { get; set; }
         [Key(1)]
-        public string FullName { get; set; }
+        [Index(1)]
+        public virtual string FullName { get; set; }
         [Key(2)]
-        public int Age { get; set; }
+        [Index(2)]
+        public virtual int Age { get; set; }
         [Key(3)]
-        public DateTime CreatedDate { get; set; }
+        [Index(3)]
+        public virtual DateTime CreatedDate { get; set; }
     }
 }

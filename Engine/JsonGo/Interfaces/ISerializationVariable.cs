@@ -31,7 +31,7 @@ namespace JsonGo.Interfaces
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        void BinarySerialize(ref BufferBuilder<byte> stream, ref TType value);
+        void BinarySerialize(ref BufferBuilder stream, ref TType value);
         /// <summary>
         /// Binary deserialize
         /// </summary>

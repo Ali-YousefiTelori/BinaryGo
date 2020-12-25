@@ -1,7 +1,6 @@
-﻿using JsonGoTest.Models;
+﻿using JsonGo.Runtime.Variables.Structures;
+using JsonGoTest.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Xunit;
@@ -105,7 +104,27 @@ namespace JsonGoTest.Binary.Variables
         {
             decimal value = 453445.54245m;
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            Assert.True(result.SequenceEqual(BitConverter.GetBytes((double)value)), $"Your Value: {value} Serialize Value: {result}"); return (result, value);
+            DecimalStruct decimalStruct = new DecimalStruct()
+            {
+                Byte0 = result[0],
+                Byte1 = result[1],
+                Byte2 = result[2],
+                Byte3 = result[3],
+                Byte4 = result[4],
+                Byte5 = result[5],
+                Byte6 = result[6],
+                Byte7 = result[7],
+                Byte8 = result[8],
+                Byte9 = result[9],
+                Byte10 = result[10],
+                Byte11 = result[11],
+                Byte12 = result[12],
+                Byte13 = result[13],
+                Byte14 = result[14],
+                Byte15 = result[15]
+            };
+            Assert.True(value == decimalStruct.Value, $"Your Value: {value} Serialize Value: {decimalStruct.Value}");
+            return (result, value);
         }
 
         [Fact]
@@ -142,7 +161,7 @@ namespace JsonGoTest.Binary.Variables
         {
             DateTime value = DateTime.Now;
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {result}");
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new DateTime(BitConverter.ToInt64(result))}");
             return (result, value);
         }
 
@@ -220,7 +239,7 @@ namespace JsonGoTest.Binary.Variables
                 return bytes;
             }).ToList();
             bytes.InsertRange(0, BitConverter.GetBytes(value.Length));
-            
+
             Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }

@@ -140,7 +140,7 @@ namespace JsonGo.Json
             // The serialize handler lets the serializer access faster to the pointers
             JsonSerializeHandler serializeHandler = new JsonSerializeHandler
             {
-                TextWriter = new BufferBuilder<char>(typeGoInfo.Capacity),
+                TextWriter = new BufferCharBuilder(typeGoInfo.Capacity),
                 //AddSerializedObjects = serializedObjects.Add,
                 //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
             };
@@ -170,7 +170,7 @@ namespace JsonGo.Json
             // The serialize handler lets the serializer access faster to the pointers
             JsonSerializeHandler serializeHandler = new JsonSerializeHandler
             {
-                TextWriter = new BufferBuilder<char>(typeGoInfo.Capacity),
+                TextWriter = new BufferCharBuilder(typeGoInfo.Capacity),
                 //AddSerializedObjects = serializedObjects.Add,
                 //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
             };
