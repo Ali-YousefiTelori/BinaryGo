@@ -2,6 +2,7 @@
 using JsonGoTest.Models;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Xunit;
 
@@ -132,9 +133,6 @@ namespace JsonGoTest.Binary.Variables
         {
             string value = "ali yousefi";
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            var bytes = Encoding.UTF8.GetBytes(value).ToList();
-            bytes.InsertRange(0, BitConverter.GetBytes(value.Length));
-            Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
@@ -232,15 +230,6 @@ namespace JsonGoTest.Binary.Variables
         {
             string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            var bytes = value.SelectMany(x =>
-            {
-                var bytes = Encoding.UTF8.GetBytes(x).ToList();
-                bytes.InsertRange(0, BitConverter.GetBytes(x.Length));
-                return bytes;
-            }).ToList();
-            bytes.InsertRange(0, BitConverter.GetBytes(value.Length));
-
-            Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
@@ -249,9 +238,6 @@ namespace JsonGoTest.Binary.Variables
         {
             string value = "salam\"\"ddv sdd {} [] \"";
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            var bytes = Encoding.UTF8.GetBytes(value).ToList();
-            bytes.InsertRange(0, BitConverter.GetBytes(value.Length));
-            Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
@@ -262,9 +248,6 @@ namespace JsonGoTest.Binary.Variables
 ali
 then yousefi"" so we are good now""";
             var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            var bytes = Encoding.UTF8.GetBytes(value).ToList();
-            bytes.InsertRange(0, BitConverter.GetBytes(value.Length));
-            Assert.True(result.SequenceEqual(bytes), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 

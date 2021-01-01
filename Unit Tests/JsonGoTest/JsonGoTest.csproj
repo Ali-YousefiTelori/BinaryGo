@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Generics\" />
+    <Folder Include="Models\LoopReference\" />
   </ItemGroup>
 
 </Project>
