@@ -53,7 +53,7 @@ namespace JsonGo.Json.Deserialize
             }
             else if (character == JsonConstantsString.OpenSquareBrackets)
             {
-                //return ExtractArray(deserializer, typeGo, ref json);
+                basePropertyGo.JsonDeserializeArray(ref instance, ref deserializer, ref json);
             }
             else
             {
@@ -70,54 +70,55 @@ namespace JsonGo.Json.Deserialize
         }
         internal static T ExtractArray(JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
         {
-            throw new NotSupportedException();
-            //var arrayInstance = typeGo.CreateInstance();
+            //typeGo.JsonDeserialize(ref json);
             //var generic = typeGo.Generics.First();
-            //while (true)
-            //{
-            //    var character = json.Read();
-            //    if (character == JsonConstantsString.OpenBraket)
-            //    {
-            //        var obj = ExtractOject(deserializer, generic, ref json);
-            //        typeGo.AddArrayValue(arrayInstance, obj);
-            //    }
-            //    else if (character == JsonConstantsString.OpenSquareBrackets)
-            //    {
-            //        var obj = ExtractArray(deserializer, generic, ref json);
-            //        typeGo.AddArrayValue(arrayInstance, obj);
-            //    }
-            //    else if (character == JsonConstantsString.Comma)
-            //    {
-            //        continue;
-            //    }
-            //    else if (character == JsonConstantsString.CloseSquareBrackets)
-            //    {
-            //        break;
-            //    }
-            //    else if (character == JsonConstantsString.Quotes)
-            //    {
-            //        var value = json.ExtractString();
-            //        typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
-            //    }
-            //    else
-            //    {
-            //        bool isClosed = false;
-            //        var value = json.ExtractValue();
-            //        if (value[value.Length - 1] == JsonConstantsString.Comma)
-            //            value = value.Slice(0, value.Length - 1);
-            //        if (value[value.Length - 1] == JsonConstantsString.CloseSquareBrackets)
-            //        {
-            //            value = value.Slice(0, value.Length - 1);
-            //            isClosed = true;
-            //        }
-            //        if (generic.JsonDeserialize != null)
-            //            typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
-            //        if (isClosed)
-            //            break;
-            //    }
-            //}
+            while (true)
+            {
+                var character = json.Read();
+                if (character == JsonConstantsString.OpenBraket)
+                {
+                    //var obj = ExtractOject(ref deserializer, ref typeGo, ref json);
+                    //typeGo.AddArrayValue(arrayInstance, obj);
+                }
+                else if (character == JsonConstantsString.OpenSquareBrackets)
+                {
+                    //var obj = ExtractArray(deserializer, generic, ref json);
+                    //typeGo.AddArrayValue(arrayInstance, obj);
+                }
+                else if (character == JsonConstantsString.Quotes)
+                {
+                    //var value = json.ExtractString();
+                    //typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+                }
+                else if (character == JsonConstantsString.Comma)
+                {
+                    continue;
+                }
+                else if (character == JsonConstantsString.CloseSquareBrackets)
+                {
+                    break;
+                }
+                else
+                {
+                    //bool isClosed = false;
+                    //var value = json.ExtractValue();
+                    //if (value[value.Length - 1] == JsonConstantsString.Comma)
+                    //    value = value.Slice(0, value.Length - 1);
+                    //if (value[value.Length - 1] == JsonConstantsString.CloseSquareBrackets)
+                    //{
+                    //    value = value.Slice(0, value.Length - 1);
+                    //    isClosed = true;
+                    //}
+                    //if (generic.JsonDeserialize != null)
+                    //    typeGo.AddArrayValue(arrayInstance, generic.JsonDeserialize(deserializer, value));
+                    //if (isClosed)
+                    //    break;
+                }
+            }
+            return default;
             //return typeGo.Cast == null ? arrayInstance : typeGo.Cast(arrayInstance);
         }
+
 
         /// <summary>
         /// Extract the list of properties from an object

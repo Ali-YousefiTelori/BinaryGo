@@ -107,10 +107,16 @@ namespace JsonGo.Runtime
             var extract = reader.ExtractString();
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
+
         internal override void JsonDeserializeObject(ref TObject instance, ref JsonDeserializer deserializer, ref JsonSpanReader reader)
         {
             var deserializedObject = FastDeserializerExtractor<TPropertyType>.ExtractOject(ref deserializer, ref TypeGoInfo, ref reader);
             SetValue(instance, deserializedObject);
+        }
+
+        internal override void JsonDeserializeArray(ref TObject instance, ref JsonDeserializer deserializer, ref JsonSpanReader reader)
+        {
+
         }
         /// <summary>
         /// json deserialize values of number or bool

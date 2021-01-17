@@ -33,6 +33,7 @@ namespace JsonGo.Runtime.Variables
             //set the default value of variable
             typeGoInfo.DefaultValue = default;
             typeGoInfo.JsonSerialize = JsonSerialize;
+            typeGoInfo.JsonDeserialize = JsonDeserialize;
 
             //set delegates to access faster and make it pointer directly usage for binary serializer
             typeGoInfo.BinarySerialize = BinarySerialize;

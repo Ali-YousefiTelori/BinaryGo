@@ -56,6 +56,7 @@ namespace JsonGo.Runtime.Variables
             //arrayTypeGoInfo.CreateInstance = ReflectionHelper.GetActivator<TObject>(baseType);
 
             CastToArray = arrayTypeGoInfo.Cast;
+            arrayTypeGoInfo.CreateInstance = () => new T[0]; 
         }
 
         Func<T[], object> CastToArray;
