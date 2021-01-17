@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGoTest.Models
+namespace BinaryGoTest.Models
 {
     public enum TestEnum
     {

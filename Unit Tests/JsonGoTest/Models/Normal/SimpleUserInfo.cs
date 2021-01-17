@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGoTest.Models.Normal
+namespace BinaryGoTest.Models.Normal
 {
     public class SimpleUserInfo
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace JsonGoTest.Models.Normal
+namespace BinaryGoTest.Models.Normal
 {
     public class ComplexCarInfo
     {

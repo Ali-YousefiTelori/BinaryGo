@@ -1,7 +1,7 @@
-﻿using JsonGoTest.Models.Complex;
+﻿using BinaryGoTest.Models.Complex;
 using Xunit;
 
-namespace JsonGoTest.Binary.Objects
+namespace BinaryGoTest.Binary.Objects
 {
     public class BinaryComplexObjectsDeserializationsTest : BinaryComplexObjectsSerializationsTest
     {
@@ -9,7 +9,7 @@ namespace JsonGoTest.Binary.Objects
         public void ComplexUserTestDeserialize()
         {
             (byte[] Result, ComplexUser Value) = ComplexUserTestSerialize();
-            var result = JsonGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<ComplexUser>(Result);
+            var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<ComplexUser>(Result);
             Assert.True(result.IsEquals(Value));
         }
     }

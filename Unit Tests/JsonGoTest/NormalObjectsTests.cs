@@ -1,17 +1,17 @@
-﻿using JsonGoTest.Models;
+﻿using BinaryGoTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace JsonGoTest
+namespace BinaryGoTest
 {
     public class NormalObjectsTests
     {
         [Fact]
         public void UserInfoTest()
         {
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -23,7 +23,7 @@ namespace JsonGoTest
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"EMP_NO\":56,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.True(result == equalData);
-            var deserialized = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<UserInfo>(result);
+            var deserialized = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<UserInfo>(result);
             Assert.True(deserialized.IsEquals(userInfo));
         }
         [Fact]
@@ -37,11 +37,11 @@ namespace JsonGoTest
                 FullName = "Ali Yousefi",
                 Id = 1,
             };
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"IsMarried\":false,\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\"}";
             Assert.True(result == equalData);
-            JsonGo.Json.Deserialize.JsonDeserializer deserializer = new JsonGo.Json.Deserialize.JsonDeserializer()
+            BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
             {
                 HasGenerateRefrencedTypes = true
             };
@@ -54,7 +54,7 @@ namespace JsonGoTest
         public void UserInfoWithRolesTest()
         {
             return;
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             UserInfo userInfo = new UserInfo()
             {
                 Age = 29,
@@ -71,7 +71,7 @@ namespace JsonGoTest
             var result = serializer.Serialize(userInfo);
             var equalData = "{\"$id\":1,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"UserInfo\":{\"$ref\":1},\"Type\":3},{\"$id\":4,\"Id\":2,\"UserInfo\":{\"$ref\":1},\"Type\":2}]}}";
             Assert.True(result == equalData);
-            JsonGo.Json.Deserialize.JsonDeserializer deserializer = new JsonGo.Json.Deserialize.JsonDeserializer()
+            BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
             {
                 HasGenerateRefrencedTypes = true
             };
@@ -85,7 +85,7 @@ namespace JsonGoTest
         public void UserInfoWithRolesAndCompanyTest()
         {
             return;
-            JsonGo.Json.Serializer serializer = new JsonGo.Json.Serializer(new JsonGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
             CompanyInfo companyInfo = new CompanyInfo()
             {
                 Id = 14,
@@ -112,7 +112,7 @@ namespace JsonGoTest
             var result = serializer.Serialize(companyInfo);
             var equalData = "{\"$id\":1,\"Id\":14,\"Name\":\"company test\",\"Users\":{\"$id\":2,\"$values\":[{\"$id\":3,\"Id\":1,\"FullName\":\"Ali Yousefi\",\"Age\":29,\"CreatedDate\":\"6/21/2019 12:53:26 PM\",\"Roles\":{\"$id\":4,\"$values\":[{\"$id\":5,\"Id\":1,\"UserInfo\":{\"$ref\":3},\"Type\":3},{\"$id\":6,\"Id\":2,\"UserInfo\":{\"$ref\":3},\"Type\":2}]},\"CompanyInfo\":{\"$ref\":1}},{\"$ref\":3}]}}";
             Assert.True(result == equalData);
-            JsonGo.Json.Deserialize.JsonDeserializer deserializer = new JsonGo.Json.Deserialize.JsonDeserializer()
+            BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
             {
                 HasGenerateRefrencedTypes = true
             };

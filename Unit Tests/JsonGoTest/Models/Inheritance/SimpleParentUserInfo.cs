@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonGoTest.Models.Inheritance
+namespace BinaryGoTest.Models.Inheritance
 {
     public class SimpleParentUserInfo : SimpleBaseUserInfo
     {

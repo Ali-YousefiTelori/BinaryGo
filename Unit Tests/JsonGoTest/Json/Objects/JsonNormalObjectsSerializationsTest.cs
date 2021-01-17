@@ -1,11 +1,11 @@
-﻿using JsonGoTest.Models.Inheritance;
-using JsonGoTest.Models.Normal;
+﻿using BinaryGoTest.Models.Inheritance;
+using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace JsonGoTest.Json.Objects
+namespace BinaryGoTest.Json.Objects
 {
     public class JsonNormalObjectsSerializationsTest
     {
@@ -46,7 +46,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize()
         {
             var value = GetSimpleUser();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali\",\"Family\":\"Yousefi Telori\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -55,7 +55,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize2()
         {
             var value = GetSimpleUser2();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -64,7 +64,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleUserInfo Value) SimpleUserTestSerialize3()
         {
             var value = GetSimpleUser3();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":-9874,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -107,9 +107,9 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize()
         {
             var value = GetSimpleParentUser();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Family\":\"Yousefi Telori\",\"Name\":\"Ali\"}", $"Your Value: {value} Serialize Value: {result}");
-            var result2 = JsonGo.Json.Serializer.NormalInstance.SerializeToBytes(value);
+            var result2 = BinaryGo.Json.Serializer.NormalInstance.SerializeToBytes(value);
             var valueaa = Encoding.UTF8.GetString(result2.ToArray());
             var iseq = valueaa == result;
             return (result, value);
@@ -119,7 +119,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize2()
         {
             var value = GetSimpleParentUser2();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":2751,\"Family\":\"Yousefi \\\"Telori\\\"\",\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
@@ -128,7 +128,7 @@ namespace JsonGoTest.Json.Objects
         public (string Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize3()
         {
             var value = GetSimpleParentUser3();
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             Assert.True(result == "{\"Id\":-9874,\"Family\":\"Yousefi \\\"Telori\\\" {\\\"name\\\": \\\"value\\\"}\",\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\"}", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }

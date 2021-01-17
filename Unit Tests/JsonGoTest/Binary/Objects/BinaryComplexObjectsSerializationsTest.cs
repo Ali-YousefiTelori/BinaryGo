@@ -1,6 +1,6 @@
-﻿using JsonGoTest.Models.Complex;
-using JsonGoTest.Models.Inheritance;
-using JsonGoTest.Models.Normal;
+﻿using BinaryGoTest.Models.Complex;
+using BinaryGoTest.Models.Inheritance;
+using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace JsonGoTest.Binary.Objects
+namespace BinaryGoTest.Binary.Objects
 {
     public class BinaryComplexObjectsSerializationsTest
     {
@@ -63,7 +63,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, ComplexUser Value) ComplexUserTestSerialize()
         {
             var value = GetComplexUser();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 

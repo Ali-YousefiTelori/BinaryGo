@@ -1,5 +1,5 @@
-﻿using JsonGo.Runtime;
-using JsonGoTest.Models;
+﻿using BinaryGo.Runtime;
+using BinaryGoTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace JsonGoTest.Json.NullableVariables
+namespace BinaryGoTest.Json.NullableVariables
 {
     public class JsonNormalNullableVariablesSerializationsTest
     {
@@ -15,7 +15,7 @@ namespace JsonGoTest.Json.NullableVariables
         public (string Result, T? Value) NullTestSerialize<T>(T? value, string valueExpected = null, bool hasQuats = false)
             where T : struct
         {
-            var result = JsonGo.Json.Serializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             if (value.HasValue)
             {
                 var stringValue = value.ToString();
@@ -223,7 +223,7 @@ namespace JsonGoTest.Json.NullableVariables
         [Fact]
         public (string Result, TestEnum? Value) EnumTestSerialize1()
         {
-            BaseTypeGoInfo.Generate<TestEnum>(JsonGo.Json.Serializer.DefaultOptions);
+            BaseTypeGoInfo.Generate<TestEnum>(BinaryGo.Json.Serializer.DefaultOptions);
             TestEnum value = TestEnum.None;
             var (Result, Value) = NullTestSerialize<TestEnum>(value, ((int)value).ToString());
             return (Result, Value);
@@ -239,7 +239,7 @@ namespace JsonGoTest.Json.NullableVariables
         [Fact]
         public (string Result, TestEnum? Value) EnumTestSerialize2()
         {
-            BaseTypeGoInfo.Generate<TestEnum>(JsonGo.Json.Serializer.DefaultOptions);
+            BaseTypeGoInfo.Generate<TestEnum>(BinaryGo.Json.Serializer.DefaultOptions);
             TestEnum value = TestEnum.Value10;
             var (Result, Value) = NullTestSerialize<TestEnum>(value, ((int)value).ToString());
             NullTestSerialize<TestEnum>(null);
@@ -249,7 +249,7 @@ namespace JsonGoTest.Json.NullableVariables
         [Fact]
         public (string Result, TestEnum? Value) EnumTestSerialize3()
         {
-            BaseTypeGoInfo.Generate<TestEnum>(JsonGo.Json.Serializer.DefaultOptions);
+            BaseTypeGoInfo.Generate<TestEnum>(BinaryGo.Json.Serializer.DefaultOptions);
             TestEnum value = TestEnum.Value50;
             var (Result, Value) = NullTestSerialize<TestEnum>(value, ((int)value).ToString());
             return (Result, Value);

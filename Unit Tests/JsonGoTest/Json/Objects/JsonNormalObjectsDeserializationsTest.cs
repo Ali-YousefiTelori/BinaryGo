@@ -1,11 +1,11 @@
-﻿using JsonGoTest.Models.Inheritance;
-using JsonGoTest.Models.Normal;
+﻿using BinaryGoTest.Models.Inheritance;
+using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace JsonGoTest.Json.Objects
+namespace BinaryGoTest.Json.Objects
 {
     public class JsonNormalObjectsDeserializationsTest : JsonNormalObjectsSerializationsTest
     {
@@ -15,7 +15,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleUserTestDeserialize()
         {
             (string Result, SimpleUserInfo Value) = SimpleUserTestSerialize();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
 
@@ -23,7 +23,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleUserTestDeserialize2()
         {
             (string Result, SimpleUserInfo Value) = SimpleUserTestSerialize2();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
 
@@ -31,7 +31,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleUserTestDeserialize3()
         {
             (string Result, SimpleUserInfo Value) = SimpleUserTestSerialize3();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
 
@@ -43,7 +43,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleParentUserTestDeserialize()
         {
             (string Result, SimpleParentUserInfo Value) = SimpleParentUserTestSerialize();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
 
@@ -51,7 +51,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleParentUserTestDeserialize2()
         {
             (string Result, SimpleParentUserInfo Value) = SimpleParentUserTestSerialize2();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
 
@@ -59,7 +59,7 @@ namespace JsonGoTest.Json.Objects
         public void SimpleParentTestDeserialize3()
         {
             (string Result, SimpleParentUserInfo Value) = SimpleParentUserTestSerialize3();
-            var result = JsonGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
+            var result = BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
             Assert.True(result.IsEquals(Value));
         }
         #endregion

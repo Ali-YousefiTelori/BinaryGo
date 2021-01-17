@@ -1,4 +1,4 @@
-﻿using JsonGoTest.Models.Normal;
+﻿using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace JsonGoTest.Models.Complex
+namespace BinaryGoTest.Models.Complex
 {
     public class ComplexUser
     {

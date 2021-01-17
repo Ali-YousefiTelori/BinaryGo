@@ -1,11 +1,11 @@
-﻿using JsonGoTest.Models.Inheritance;
-using JsonGoTest.Models.Normal;
+﻿using BinaryGoTest.Models.Inheritance;
+using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace JsonGoTest.Binary.Objects
+namespace BinaryGoTest.Binary.Objects
 {
     public class BinaryNormalObjectsSerializationsTest
     {
@@ -45,7 +45,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize()
         {
             var value = GetSimpleUser();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 
@@ -53,7 +53,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize2()
         {
             var value = GetSimpleUser2();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 
@@ -61,7 +61,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize3()
         {
             var value = GetSimpleUser3();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 
@@ -103,7 +103,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize()
         {
             var value = GetSimpleParentUser();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 
@@ -111,7 +111,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize2()
         {
             var value = GetSimpleParentUser2();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
 
@@ -119,7 +119,7 @@ namespace JsonGoTest.Binary.Objects
         public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize3()
         {
             var value = GetSimpleParentUser3();
-            var result = JsonGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
             return (result.ToArray(), value);
         }
         #endregion
