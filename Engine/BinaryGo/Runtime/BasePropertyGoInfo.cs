@@ -1,8 +1,11 @@
 ﻿using BinaryGo.Binary.Deserialize;
+using BinaryGo.Binary.StructureModels;
+using BinaryGo.Helpers;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using BinaryGo.Json.Deserialize;
 using System;
+using System.Collections.Generic;
 
 namespace BinaryGo.Runtime
 {
@@ -11,6 +14,10 @@ namespace BinaryGo.Runtime
     /// </summary>
     public abstract class BasePropertyGoInfo<TObject>
     {
+        /// <summary>
+        /// index of property to serialize
+        /// </summary>
+        public int Index { get; set; }
         /// <summary>
         /// Property type
         /// </summary>
@@ -100,5 +107,11 @@ namespace BinaryGo.Runtime
         /// <param name="reader">Reader of binary</param>
         /// <param name="value"></param>
         internal abstract void BinaryDeserialize(ref BinarySpanReader reader, ref TObject value);
+
+        /// <summary>
+        /// Get Binary member by property
+        /// </summary>
+        /// <returns></returns>
+        internal abstract MemberBinaryModelInfo GetBinaryMember(BaseOptionInfo option, Dictionary<Type, BinaryModelInfo> generatedModels);
     }
 }

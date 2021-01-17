@@ -1,4 +1,5 @@
-﻿using BinaryGo.Runtime.Variables;
+﻿using BinaryGo.Binary.StructureModels;
+using BinaryGo.Runtime.Variables;
 using BinaryGo.Runtime.Variables.Collections;
 using BinaryGo.Runtime.Variables.Enums;
 using BinaryGo.Runtime.Variables.Nullables;
@@ -17,6 +18,10 @@ namespace BinaryGo.Runtime
     public abstract class BaseTypeGoInfo
     {
         /// <summary>
+        /// Data type
+        /// </summary>
+        public Type Type { get; set; }
+        /// <summary>
         /// maximum size of this type taked from memory used for bufferbuilder 
         /// </summary>
         public int Capacity = 2;
@@ -25,11 +30,34 @@ namespace BinaryGo.Runtime
         /// default value of bytes
         /// </summary>
         public byte[] DefaultBinaryValue;
+        /// <summary>
+        /// variable of serialize and deserialization
+        /// </summary>
+        public BaseVariable Variable { get; set; }
+        /// <summary>
+        /// list of properties
+        /// </summary>
+        internal abstract Dictionary<string, BaseTypeGoInfo> InternalProperties { get; }
+        /// <summary>
+        /// remove property from list of type properties
+        /// </summary>
+        /// <param name="propertyName"></param>
+        internal abstract void RemoveProperty(string propertyName);
+        /// <summary>
+        /// add new property to list of properties
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyGoInfo"></param>
+        internal abstract void AddProperty(string propertyName, object propertyGoInfo);
+        /// <summary>
+        /// regenerate properties of type
+        /// </summary>
+        internal abstract void ReGenerateProperties(List<MemberBinaryModelInfo> properties);
 
         /// <summary>
         /// Initializes a variable to a TypeGo
         /// </summary>
-        public static TVariable InitializeVariable<TVariable>(object typeGoInfo, ITypeOptions options)
+        public static TVariable InitializeVariable<TVariable>(BaseTypeGoInfo typeGoInfo, ITypeOptions options)
             where TVariable : BaseVariable, new()
         {
             TVariable variable = new TVariable();

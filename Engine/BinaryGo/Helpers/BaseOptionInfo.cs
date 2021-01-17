@@ -86,5 +86,14 @@ namespace BinaryGo.Helpers
         {
             CustomTypeChanges[type] = result;
         }
+
+        /// <summary>
+        /// generate type to typeGo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public void GenerateType<T>()
+        {
+            BaseTypeGoInfo.Generate<T>(this);
+        }
     }
 }

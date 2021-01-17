@@ -1,10 +1,12 @@
-﻿using BinaryGo.Helpers;
+﻿using BinaryGo.Binary.StructureModels;
+using BinaryGo.Helpers;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using BinaryGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,7 @@ namespace BinaryGo.Binary
             BaseTypeGoInfo.GenerateDefaultVariables(DefaultOptions);
         }
 
+        BaseOptionInfo _Options;
         /// <summary>
         /// 
         /// </summary>
@@ -41,25 +44,27 @@ namespace BinaryGo.Binary
         /// <summary>
         /// 
         /// </summary>
-        public BaseOptionInfo Options;
+        public BaseOptionInfo Options
+        {
+            get
+            {
+                return _Options;
+            }
+            set
+            {
+                _Options = value;
+                AddTypes = Options.Types.Add;
+                TryGetValueOfTypeGo = Options.Types.TryGetValue;
+                HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
+                Setting.HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
+            }
+        }
         /// <summary>
         /// Initialize seralizer 
         /// </summary>
         public BinarySerializer()
         {
             Options = DefaultOptions;
-
-            AddTypes = Options.Types.Add;
-            TryGetValueOfTypeGo = Options.Types.TryGetValue;
-            //SerializeHandler.Serializer = this;
-
-            HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
-            Setting.HasGenerateRefrencedTypes = Options.HasGenerateRefrencedTypes;
-
-            //SerializeFunction = (TypeGoInfo typeGoInfo, Stream stream, ref object dataRef) =>
-            //{
-            //    SerializeObject(ref dataRef, typeGoInfo);
-            //};
         }
 
         /// <summary>
@@ -134,6 +139,27 @@ namespace BinaryGo.Binary
             typeGoInfo.BinarySerialize(ref serializeHandler.BinaryWriter, ref data);
             typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.BinaryWriter.Length);
             return serializeHandler.BinaryWriter.ToSpan().Slice(0, serializeHandler.BinaryWriter.Length);
+        }
+
+        /// <summary>
+        /// Get structure of models of typeGo
+        /// </summary>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static List<BinaryModelInfo> GetStructureModels(BaseOptionInfo option = default)
+        {
+            if (option == null)
+                option = DefaultOptions;
+            List<BinaryModelInfo> result = new List<BinaryModelInfo>();
+            Dictionary<Type, BinaryModelInfo> generatedModels = new Dictionary<Type, BinaryModelInfo>();
+            foreach (var type in option.Types)
+            {
+                var typeGoType = ((BaseTypeGoInfo)type.Value).Type;
+                if (typeGoType.Assembly.FullName.StartsWith("System.Private.CoreLib"))
+                    continue;
+                result.Add(BinaryModelInfo.GetBinaryModel(typeGoType, option, generatedModels));
+            }
+            return result;
         }
     }
 }

@@ -49,8 +49,9 @@ namespace BinaryGo.Runtime.Variables
         /// </summary>
         /// <param name="typeGoInfo">TypeGo</param>
         /// <param name="options">Serializer's options or settings</param>
-        public void InitializeBase(object typeGoInfo, ITypeOptions options)
+        public void InitializeBase(BaseTypeGoInfo typeGoInfo, ITypeOptions options)
         {
+            typeGoInfo.Variable = this;
             CurrentCulture = options.CurrentCulture;
             Options = options;
 

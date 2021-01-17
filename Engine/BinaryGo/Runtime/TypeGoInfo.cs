@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BinaryGo.Binary.StructureModels;
+using BinaryGo.Runtime.Variables;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BinaryGo.Runtime
 {
@@ -16,10 +19,6 @@ namespace BinaryGo.Runtime
         /// If the type is simple like int, byte, bool, enum it can be serialized without quotes
         /// </summary>
         public bool IsNoQuotesValueType = true;
-        /// <summary>
-        /// Data type
-        /// </summary>
-        public Type Type { get; set; }
         /// <summary>
         /// Serialize action as text
         /// </summary>
@@ -54,10 +53,6 @@ namespace BinaryGo.Runtime
         /// </summary>
         public Dictionary<string, BasePropertyGoInfo<TType>> Properties;
         /// <summary>
-        /// Type properties
-        /// </summary>
-        public Dictionary<string, BasePropertyGoInfo<TType>> DirectProperties;
-        /// <summary>
         /// Array of all properties to serialize
         /// </summary>
         public BasePropertyGoInfo<TType>[] SerializeProperties;
@@ -65,10 +60,40 @@ namespace BinaryGo.Runtime
         /// Array of all properties to deserialize
         /// </summary>
         public BasePropertyGoInfo<TType>[] DeserializeProperties;
-        ///// <summary>
-        ///// Generic types
-        ///// </summary>
-        //public List<TypeGoInfo> Generics { get; set; } = new List<TypeGoInfo>();
 
+        #region Structure Changes
+
+        internal override Dictionary<string, BaseTypeGoInfo> InternalProperties
+        {
+            get
+            {
+                return Properties.ToDictionary(x => x.Key, x => x.Value.BaseTypeGoInfo);
+            }
+        }
+
+        internal override void AddProperty(string propertyName, object propertyGoInfo)
+        {
+            Properties.Add(propertyName, (BasePropertyGoInfo<TType>)propertyGoInfo);
+        }
+
+        internal override void RemoveProperty(string propertyName)
+        {
+            Properties.Remove(propertyName);
+        }
+
+        internal override void ReGenerateProperties(List<MemberBinaryModelInfo> properties)
+        {
+            var objectVariable = (ObjectVariable<TType>)Variable;
+            objectVariable.RebuildProperties(properties);
+            Generateproperties();
+        }
+
+        internal void Generateproperties()
+        {
+            SerializeProperties = Properties.Values.ToArray();
+            DeserializeProperties = Properties.Values.ToArray();
+        }
+
+        #endregion
     }
 }

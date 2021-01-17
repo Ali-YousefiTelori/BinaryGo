@@ -1,8 +1,11 @@
 ﻿using BinaryGo.Binary.Deserialize;
+using BinaryGo.Binary.StructureModels;
+using BinaryGo.Helpers;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using BinaryGo.Json.Deserialize;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -27,27 +30,46 @@ namespace BinaryGo.Runtime
         /// </summary>
         public PropertyGoInfo(PropertyInfo property, ITypeOptions options)
         {
-            if (options.TryGetValueOfTypeGo(property.PropertyType, out object typeGoInfoProperty))
+            //coming from change structure
+            if (property == null)
             {
-                TypeGoInfo = (TypeGoInfo<TPropertyType>)typeGoInfoProperty;
+                if (options.TryGetValueOfTypeGo(typeof(TPropertyType), out object typeGoInfoProperty))
+                {
+                    TypeGoInfo = (TypeGoInfo<TPropertyType>)typeGoInfoProperty;
+                }
+                else
+                {
+                    TypeGoInfo = BaseTypeGoInfo.Generate<TPropertyType>(options);
+                }
+                GetValue = (ref TObject obj) => default;
+                SetValue = (TObject obj, TPropertyType value) => { };
             }
+            //coming from normal binary Go
             else
             {
-                TypeGoInfo = BaseTypeGoInfo.Generate<TPropertyType>(options);
-            }
+                if (options.TryGetValueOfTypeGo(property.PropertyType, out object typeGoInfoProperty))
+                {
+                    TypeGoInfo = (TypeGoInfo<TPropertyType>)typeGoInfoProperty;
+                }
+                else
+                {
+                    TypeGoInfo = BaseTypeGoInfo.Generate<TPropertyType>(options);
+                }
 
-            PropertyCallerInfo<TObject, TPropertyType> propertyCaller;
+                PropertyCallerInfo<TObject, TPropertyType> propertyCaller;
 
-            try
-            {
-                propertyCaller = ReflectionHelper.GetDelegateInstance<TObject, TPropertyType>(property);
+                try
+                {
+                    propertyCaller = ReflectionHelper.GetDelegateInstance<TObject, TPropertyType>(property);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Cannot create delegate for property {property.Name} in type {TypeGoInfo.Type.FullName}", ex);
+                }
+                GetValue = propertyCaller.GetValueAction;
+                SetValue = propertyCaller.SetValueAction;
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Cannot create delegate for property {property.Name} in type {TypeGoInfo.Type.FullName}", ex);
-            }
-            GetValue = propertyCaller.GetValueAction;
-            SetValue = propertyCaller.SetValueAction;
+            Type = typeof(TPropertyType);
         }
 
         /// <summary>
@@ -138,6 +160,24 @@ namespace BinaryGo.Runtime
         internal override void BinaryDeserialize(ref BinarySpanReader reader, ref TObject value)
         {
             SetValue(value, TypeGoInfo.BinaryDeserialize(ref reader));
+        }
+
+        /// <summary>
+        /// Get binary member
+        /// </summary>
+        /// <returns></returns>
+        internal override MemberBinaryModelInfo GetBinaryMember(BaseOptionInfo option, Dictionary<Type, BinaryModelInfo> generatedModels)
+        {
+            MemberBinaryModelInfo memberBinaryModelInfo = new MemberBinaryModelInfo()
+            {
+                Name = Name,
+                ResultType = BinaryModelInfo.GetBinaryModel(TypeGoInfo, option, generatedModels),
+                CanRead = true,
+                CanWrite = true,
+                Type = MemberBinaryModelType.Property
+            };
+
+            return memberBinaryModelInfo;
         }
 
         //internal override void BinarySerialize(ref BufferBuilder stream, ref object value)

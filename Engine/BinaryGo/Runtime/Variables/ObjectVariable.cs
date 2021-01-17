@@ -1,8 +1,10 @@
 ﻿using BinaryGo.Binary.Deserialize;
+using BinaryGo.Binary.StructureModels;
 using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,13 +25,9 @@ namespace BinaryGo.Runtime.Variables
 
         }
 
-        BasePropertyGoInfo<TObject>[] Properties;
+        internal BasePropertyGoInfo<TObject>[] Properties;
         int PropertiesLength;
         TypeGoInfo<TObject> TypeGoInfo;
-        /// <summary>
-        /// static serialized value one time calculated
-        /// </summary>
-        public string StaticSerializedValue;
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
@@ -43,20 +41,7 @@ namespace BinaryGo.Runtime.Variables
             if (baseType == null)
                 baseType = typeGoInfo.Type;
             baseType = ReflectionHelper.GenerateTypeFromInterface(baseType, options);
-            var properties = ReflectionHelper.GetListOfProperties(baseType).ToList();
-            Properties = new BasePropertyGoInfo<TObject>[properties.Count];
-            PropertiesLength = properties.Count;
-            for (int i = 0; i < properties.Count; i++)
-            {
-                var property = properties[i];
-                var propertyInfo = (BasePropertyGoInfo<TObject>)Activator.CreateInstance(typeof(PropertyGoInfo<,>)
-                   .MakeGenericType(typeof(TObject), property.PropertyType), property, options);
-                typeGoInfo.Properties[property.Name] = propertyInfo;
-                propertyInfo.Type = property.PropertyType;
-                propertyInfo.Name = property.Name;
-                propertyInfo.NameBytes = options.Encoding.GetBytes(property.Name);
-                Properties[i] = propertyInfo;
-            }
+            
             typeGoInfo.DefaultBinaryValue = new byte[] { 0 };
 
             //set delegates to access faster and make it pointer directly usgae
@@ -76,21 +61,66 @@ namespace BinaryGo.Runtime.Variables
 
             typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.ToArray();
             typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.ToArray();
+            GenerateProperties();
+        }
 
-            //cache serialization data to memory to use it always without calculation
-            //StringBuilder stringBuilder = new StringBuilder();
-            //stringBuilder.Append(JsonConstantsString.OpenBraket);
+        internal void GenerateProperties()
+        {
+            var baseType = Nullable.GetUnderlyingType(TypeGoInfo.Type);
+            if (baseType == null)
+                baseType = TypeGoInfo.Type;
+            baseType = ReflectionHelper.GenerateTypeFromInterface(baseType, Options);
+
+            var properties = ReflectionHelper.GetListOfProperties(baseType).ToList();
+            Properties = new BasePropertyGoInfo<TObject>[properties.Count];
+            PropertiesLength = properties.Count;
+            for (int i = 0; i < properties.Count; i++)
+            {
+                var property = properties[i];
+                var propertyInfo = (BasePropertyGoInfo<TObject>)Activator.CreateInstance(typeof(PropertyGoInfo<,>)
+                   .MakeGenericType(typeof(TObject), property.PropertyType), property, Options);
+                TypeGoInfo.Properties[property.Name] = propertyInfo;
+                propertyInfo.Index = i;
+                propertyInfo.Type = property.PropertyType;
+                propertyInfo.Name = property.Name;
+                propertyInfo.NameBytes = Options.Encoding.GetBytes(property.Name);
+                Properties[i] = propertyInfo;
+            }
             for (int i = 0; i < Properties.Length; i++)
             {
                 var property = Properties[i];
-                property.NameSerialized += JsonConstantsString.Quotes;
+                property.NameSerialized = JsonConstantsString.Quotes.ToString();
                 property.NameSerialized += property.Name;
                 property.NameSerialized += JsonConstantsString.QuotesColon;
             }
-            //if (stringBuilder[stringBuilder.Length - 1] == JsonConstantsString.Comma)
-            //    stringBuilder.Length--;
-            //stringBuilder.Append(JsonConstantsString.CloseBracket);
-            //StaticSerializedValue = JsonConstantsString.OpenBraket;
+        }
+
+        internal void RebuildProperties(List<MemberBinaryModelInfo> properties)
+        {
+            Properties = new BasePropertyGoInfo<TObject>[TypeGoInfo.Properties.Count];
+            PropertiesLength = TypeGoInfo.Properties.Count;
+            int i = 0;
+            foreach (var propertyKeyValue in TypeGoInfo.Properties)
+            {
+                var property = propertyKeyValue.Value;
+                property.Name = propertyKeyValue.Key;
+                property.NameBytes = Options.Encoding.GetBytes(property.Name);
+                Properties[i] = property;
+                var findProperty = properties.FirstOrDefault(x => x.Name == property.Name);
+                property.Index = findProperty.Index;
+                i++;
+            }
+
+            //order properties
+            //re indexing properties because generation will set index of properties
+            Properties = Properties.OrderBy(x => x.Index).ToArray();
+            for (i = 0; i < Properties.Length; i++)
+            {
+                var property = Properties[i];
+                property.NameSerialized = JsonConstantsString.Quotes.ToString();
+                property.NameSerialized += property.Name;
+                property.NameSerialized += JsonConstantsString.QuotesColon;
+            }
         }
 
         /// <summary>
@@ -182,11 +212,10 @@ namespace BinaryGo.Runtime.Variables
             if (reader.Read(1)[0] == 0)
                 return default;
             var instance = TypeGoInfo.CreateInstance();
-            var properties = TypeGoInfo.DeserializeProperties;
-            var len = properties.Length;
+            var len = Properties.Length;
             for (int i = 0; i < len; i++)
             {
-                var property = properties[i];
+                var property = Properties[i];
                 //var value = property.BinaryDeserialize(ref reader);
                 property.BinaryDeserialize(ref reader, ref instance);
                 //property.InternalSetValue(ref instance, ref value);
@@ -195,185 +224,3 @@ namespace BinaryGo.Runtime.Variables
         }
     }
 }
-
-//public class Alaki
-//{
-//    /// <summary>
-//    /// Initalizes TypeGo variable
-//    /// </summary>
-//    /// <param name="typeGoInfo">TypeGo variable to initialize</param>
-//    /// <param name="options">Serializer or deserializer options</param>
-//    public override void Initialize<T>(TypeGoInfo<T> typeGoInfo, IBaseTypeGo options)
-//    {
-//        typeGoInfo.IsNoQuotesValueType = false;
-//        var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
-//        if (baseType == null)
-//            baseType = typeGoInfo.Type;
-//        baseType = ReflectionHelper.GenerateTypeFromInterface(baseType);
-//        foreach (var property in ReflectionHelper.GetListOfProperties(baseType))
-//        {
-//            IPropertyCallerInfo del = null;
-//            try
-//            {
-//                del = ReflectionHelper.GetDelegateInstance(baseType, property);
-//            }
-//            catch (Exception ex)
-//            {
-//                throw new Exception($"Cannot create delegate for property {property.Name} in type {typeGoInfo.Type.FullName}", ex);
-//            }
-//            if (!options.TryGetValueOfTypeGo(property.PropertyType, out object typeGoInfoProperty))
-//            {
-//                var method = typeof(TypeGoInfo<>).MakeGenericType(property.PropertyType).GetMethod("Generate", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-//                typeGoInfoProperty = method.Invoke(null, new object[] { options });
-//            }
-
-//            object propertyInfo = Activator.CreateInstance(typeof(PropertyGoInfo<,>).MakeGenericType(typeof(TObject), property.PropertyType));
-//            typeGoInfo.Properties[property.Name] = propertyInfo;
-
-
-//            propertyInfo.TypeGoInfo = typeGoInfoProperty;
-//            propertyInfo.Type = property.PropertyType;
-//            propertyInfo.Name = property.Name;
-//            //propertyInfo.JsonGetValue = (handler, x) => del.GetPropertyValue(x);
-//            //propertyInfo.JsonSetValue = del.SetPropertyValue;
-//            propertyInfo.GetValue = del.GetPropertyValue;
-//            propertyInfo.SetValue = del.SetValue;
-//        }
-
-//        foreach (var item in baseType.GetFields())
-//        {
-//            if (item.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
-//                continue;
-
-//            if (!options.TryGetValueOfTypeGo(item.FieldType, out TypeGoInfo typeGoInfoProperty))
-//            {
-//                typeGoInfoProperty = Generate(item.FieldType, options);
-//            }
-//            typeGoInfo.Properties[item.Name] = new PropertyGoInfo()
-//            {
-//                TypeGoInfo = typeGoInfoProperty,
-//                Type = item.FieldType,
-//                Name = item.Name,
-//                //GetValue = item.GetValue,
-//                //SetValue = item.SetValue
-//            };
-//        }
-
-//        //set the default value of variable
-//        typeGoInfo.DefaultValue = default;
-//    }
-
-//    /// <summary>
-//    /// json serialize
-//    /// </summary>
-//    /// <param name="handler"></param>
-//    /// <param name="value"></param>
-//    public void JsonSerialize(ref JsonSerializeHandler handler, ref T value)
-//    {
-//        if (options.HasGenerateRefrencedTypes)
-//        {
-//            //add $Id dproperties
-//            typeGoInfo.Properties[JsonConstantsString.IdRefrencedTypeNameNoQuotes] = new PropertyGoInfo()
-//            {
-//                TypeGoInfo = Generate(typeof(int), options),
-//                Type = typeof(int),
-//                Name = JsonConstantsString.IdRefrencedTypeNameNoQuotes,
-//                JsonSetValue = (serializer, instance, value) =>
-//                {
-//                    serializer.DeSerializedObjects.Add((int)value, instance);
-//                },
-//                JsonGetValue = (handler, data) =>
-//                {
-//                    if (!handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
-//                    {
-//                        var serializer = handler.Serializer;
-//                        serializer.ReferencedIndex++;
-//                        handler.AddSerializedObjects(data, serializer.ReferencedIndex);
-//                        return serializer.ReferencedIndex;
-//                    }
-//                    else
-//                    {
-//                        return refrencedId;
-//                    }
-//                }
-//            };
-//        }
-
-
-//        typeGoInfo.SerializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonGetValue != null).ToArray();
-//        typeGoInfo.DeserializeProperties = typeGoInfo.Properties.Values.Where(x => x.JsonSetValue != null).ToArray();
-//        if (options.HasGenerateRefrencedTypes)
-//        {
-//            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-//            {
-//                if (handler.TryGetValueOfSerializedObjects(data, out int refrencedId))
-//                {
-//                    handler.AppendChar(JsonConstantsString.OpenBraket);
-//                    handler.Append(JsonConstantsString.RefRefrencedTypeName);
-//                    handler.AppendChar(JsonConstantsString.Colon);
-//                    handler.Append(refrencedId.ToString(CurrentCulture));
-//                    handler.AppendChar(JsonConstantsString.CloseBracket);
-//                }
-//                //else
-//                //    handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
-//            };
-//        }
-//        else
-//        {
-//            typeGoInfo.JsonSerialize = (JsonSerializeHandler handler, ref object data) =>
-//            {
-//                Func<char, StringBuilder> appendChar = handler.AppendChar;
-//                RefFunc<StringBuilder> append = handler.Append;
-
-//                appendChar(JsonConstantsString.OpenBraket);
-
-//                var properties = typeGoInfo.SerializeProperties;
-//                var length = properties.Length;
-//                for (int i = 0; i < length; i++)
-//                {
-//                    var property = properties[i];
-//                    var propertyType = property.TypeGoInfo;
-//                    object propertyValue = property.JsonGetValue(handler, data);
-//                    if (propertyValue == null || propertyValue.Equals(propertyType.DefaultValue))
-//                        continue;
-//                    appendChar(JsonConstantsString.Quotes);
-//                    append(property.Name);
-//                    append(JsonConstantsString.QuotesColon);
-//                    propertyType.JsonSerialize(handler, ref propertyValue);
-//                    appendChar(JsonConstantsString.Comma);
-//                }
-
-//                //Remove Last Comma
-//                handler.RemoveLastCommaCharacter();
-
-//                appendChar(JsonConstantsString.CloseBracket);
-//                //handler.Serializer.SerializeFunction(typeGoInfo, handler, ref data);
-//            };
-
-//            typeGoInfo.BinarySerialize = (Stream stream, ref object data) =>
-//            {
-//                var properties = typeGoInfo.SerializeProperties;
-//                var len = properties.Length;
-//                for (int i = 0; i < len; i++)
-//                {
-//                    var property = properties[i];
-//                    var value = property.GetValue(data);
-//                    if (value == null || value == property.TypeGoInfo.DefaultValue)
-//                    {
-
-//                    }
-//                    else
-//                        property.TypeGoInfo.BinarySerialize(stream, ref value);
-//                }
-//            };
-
-//            typeGoInfo.BinaryDeserialize = (ref BinarySpanReader reader) =>
-//            {
-
-//            };
-//        }
-
-//        typeGoInfo.CreateInstance = GetActivator(baseType);
-//        typeGoInfo.DefaultValue = null;
-//    }
-//}

@@ -1,8 +1,10 @@
-﻿using BinaryGo.Helpers;
+﻿using BinaryGo.Binary.StructureModels;
+using BinaryGo.Helpers;
 using BinaryGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace BinaryGo.Binary.Deserialize
@@ -22,10 +24,9 @@ namespace BinaryGo.Binary.Deserialize
         public BinaryDeserializer()
         {
             Options = DefaultOptions;
-            AddTypes = Options.Types.Add;
-            TryGetValueOfTypeGo = Options.Types.TryGetValue;
         }
 
+        BaseOptionInfo _Options;
         /// <summary>
         /// Adds new value to types
         /// </summary>
@@ -35,7 +36,23 @@ namespace BinaryGo.Binary.Deserialize
         /// </summary>
         public TryGetValue<Type> TryGetValueOfTypeGo { get; set; }
 
-        internal BaseOptionInfo Options { get; set; }
+        /// <summary>
+        /// options and cached data for serialize and deserialize
+        /// cached data like types
+        /// </summary>
+        public BaseOptionInfo Options
+        {
+            get
+            {
+                return _Options;
+            }
+            set
+            {
+                _Options = value;
+                AddTypes = _Options.Types.Add;
+                TryGetValueOfTypeGo = _Options.Types.TryGetValue;
+            }
+        }
         /// <summary>
         /// Save deserialized objects for referenced type
         /// </summary>
@@ -78,6 +95,89 @@ namespace BinaryGo.Binary.Deserialize
             {
                 DeSerializedObjects.Clear();
             }
+        }
+
+        Dictionary<string, Type> MovedTypes { get; set; } = new Dictionary<string, Type>();
+        /// <summary>
+        /// add a type as renamed
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <param name="type"></param>
+        public void AddMovedType(string fullName, Type type)
+        {
+            MovedTypes[fullName] = type;
+        }
+
+        /// <summary>
+        /// Build your new structure to deserialize structure
+        /// </summary>
+        /// <param name="newStructureModels"></param>
+        public void BuildStructure(List<BinaryModelInfo> newStructureModels)
+        {
+            foreach (var model in newStructureModels)
+            {
+                bool hasChanged = false;
+                (Type Type, BaseTypeGoInfo TypeGo) = FindType(model);
+                foreach (var property in TypeGo.InternalProperties)
+                {
+                    if (!model.Properties.Any(x => x.Name == property.Key))
+                    {
+                        hasChanged = true;
+                        TypeGo.RemoveProperty(property.Key);
+                    }
+                }
+
+                foreach (var property in model.Properties)
+                {
+                    if (!TypeGo.InternalProperties.Any(x => x.Key == property.Name))
+                    {
+                        hasChanged = true;
+                        var instance = Activator.CreateInstance(typeof(PropertyGoInfo<,>)
+                            .MakeGenericType(TypeGo.Type, GetTypeOfProperty(property)), null, Options);
+                        TypeGo.AddProperty(property.Name, instance);
+                    }
+                }
+
+
+                if (hasChanged)
+                {
+                    TypeGo.ReGenerateProperties(model.Properties);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string GetStrcutureModelName(Type type)
+        {
+            return $"{Path.GetFileName(type.Assembly.Location)} {type.Namespace} {type.Name}";
+        }
+
+        Type GetTypeOfProperty(MemberBinaryModelInfo memberBinaryModel)
+        {
+            if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System String")
+                return typeof(string);
+            else if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System Int32")
+                return typeof(int);
+            else if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System DateTime")
+                return typeof(DateTime);
+            return null;
+        }
+
+        (Type Type, BaseTypeGoInfo TypeGo) FindType(BinaryModelInfo binaryModel)
+        {
+            string modelFullName = binaryModel.ToString();
+            MovedTypes.TryGetValue(modelFullName, out Type type);
+            foreach (var item in Options.Types)
+            {
+                var typeFullName = GetStrcutureModelName(item.Key);
+                if (typeFullName == modelFullName || item.Key == type)
+                    return (item.Key, (BaseTypeGoInfo)item.Value);
+            }
+            throw new Exception($"I cannot find {modelFullName} did you initialzie it before use?");
         }
     }
 }

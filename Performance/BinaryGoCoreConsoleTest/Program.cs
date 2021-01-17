@@ -69,6 +69,7 @@ namespace BinaryGoCoreConsoleTest
                 normalSerializeSamples.RunComplex_Json_JsonNet();
                 normalSerializeSamples.RunComplex_Json_TextJson();
                 normalSerializeSamples.RunComplex_Json_UTF8Json();
+                var modelStructures = BinarySerializer.GetStructureModels();
                 //var bytesaaa = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(normalSerializeSamples.GetSimpleSample()).ToArray();
                 //var deserialized = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<BinaryGoPerformance.Models.SimpleUserInfo>(bytesaaa);
                 //var staticdata = GetText(bytesaaa);
