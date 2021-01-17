@@ -1,5 +1,5 @@
-# JsonGo
-simple and easy and fast serialize and deserialize json
+# BinaryGo
+simple and easy and fast serialize and deserialize binary and json
 
 Nuget:
 https://www.nuget.org/packages/JsonGo/
