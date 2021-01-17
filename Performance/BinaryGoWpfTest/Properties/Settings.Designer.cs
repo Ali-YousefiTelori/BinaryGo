@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JsongGoWpfTest.Properties
+namespace BinaryGoWpfTest.Properties
 {
 
 

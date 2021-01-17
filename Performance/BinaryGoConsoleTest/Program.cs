@@ -1,7 +1,6 @@
-﻿using JsonGo;
-using JsonGo.DataTypes;
-using JsonGo.Deserialize;
-using JsonGoPerformance;
+﻿using BinaryGo;
+using BinaryGo.DataTypes;
+using BinaryGoPerformance;
 using MessagePack;
 using Newtonsoft.Json;
 using System;
@@ -11,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace JsonGoConsoleTest
+namespace BinaryGoConsoleTest
 {
 
 
@@ -73,38 +72,38 @@ namespace JsonGoConsoleTest
         {
             try
             {
-                Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
-                JsonGoModelBuilder.Initialize();
-                if (Console.ReadLine() == "1")
-                {
-                    Console.WriteLine($"Enter number of items: ");
-                    int count = int.Parse(Console.ReadLine());
-                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
-                }
-                else
-                {
-                    Console.WriteLine($"Enter number of items: ");
-                    int count = int.Parse(Console.ReadLine());
-                    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
-                    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
-                }
+                //Console.WriteLine($"Enter 1 for loop reference testing another is normal object testing: ");
+                //BinaryGoModelBuilder.Initialize();
+                //if (Console.ReadLine() == "1")
+                //{
+                //    Console.WriteLine($"Enter number of items: ");
+                //    int count = int.Parse(Console.ReadLine());
+                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleSample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetSimpleArraySample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    LoopReferenceSamples.Run(LoopReferenceSamples.GetComplexObjectSample(), count);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"Enter number of items: ");
+                //    int count = int.Parse(Console.ReadLine());
+                //    Console.WriteLine(@"///////////////////////// SimpleSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetSimpleSample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// SimpleArraySample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetSimpleArraySample(), count);
+                //    Console.WriteLine();
+                //    Console.WriteLine();
+                //    Console.WriteLine(@"///////////////////////// ComplexObjectSample \\\\\\\\\\\\\\\\\\\\\\\\\\\");
+                //    NormalSamples.Run(NormalSamples.GetComplexObjectSample(), count);
+                //}
 
 
             }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace JsongGoWpfTest
+namespace BinaryGoWpfTest
 {
     /// <summary>
     /// Logica di interazione per MainWindow.xaml
