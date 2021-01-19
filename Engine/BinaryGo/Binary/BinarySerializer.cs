@@ -92,10 +92,10 @@ namespace BinaryGo.Binary
         /// </summary>
         public JsonConstantsString Setting { get; set; } = new JsonConstantsString();
 
-        /// <summary>
-        /// Start of referenced index
-        /// </summary>
-        public int ReferencedIndex { get; set; } = 0;
+        ///// <summary>
+        ///// Start of referenced index
+        ///// </summary>
+        //public int ReferencedIndex { get; set; } = 0;
         /// <summary>
         /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
@@ -128,17 +128,17 @@ namespace BinaryGo.Binary
                 typeGoInfo = (TypeGoInfo<T>)typeGo;
 
             // The serialize handler lets the serializer access faster to the pointers
-            JsonSerializeHandler serializeHandler = new JsonSerializeHandler
-            {
-                BinaryWriter = new BufferBuilder(typeGoInfo.Capacity),
-                //AddSerializedObjects = serializedObjects.Add,
-                //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
-            };
-
-            ReferencedIndex = 0;
-            typeGoInfo.BinarySerialize(ref serializeHandler.BinaryWriter, ref data);
-            typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.BinaryWriter.Length);
-            return serializeHandler.BinaryWriter.ToSpan().Slice(0, serializeHandler.BinaryWriter.Length);
+            //JsonSerializeHandler serializeHandler = new JsonSerializeHandler
+            //{
+            //    BinaryWriter = new BufferBuilder(typeGoInfo.Capacity),
+            //    //AddSerializedObjects = serializedObjects.Add,
+            //    //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
+            //};
+            var binaryWriter = new BufferBuilder(typeGoInfo.Capacity);
+            //ReferencedIndex = 0;
+            typeGoInfo.BinarySerialize(ref binaryWriter, ref data);
+            typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, binaryWriter.Length);
+            return binaryWriter.ToSpan().Slice(0, binaryWriter.Length);
         }
 
         /// <summary>
