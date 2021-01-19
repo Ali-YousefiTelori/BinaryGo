@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using ZeroFormatter;
 
 namespace BinaryGoPerformance
@@ -21,6 +22,8 @@ namespace BinaryGoPerformance
         static byte[] BinaryGoBinaryBytes = new byte[] { 1, 0, 0, 0, 18, 0, 0, 0, 65, 108, 105, 32, 89, 111, 117, 115, 101, 102, 105, 32, 84, 101, 108, 111, 114, 105, 28, 0, 0, 0, 92, 159, 66, 175, 2, 8, 216, 8 };
         public static void InitializeChaches<T>(T obj)
         {
+            ProtoBuf.Serializer.PrepareSerializer<CompanyInfo>();
+            ProtoBuf.Serializer.PrepareSerializer<SimpleUserInfo>();
             for (int i = 0; i < 10; i++)
             {
                 Serializer.NormalInstance.Serialize(obj);
@@ -200,6 +203,7 @@ namespace BinaryGoPerformance
 
 
         static BinarySerializer _BinaryGo_Binary_serializer = new BinarySerializer();
+        static MemoryStream _GRPC_Stream = new MemoryStream();
         static BinaryDeserializer _BinaryGo_Binary_Deserializer = new BinaryDeserializer();
 
         [Benchmark]
@@ -341,6 +345,18 @@ namespace BinaryGoPerformance
         //    cars.GetValue = x => x.Cars;
         //    cars.SetValue = (x, v) => x.Cars = v;
         //}
+
+        [Benchmark]
+        public void RunComplex_GRPC()
+        {
+            ProtoBuf.Serializer.Serialize(_GRPC_Stream, GetComplexObjectSample());
+        }
+
+        [Benchmark]
+        public void RunSimple_GRPC()
+        {
+            ProtoBuf.Serializer.Serialize(_GRPC_Stream, GetSimpleSample());
+        }
 
         [Benchmark]
         public void RunComplex_Binary_BinaryGo()

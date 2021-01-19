@@ -1,0 +1,43 @@
+﻿syntax = "proto3";
+package BinaryGoPerformance.Models;
+import "protobuf-net/bcl.proto"; // schema for protobuf-net's handling of core .NET types
+
+message CarInfo {
+   int32 Id = 1;
+   string Name = 2;
+}
+message CompanyInfo {
+   int32 Id = 1;
+   string Name = 2;
+   repeated UserInfo Users = 3;
+   repeated CarInfo Cars = 4;
+}
+message ProductInfo {
+   int32 Id = 1;
+   string Name = 2;
+   .bcl.DateTime CreatedDate = 3;
+}
+message RoleInfo {
+   int32 Id = 1;
+   RoleType Type = 2;
+}
+enum RoleType {
+   None = 0;
+   Admin = 1;
+   Normal = 2;
+   Viewer = 3;
+}
+message UserInfo {
+   int32 Id = 1;
+   string FullName = 2;
+   int32 Age = 3;
+   .bcl.DateTime CreatedDate = 4;
+   repeated ProductInfo Products = 5;
+   repeated RoleInfo Roles = 6;
+}
+message SimpleUserInfo {
+   int32 Id = 1;
+   string FullName = 2;
+   int32 Age = 3;
+   .bcl.DateTime CreatedDate = 4;
+}

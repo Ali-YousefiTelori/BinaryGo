@@ -8,9 +8,12 @@ using BinaryGoPerformance;
 using BinaryGoPerformance.Models;
 using MessagePack;
 using Newtonsoft.Json;
+using ProtoBuf;
+using ProtoBuf.Meta;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -60,6 +63,13 @@ namespace BinaryGoCoreConsoleTest
             try
             {
                 NormalSerializeSamples normalSerializeSamples = new NormalSerializeSamples();
+                //using (var stream = new MemoryStream())
+                //{
+                //    Serializer.PrepareSerializer<CompanyInfo>();
+                //    Serializer.Serialize(stream, normalSerializeSamples.GetComplexObjectSample());
+                //    Serializer.Serialize(stream, normalSerializeSamples.GetComplexObjectSample());
+                //}
+
                 //normalSerializeSamples.InitBinaryGo();
                 normalSerializeSamples.RunComplex_Binary_BinaryGo();
                 normalSerializeSamples.RunComplex_Binary_MessagePack();

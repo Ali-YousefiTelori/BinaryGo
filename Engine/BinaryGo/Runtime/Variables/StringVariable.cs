@@ -104,7 +104,7 @@ namespace BinaryGo.Runtime.Variables
             int len = serialized.Length;
             stream.Write(ref len);
             //stream.Write(Encoding.GetBytes(value));
-            stream.Write(serialized);
+            stream.Write(ref serialized);
         }
 
         /// <summary>
