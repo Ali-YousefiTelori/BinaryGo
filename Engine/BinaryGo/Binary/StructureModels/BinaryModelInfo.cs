@@ -100,7 +100,16 @@ namespace BinaryGo.Binary.StructureModels
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{AssemblyName} {Namespace} {Name}";
+            return $"{AssemblyName} {Namespace}.{Name}";
+        }
+
+        /// <summary>
+        /// get full Namespace + name of model
+        /// </summary>
+        /// <returns></returns>
+        public string GetFullName()
+        {
+            return $"{Namespace}.{Name}";
         }
     }
 }

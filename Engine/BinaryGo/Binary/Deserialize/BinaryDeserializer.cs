@@ -153,18 +153,16 @@ namespace BinaryGo.Binary.Deserialize
         /// <returns></returns>
         public string GetStrcutureModelName(Type type)
         {
-            return $"{Path.GetFileName(type.Assembly.Location)} {type.Namespace} {type.Name}";
+            return $"{Path.GetFileName(type.Assembly.Location)} {type.Namespace}.{type.Name}";
         }
 
         Type GetTypeOfProperty(MemberBinaryModelInfo memberBinaryModel)
         {
-            if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System String")
-                return typeof(string);
-            else if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System Int32")
-                return typeof(int);
-            else if (memberBinaryModel.ResultType.ToString() == "System.Private.CoreLib.dll System DateTime")
-                return typeof(DateTime);
-            return null;
+            var fullName = memberBinaryModel.ResultType.GetFullName();
+            var find = ReflectionHelper.VariableTypes.FirstOrDefault(x => x.Value == fullName);
+            if (find.Value == null)
+                throw new Exception($"Property of type {fullName} not found!");
+            return find.Key;
         }
 
         (Type Type, BaseTypeGoInfo TypeGo) FindType(BinaryModelInfo binaryModel)
