@@ -100,11 +100,19 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder stream, ref string value)
         {
-            var serialized = MemoryMarshal.Cast<char, byte>(value);
-            int len = serialized.Length;
-            stream.Write(ref len);
-            //stream.Write(Encoding.GetBytes(value));
-            stream.Write(ref serialized);
+            if (value == null)
+            {
+                int len = -1;
+                stream.Write(ref len);
+            }
+            else
+            {
+                var serialized = MemoryMarshal.Cast<char, byte>(value);
+                int len = serialized.Length;
+                stream.Write(ref len);
+                //stream.Write(Encoding.GetBytes(value));
+                stream.Write(ref serialized);
+            }
         }
 
         /// <summary>
@@ -114,7 +122,8 @@ namespace BinaryGo.Runtime.Variables
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
             var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-            //return Encoding.GetString(reader.Read(length));
+            if (length == -1)
+                return null;
             return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));
         }
     }
