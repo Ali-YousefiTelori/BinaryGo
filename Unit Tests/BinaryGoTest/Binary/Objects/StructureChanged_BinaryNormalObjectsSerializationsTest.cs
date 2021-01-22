@@ -117,27 +117,30 @@ namespace BinaryGoTest.Binary.Objects
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize()
         {
             var value = GetSimpleParentUser();
-            var result = GetSerializer.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize2()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize2()
         {
             var value = GetSimpleParentUser2();
-            var result = GetSerializer.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize3()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize3()
         {
             var value = GetSimpleParentUser3();
-            var result = GetSerializer.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
         #endregion
 

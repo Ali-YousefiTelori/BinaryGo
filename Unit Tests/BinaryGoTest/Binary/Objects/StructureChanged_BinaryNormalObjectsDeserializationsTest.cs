@@ -1,6 +1,7 @@
 ﻿using BinaryGo.Binary;
 using BinaryGo.Binary.Deserialize;
 using BinaryGo.Helpers;
+using BinaryGoTest.Models.Inheritance;
 using BinaryGoTest.Models.Normal;
 using BinaryGoTest.Models.StructureChanged;
 using System;
@@ -50,6 +51,40 @@ namespace BinaryGoTest.Binary.Objects
             Assert.True(resultDeserialized.IsEquals(Value));
         }
 
+        public void SimpleParentUserTestDeserializeBase(byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions)
+        {
+            //in this example server side has SimpleUserInfo
+            //server side has Id, Name, Family
+            //and the client side has SimpleUserOldStructureInfo
+            //client side has Id, Age, BirthDate ,Name
+
+            //new structure of models
+            var newStructureModels = BinarySerializer.GetStructureModels(SerializerOptions);
+
+            //my old deserializer
+            var myDeserializer = new BinaryDeserializer();
+            myDeserializer.Options = new BinaryGo.Helpers.BaseOptionInfo();
+
+            #region VersionChangedControl
+            //generate type
+            myDeserializer.Options.GenerateType<SimpleParentUserOldStructureInfo>();
+            //add model renamed
+            myDeserializer.AddMovedType(myDeserializer.GetStrcutureModelName(typeof(SimpleParentUserInfo)), typeof(SimpleParentUserOldStructureInfo));
+            //build new structure to old structure
+            myDeserializer.BuildStructure(newStructureModels);
+            #endregion
+
+            var result = myDeserializer.Deserialize<SimpleParentUserOldStructureInfo>(Result);
+            Assert.True(result.IsEquals(Value));
+
+            //now serialize from client side and deserialize from server side happen
+            result.Passport = "AV12345678";
+            BinarySerializer binarySerializer = new BinarySerializer(myDeserializer.Options);
+            var resultSerialized = binarySerializer.Serialize(result);
+            var resultDeserialized = myDeserializer.Deserialize<SimpleParentUserOldStructureInfo>(resultSerialized);
+            Assert.True(resultDeserialized.IsEquals(Value));
+        }
+
         [Fact]
         public void SimpleUserTestDeserialize()
         {
@@ -74,6 +109,32 @@ namespace BinaryGoTest.Binary.Objects
             SimpleUserTestDeserializeBase(Result, Value, SerializerOptions);
         }
 
+
+        [Fact]
+        public void SimpleParentUserTestDeserialize()
+        {
+            //in thi lines serialize from server side and try to deserialize from client side happen
+            (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize();
+            SimpleParentUserTestDeserializeBase(Result, Value, SerializerOptions);
+        }
+
+        [Fact]
+        public void SimpleParentUserTestDeserialize2()
+        {
+
+            //in thi lines serialize from server side and try to deserialize from client side happen
+            (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize2();
+            SimpleParentUserTestDeserializeBase(Result, Value, SerializerOptions);
+        }
+
+        [Fact]
+        public void SimpleParentUserTestDeserialize3()
+        {
+
+            //in thi lines serialize from server side and try to deserialize from client side happen
+            (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize3();
+            SimpleParentUserTestDeserializeBase(Result, Value, SerializerOptions);
+        }
         #endregion
     }
 }
