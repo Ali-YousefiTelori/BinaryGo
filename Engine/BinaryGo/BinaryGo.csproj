@@ -4,6 +4,12 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Authors>Ali Yousefi Telori</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0-preview8</Version>
+    <Description>Very fast binary and json serializer</Description>
+    <Copyright>ali.visual.studio@gmail.com</Copyright>
+    <PackageTags>grpc,binary,json,serializer</PackageTags>
+    <PackageProjectUrl>https://github.com/Ali-YousefiTelori/BinaryGo</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,7 +39,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
