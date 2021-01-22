@@ -153,18 +153,25 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="value">value to serialize</param>
         public void BinarySerialize(ref BufferBuilder stream, ref T[] value)
         {
-            if (value.Length > 0)
+            if (value == null)
             {
-                stream.Write(BitConverter.GetBytes(value.Length));
-                for (int i = 0; i < value.Length; i++)
-                {
-                    var obj = value[i];
-                    typeGoInfo.BinarySerialize(ref stream, ref obj);
-                }
+                stream.Write(BitConverter.GetBytes(-1));
             }
             else
             {
-                stream.Write(BitConverter.GetBytes(0));
+                if (value.Length > 0)
+                {
+                    stream.Write(BitConverter.GetBytes(value.Length));
+                    for (int i = 0; i < value.Length; i++)
+                    {
+                        var obj = value[i];
+                        typeGoInfo.BinarySerialize(ref stream, ref obj);
+                    }
+                }
+                else
+                {
+                    stream.Write(BitConverter.GetBytes(0));
+                }
             }
         }
 
@@ -175,8 +182,10 @@ namespace BinaryGo.Runtime.Variables
         public T[] BinaryDeserialize(ref BinarySpanReader reader)
         {
             var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
-            if (length == 0)
-                return null;
+            if (length == -1)
+                return null; 
+            else if (length == 0)
+                return new T[0];
             var instance = new T[length];
             for (int i = 0; i < length; i++)
             {
