@@ -165,5 +165,31 @@ namespace BinaryGo.Runtime
         {
             instance.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance).SetValue(instance, value);
         }
+
+        /// <summary>
+        /// default c# variables and type names
+        /// </summary>
+        public static Dictionary<Type, string> VariableTypes { get; set; } = new Dictionary<Type, string>()
+        {
+            { typeof(bool),"System.Boolean"},
+            { typeof(DateTime),"System.DateTime"},
+            { typeof(TimeSpan),"System.TimeSpan"},
+            { typeof(int),"System.Int32"},
+            { typeof(uint),"System.UInt32"},
+            { typeof(long),"System.Int64"},
+            { typeof(ulong),"System.UInt64"},
+            { typeof(short),"System.Int16"},
+            { typeof(ushort),"System.UInt16"},
+            { typeof(byte),"System.Byte"},
+            { typeof(sbyte),"System.SByte"},
+            { typeof(double),"System.Double"},
+            { typeof(float),"System.Single"},
+            { typeof(decimal),"System.Decimal"},
+            { typeof(string),"System.String"},
+            { typeof(Guid),"System.Guid"},
+            { typeof(byte[]),"System.Byte[]"},
+            { typeof(string[]),"System.Int32[]"},
+            { typeof(int[]),"System.String[]"},
+        };
     }
 }

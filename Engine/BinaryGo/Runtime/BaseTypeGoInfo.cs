@@ -213,23 +213,14 @@ namespace BinaryGo.Runtime
         /// <param name="options"></param>
         public static void GenerateDefaultVariables(ITypeOptions options)
         {
-            Generate<DateTime>(options);
-            Generate<uint>(options);
-            Generate<long>(options);
-            Generate<short>(options);
-            Generate<byte>(options);
-            Generate<double>(options);
-            Generate<float>(options);
-            Generate<decimal>(options);
-            Generate<sbyte>(options);
-            Generate<ulong>(options);
-            Generate<bool>(options);
-            Generate<ushort>(options);
-            Generate<int>(options);
-            Generate<byte[]>(options);
-            Generate<int[]>(options);
-            Generate<string>(options);
-            Generate<string[]>(options);
+
+            foreach (var variableType in ReflectionHelper.VariableTypes)
+            {
+                var method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+                     .FirstOrDefault(x => x.Name == "Generate" && x.GetGenericArguments().Length == 1);
+                var genericMethod = method.MakeGenericMethod(variableType.Key);
+                genericMethod.Invoke(null, new object[] { options });
+            }
         }
     }
 }
