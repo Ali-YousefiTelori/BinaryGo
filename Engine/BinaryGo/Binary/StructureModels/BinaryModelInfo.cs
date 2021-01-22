@@ -27,6 +27,13 @@ namespace BinaryGo.Binary.StructureModels
         /// </summary>
         public string AssemblyName { get; set; }
         /// <summary>
+        /// binary go structre name
+        /// like: object
+        /// like int32
+        /// like enum as int32
+        /// </summary>
+        public string BinaryName { get; set; }
+        /// <summary>
         /// list of properties
         /// </summary>
         public List<MemberBinaryModelInfo> Properties { get; set; }
