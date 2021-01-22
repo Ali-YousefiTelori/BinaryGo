@@ -161,7 +161,11 @@ namespace BinaryGo.Binary.Deserialize
             var fullName = memberBinaryModel.ResultType.GetFullName();
             var find = ReflectionHelper.VariableTypes.FirstOrDefault(x => x.Value == fullName);
             if (find.Value == null)
+            {
+                if (MovedTypes.TryGetValue(memberBinaryModel.ResultType.ToString(), out Type type))
+                    return type;
                 throw new Exception($"Property of type {fullName} not found!");
+            }
             return find.Key;
         }
 
