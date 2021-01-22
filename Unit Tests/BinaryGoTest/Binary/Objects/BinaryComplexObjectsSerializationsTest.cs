@@ -1,4 +1,6 @@
-﻿using BinaryGoTest.Models.Complex;
+﻿using BinaryGo.Binary;
+using BinaryGo.Helpers;
+using BinaryGoTest.Models.Complex;
 using BinaryGoTest.Models.Inheritance;
 using BinaryGoTest.Models.Normal;
 using System;
@@ -12,6 +14,16 @@ namespace BinaryGoTest.Binary.Objects
 {
     public class BinaryComplexObjectsSerializationsTest
     {
+        public BinarySerializer GetSerializer
+        {
+            get
+            {
+                var result = new BinarySerializer();
+                result.Options = new BaseOptionInfo();
+                return result;
+            }
+        }
+
         static Random Random = new Random();
         #region ComplexUser
         public ComplexUser GetComplexUser()
@@ -37,7 +49,7 @@ namespace BinaryGoTest.Binary.Objects
                     IsClosed = true,
                     Key = Guid.NewGuid(),
                     Name = "Hello World",
-                    Type = ComapnyType.Goverment,
+                    Type = CompanyType.Goverment,
                     Cars = GetCars()
                 });
             }
@@ -58,16 +70,15 @@ namespace BinaryGoTest.Binary.Objects
             }
             return result;
         }
-
-        [Fact]
-        public (byte[] Result, ComplexUser Value) ComplexUserTestSerialize()
-        {
-            var value = GetComplexUser();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
-        }
-
         #endregion
 
+        [Fact]
+        public (byte[] Result, ComplexUser Value, BaseOptionInfo SerializerOptions) ComplexUserTestSerialize()
+        {
+            var value = GetComplexUser();
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
+        }
     }
 }

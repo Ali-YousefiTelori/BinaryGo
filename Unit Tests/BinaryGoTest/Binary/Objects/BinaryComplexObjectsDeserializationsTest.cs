@@ -1,4 +1,5 @@
-﻿using BinaryGoTest.Models.Complex;
+﻿using BinaryGo.Helpers;
+using BinaryGoTest.Models.Complex;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Objects
@@ -8,7 +9,7 @@ namespace BinaryGoTest.Binary.Objects
         [Fact]
         public void ComplexUserTestDeserialize()
         {
-            (byte[] Result, ComplexUser Value) = ComplexUserTestSerialize();
+            (byte[] Result, ComplexUser Value, BaseOptionInfo SerializerOptions) = ComplexUserTestSerialize();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<ComplexUser>(Result);
             Assert.True(result.IsEquals(Value));
         }

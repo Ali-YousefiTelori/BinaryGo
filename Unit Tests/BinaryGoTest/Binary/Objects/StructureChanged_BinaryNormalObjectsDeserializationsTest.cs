@@ -13,7 +13,7 @@ using Xunit;
 
 namespace BinaryGoTest.Binary.Objects
 {
-    public class StructureChanged_BinaryNormalObjectsDeserializationsTest : StructureChanged_BinaryNormalObjectsSerializationsTest
+    public class StructureChanged_BinaryNormalObjectsDeserializationsTest : BinaryNormalObjectsSerializationsTest
     {
         #region SimpleUser
         public void SimpleUserTestDeserializeBase(byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions)

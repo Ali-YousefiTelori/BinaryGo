@@ -1,4 +1,6 @@
-﻿using BinaryGoTest.Models.Inheritance;
+﻿using BinaryGo.Binary;
+using BinaryGo.Helpers;
+using BinaryGoTest.Models.Inheritance;
 using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
@@ -41,28 +43,41 @@ namespace BinaryGoTest.Binary.Objects
             };
         }
 
+        public BinarySerializer GetSerializer
+        {
+            get
+            {
+                var result = new BinarySerializer();
+                result.Options = new BaseOptionInfo();
+                return result;
+            }
+        }
+
         [Fact]
-        public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize()
+        public (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) SimpleUserTestSerialize()
         {
             var value = GetSimpleUser();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize2()
+        public (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) SimpleUserTestSerialize2()
         {
             var value = GetSimpleUser2();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleUserInfo Value) SimpleUserTestSerialize3()
+        public (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) SimpleUserTestSerialize3()
         {
             var value = GetSimpleUser3();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         #endregion
@@ -100,27 +115,30 @@ namespace BinaryGoTest.Binary.Objects
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize()
         {
             var value = GetSimpleParentUser();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize2()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize2()
         {
             var value = GetSimpleParentUser2();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
 
         [Fact]
-        public (byte[] Result, SimpleParentUserInfo Value) SimpleParentUserTestSerialize3()
+        public (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) SimpleParentUserTestSerialize3()
         {
             var value = GetSimpleParentUser3();
-            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value);
-            return (result.ToArray(), value);
+            var serializer = GetSerializer;
+            var result = serializer.Serialize(value);
+            return (result.ToArray(), value, serializer.Options);
         }
         #endregion
 
