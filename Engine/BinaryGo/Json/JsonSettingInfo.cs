@@ -44,6 +44,10 @@ namespace BinaryGo.Json
         /// </summary>
         public static readonly string BackSlashR = "\\r";
         /// <summary>
+        /// \r\n bytes
+        /// </summary>
+        public static readonly string BackSlashRN = "\\r\\n";
+        /// <summary>
         /// \t bytes
         /// </summary>
         public static readonly string BackSlashT = "\\t";
@@ -120,6 +124,10 @@ namespace BinaryGo.Json
         /// Back slash
         /// </summary>
         public const char BackSlash = '\\';
+        /// <summary>
+        /// double Back slash
+        /// </summary>
+        public const string DoubleBackSlash = "\\\\";
         /// <summary>
         /// $Id refrenced type name
         /// </summary>

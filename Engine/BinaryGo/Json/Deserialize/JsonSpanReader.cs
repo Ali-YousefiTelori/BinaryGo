@@ -133,6 +133,13 @@ namespace BinaryGo.Json.Deserialize
                         i++;
                         index = i;
                     }
+                    else if (readOnlySpan[i + 1] == JsonConstantsString.BackSlash)
+                    {
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+                        stringBuilder.Append(JsonConstantsString.BackSlash);
+                        i++;
+                        index = i + 1;
+                    }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
                     {
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));

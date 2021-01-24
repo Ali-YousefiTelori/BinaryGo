@@ -48,8 +48,11 @@ namespace BinaryGo.Runtime.Variables
 
             //set delegates to access faster and make it pointer directly usage for binary deserializer
             typeGoInfo.BinaryDeserialize = BinaryDeserialize;
+
+            IsUnixNewLine = Environment.NewLine.Length == 1;
         }
 
+        bool IsUnixNewLine { get; set; }
         /// <summary>
         /// json serialize
         /// </summary>
@@ -60,21 +63,29 @@ namespace BinaryGo.Runtime.Variables
             handler.TextWriter.Write(JsonConstantsString.Quotes);
             var result = value.AsSpan();
             var len = result.Length;
+            int hasBackSlashNIndex = -1;
             for (int i = 0; i < len; i++)
             {
                 if (result[i] == JsonConstantsString.Quotes)
                 {
                     handler.TextWriter.Write(JsonConstantsString.BackSlashQuotes);
                 }
-                //else if (result[i] == '\r' && i < result.Length - 1 && result[i + 1] == '\n')
-                //{
-                //    handler.Append("\\r\\n");
-                //    i++;
-                //}
+                else if (result[i] == JsonConstantsString.BackSlash)
+                {
+                    handler.TextWriter.Write(JsonConstantsString.DoubleBackSlash);
+                }
                 else if (result[i] == JsonConstantsString.NSpace)
-                    handler.TextWriter.Write(JsonConstantsString.BackSlashN);
+                {
+                    if (hasBackSlashNIndex != i - 1 && IsUnixNewLine)
+                        handler.TextWriter.Write(JsonConstantsString.BackSlashRN);
+                    else
+                        handler.TextWriter.Write(JsonConstantsString.BackSlashN);
+                }
                 else if (result[i] == JsonConstantsString.RSpace)
+                {
+                    hasBackSlashNIndex = i;
                     handler.TextWriter.Write(JsonConstantsString.BackSlashR);
+                }
                 else if (result[i] == JsonConstantsString.TSpace)
                     handler.TextWriter.Write(JsonConstantsString.BackSlashT);
                 else
