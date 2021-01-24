@@ -238,7 +238,11 @@ namespace BinaryGoTest.Json.Variables
             string value = $"\"test hello: \\\"my name is{Environment.NewLine}ali{Environment.NewLine}then \\ yousefi\\\" so we are good now\\\"\"";
             var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             var jsonSerialize = Newtonsoft.Json.JsonConvert.SerializeObject(value);
-            Assert.True(result == "\"\\\"test hello: \\\\\\\"my name is\\r\\nali\\r\\nthen \\\\ yousefi\\\\\\\" so we are good now\\\\\\\"\\\"\"", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
+            if (Environment.NewLine.Length == 2)
+                Assert.True(result == "\"\\\"test hello: \\\\\\\"my name is\\r\\nali\\r\\nthen \\\\ yousefi\\\\\\\" so we are good now\\\\\\\"\\\"\"", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
+            else
+                Assert.True(result == "\"\\\"test hello: \\\\\\\"my name is\\nali\\nthen \\\\ yousefi\\\\\\\" so we are good now\\\\\\\"\\\"\"", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
+
             return (result, value);
         }
 
