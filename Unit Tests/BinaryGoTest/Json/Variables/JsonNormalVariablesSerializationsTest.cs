@@ -235,9 +235,9 @@ namespace BinaryGoTest.Json.Variables
         [Fact]
         public (string Result, string Value) StringWithLineTestSerialize()
         {
-            string value = $"test hello: \"my name is{Environment.NewLine}ali{Environment.NewLine}then yousefi\" so we are good now\"";
+            string value = $"\"test hello: \\\"my name is{Environment.NewLine}ali{Environment.NewLine}then yousefi\\\" so we are good now\\\"\"";
             var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
-            Assert.True(result == "\"test hello: \\\"my name is\\r\\nali\\r\\nthen yousefi\\\" so we are good now\\\"\"", $"Your Value: {value} Serialize Value: {result}");
+            Assert.True(result == "\"\\\"test hello: \\\\\"my name is\\r\\nali\\r\\nthen yousefi\\\\\" so we are good now\\\\\"\\\"\"", $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
 
