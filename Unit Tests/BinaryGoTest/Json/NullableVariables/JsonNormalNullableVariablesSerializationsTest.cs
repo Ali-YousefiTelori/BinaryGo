@@ -18,7 +18,11 @@ namespace BinaryGoTest.Json.NullableVariables
             var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             if (value.HasValue)
             {
-                var stringValue = value.ToString();
+                var stringValue = "";
+                if (value is DateTime date)
+                    stringValue = date.ToString("yyyy-MM-ddTHH\\:mm\\:sszzz");
+                else
+                    stringValue = value.ToString();
                 if (hasQuats)
                     stringValue = $"\"{stringValue}\"";
                 if (valueExpected == null)

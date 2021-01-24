@@ -46,6 +46,10 @@ namespace BinaryGo.Runtime.Variables
         }
 
         /// <summary>
+        /// format of datetime serialization
+        /// </summary>
+        public string Format = "yyyy-MM-ddTHH\\:mm\\:sszzz";
+        /// <summary>
         /// json serialize
         /// </summary>
         /// <param name="handler"></param>
@@ -53,7 +57,7 @@ namespace BinaryGo.Runtime.Variables
         public void JsonSerialize(ref JsonSerializeHandler handler, ref DateTime value)
         {
             handler.TextWriter.Write(JsonConstantsString.Quotes);
-            handler.TextWriter.Write(value.ToString(CurrentCulture));
+            handler.TextWriter.Write(value.ToString(Format, CurrentCulture));
             handler.TextWriter.Write(JsonConstantsString.Quotes);
         }
 

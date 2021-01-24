@@ -141,7 +141,8 @@ namespace BinaryGoTest.Json.Variables
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
             var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
             var jsonSerialize = Newtonsoft.Json.JsonConvert.SerializeObject(value);
-            Assert.True(result == $"\"{value}\"", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
+            var valueText = value.ToString("yyyy-MM-ddTHH\\:mm\\:sszzz");
+            Assert.True(result == $"\"{valueText}\"", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
             return (result, value);
         }
         [Fact]
