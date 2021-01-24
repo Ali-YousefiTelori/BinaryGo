@@ -246,9 +246,7 @@ namespace BinaryGoTest.Binary.Variables
         [Fact]
         public (byte[] Result, string Value) StringWithLineTestSerialize()
         {
-            string value = @"test hello: ""my name is
-ali
-then yousefi"" so we are good now""";
+            string value = $"test hello: \"my name is{Environment.NewLine}ali{Environment.NewLine}then yousefi\" so we are good now\"";
             var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
             return (result, value);
         }
