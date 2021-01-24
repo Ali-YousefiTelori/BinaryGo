@@ -56,7 +56,8 @@ namespace BinaryGoTest.Json.Objects
         {
             var value = GetSimpleUser2();
             var result = BinaryGo.Json.Serializer.NormalInstance.Serialize(value);
-            Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result}");
+            var jsonSerialize = Newtonsoft.Json.JsonConvert.SerializeObject(value);
+            Assert.True(result == "{\"Id\":2751,\"Name\":\"Ali \\\" \\r \\n new line \\r\\n \\t end\",\"Family\":\"Yousefi \\\"Telori\\\"\"}", $"Your Value: {value} Serialize Value: {result} and jsonSerialize: {jsonSerialize}");
             return (result, value);
         }
 
