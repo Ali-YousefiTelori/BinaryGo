@@ -63,7 +63,7 @@ namespace BinaryGo.Runtime.Variables
             handler.TextWriter.Write(JsonConstantsString.Quotes);
             var result = value.AsSpan();
             var len = result.Length;
-            int hasBackSlashNIndex = -1;
+            //int hasBackSlashNIndex = -1;
             for (int i = 0; i < len; i++)
             {
                 if (result[i] == JsonConstantsString.Quotes)
@@ -76,14 +76,14 @@ namespace BinaryGo.Runtime.Variables
                 }
                 else if (result[i] == JsonConstantsString.NSpace)
                 {
-                    if (hasBackSlashNIndex != i - 1 && IsUnixNewLine)
-                        handler.TextWriter.Write(JsonConstantsString.BackSlashRN);
-                    else
+                    //if (hasBackSlashNIndex != i - 1 && IsUnixNewLine)
+                    //    handler.TextWriter.Write(JsonConstantsString.BackSlashRN);
+                    //else
                         handler.TextWriter.Write(JsonConstantsString.BackSlashN);
                 }
                 else if (result[i] == JsonConstantsString.RSpace)
                 {
-                    hasBackSlashNIndex = i;
+                    //hasBackSlashNIndex = i;
                     handler.TextWriter.Write(JsonConstantsString.BackSlashR);
                 }
                 else if (result[i] == JsonConstantsString.TSpace)
