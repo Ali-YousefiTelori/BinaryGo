@@ -1,5 +1,5 @@
 # BinaryGo
-simple and easy and fast serialize and deserialize binary and json
+BinaryGo is an easy to use and very fast JSON-BINARY serializer/deserializer
 
 Nuget:
 https://www.nuget.org/packages/JsonGo/
