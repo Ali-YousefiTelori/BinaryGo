@@ -23,9 +23,9 @@ https://www.nuget.org/packages/JsonGo/
                 BirthDate = DateTime.Now,
                 Name = "ali"
             };
-            var value = JsonGo.Serializer.SingleIntance.Serialize(userInfo);
+            var value = BinaryGo.Serializer.SingleIntance.Serialize(userInfo);
             Console.WriteLine(value);
-            var deserialize = JsonGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(value);
+            var deserialize = BinaryGo.Deserialize.Deserializer.SingleIntance.Deserialize<UserInfo>(value);
             Console.WriteLine(deserialize.Name);
             Console.ReadLine();
         }
