@@ -86,7 +86,7 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// <param name="reader">Reader of binary</param>
         public TEnum BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var value = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            int value = BitConverter.ToInt32(reader.Read(sizeof(int)));
             return Unsafe.As<int, TEnum>(ref value);
         }
     }
