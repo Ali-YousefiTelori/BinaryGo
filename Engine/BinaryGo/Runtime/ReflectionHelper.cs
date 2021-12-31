@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 
 namespace BinaryGo.Runtime
 {
@@ -63,7 +62,7 @@ namespace BinaryGo.Runtime
         public static IEnumerable<PropertyInfo> GetListOfProperties(Type type)
         {
             List<PropertyInfo> properties = new List<PropertyInfo>();
-            foreach (var property in type.GetProperties())
+            foreach (PropertyInfo property in type.GetProperties())
             {
                 if (property.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0 || !property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0)
                     continue;
@@ -85,22 +84,22 @@ namespace BinaryGo.Runtime
             ParameterExpression arg = Expression.Parameter(type.MakeByRefType(), "x");
             Expression expr = Expression.Property(arg, propertyInfo.Name);
 
-            var propertyResolver = Expression.Lambda<GetPropertyValue<TObjectType, TPropertyType>>(expr, arg).Compile();
+            GetPropertyValue<TObjectType, TPropertyType> propertyResolver = Expression.Lambda<GetPropertyValue<TObjectType, TPropertyType>>(expr, arg).Compile();
 
 
             //var openGetterType = typeof(GetPropertyValue<,>);
             //var concreteGetterType = openGetterType
             //    .MakeGenericType(type, propertyInfo.PropertyType);
 
-            var openSetterType = typeof(Action<,>);
-            var concreteSetterType = openSetterType
+            Type openSetterType = typeof(Action<,>);
+            Type concreteSetterType = openSetterType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
             //Delegate getterInvocation = Delegate.CreateDelegate(concreteGetterType, null, propertyInfo.GetGetMethod());
             Delegate setterInvocation = Delegate.CreateDelegate(concreteSetterType, null, propertyInfo.GetSetMethod());
 
-            var callerType = typeof(PropertyCallerInfo<,>);
-            var callerGenericType = callerType
+            Type callerType = typeof(PropertyCallerInfo<,>);
+            Type callerGenericType = callerType
                 .MakeGenericType(type, propertyInfo.PropertyType);
 
             return (PropertyCallerInfo<TObjectType, TPropertyType>)Activator.CreateInstance(callerGenericType, propertyResolver, setterInvocation);
@@ -108,7 +107,7 @@ namespace BinaryGo.Runtime
 
         static T[] GetArray<T>(IEnumerable<T> iList)
         {
-            var result = new T[iList.Count()];
+            T[] result = new T[iList.Count()];
 
             Array.Copy(iList.ToArray(), 0, result, 0, result.Length);
             return result;
@@ -121,6 +120,17 @@ namespace BinaryGo.Runtime
         /// <returns></returns>
         public static Func<T> GetActivator<T>(Type type)
         {
+            //try
+            //{
+            //    //try to get fast compile time instancer
+            //    MethodInfo method = typeof(ReflectionHelper).GetMethod(nameof(GetActivatorCompileTimeNew), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(typeof(T));
+            //    return (Func<T>)method.Invoke(null, null);
+            //}
+            //catch(Exception exception)
+            //{
+            //    string msg = exception.Message;
+            //}
+
             ConstructorInfo emptyConstructor = type.GetConstructor(Type.EmptyTypes);
             if (emptyConstructor == null)
             {
@@ -138,6 +148,12 @@ namespace BinaryGo.Runtime
             //compile it
             Func<T> compiled = (Func<T>)lambda.Compile();
             return compiled;
+        }
+
+        static Func<T> GetActivatorCompileTimeNew<T>()
+            where T : new()
+        {
+            return () => new T();
         }
 
         //public static Func<object> GetActivator(Type type)

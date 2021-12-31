@@ -90,14 +90,14 @@ namespace BinaryGo.Json.Deserialize
         {
             try
             {
-                var dataType = typeof(T);
+                Type dataType = typeof(T);
                 if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
                 {
                     typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
                 }
-                var reader = new JsonSpanReader(json.AsSpan());
+                JsonSpanReader reader = new JsonSpanReader(json.AsSpan());
                 JsonDeserializer deserializer = this;
-                var result = FastDeserializerExtractor<T>.Extract(ref deserializer, (TypeGoInfo<T>)typeGoInfo, ref reader);
+                T result = FastDeserializerExtractor<T>.Extract(ref deserializer, (TypeGoInfo<T>)typeGoInfo, ref reader);
                 return result;
             }
             finally

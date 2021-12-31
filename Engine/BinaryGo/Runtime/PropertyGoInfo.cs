@@ -126,13 +126,13 @@ namespace BinaryGo.Runtime
 
         internal override void JsonDeserializeString(ref TObject instance, ref JsonSpanReader reader)
         {
-            var extract = reader.ExtractString();
+            ReadOnlySpan<char> extract = reader.ExtractString();
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
 
         internal override void JsonDeserializeObject(ref TObject instance, ref JsonDeserializer deserializer, ref JsonSpanReader reader)
         {
-            var deserializedObject = FastDeserializerExtractor<TPropertyType>.ExtractOject(ref deserializer, ref TypeGoInfo, ref reader);
+            TPropertyType deserializedObject = FastDeserializerExtractor<TPropertyType>.ExtractOject(ref deserializer, ref TypeGoInfo, ref reader);
             SetValue(instance, deserializedObject);
         }
 
@@ -147,7 +147,7 @@ namespace BinaryGo.Runtime
         /// <param name="reader">json text reader</param>
         internal override void JsonDeserializeValue(ref TObject instance, ref JsonSpanReader reader)
         {
-            var extract = reader.ExtractValue();
+            ReadOnlySpan<char> extract = reader.ExtractValue();
             SetValue(instance, TypeGoInfo.JsonDeserialize(ref extract));
         }
 

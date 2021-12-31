@@ -83,7 +83,7 @@ namespace BinaryGo.Runtime
 
         internal override void ReGenerateProperties(List<MemberBinaryModelInfo> properties)
         {
-            var objectVariable = (ObjectVariable<TType>)Variable;
+            ObjectVariable<TType> objectVariable = (ObjectVariable<TType>)Variable;
             objectVariable.RebuildProperties(properties);
             Generateproperties();
         }

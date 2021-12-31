@@ -52,7 +52,7 @@ namespace BinaryGo.Binary.StructureModels
         /// <returns></returns>
         internal static BinaryModelInfo GetBinaryModel<T>(TypeGoInfo<T> typeGoInfo, BaseOptionInfo option, Dictionary<Type, BinaryModelInfo> generatedModels)
         {
-            var type = typeGoInfo.Type;
+            Type type = typeGoInfo.Type;
             if (generatedModels.TryGetValue(type, out BinaryModelInfo binaryModel))
                 return binaryModel;
             binaryModel = new BinaryModelInfo
@@ -65,16 +65,16 @@ namespace BinaryGo.Binary.StructureModels
             };
 
             generatedModels.Add(type, binaryModel);
-            foreach (var genericType in type.GetGenericArguments())
+            foreach (Type genericType in type.GetGenericArguments())
             {
                 binaryModel.Generics.Add(GetBinaryModel(genericType, option, generatedModels));
             }
 
             if (typeGoInfo.Variable is ObjectVariable<T> objectVariable)
             {
-                foreach (var property in objectVariable.Properties)
+                foreach (BasePropertyGoInfo<T> property in objectVariable.Properties)
                 {
-                    var propertyResult = property.GetBinaryMember(option, generatedModels);
+                    MemberBinaryModelInfo propertyResult = property.GetBinaryMember(option, generatedModels);
                     propertyResult.Index = property.Index;
                     binaryModel.Properties.Add(propertyResult);
                 }
@@ -88,16 +88,16 @@ namespace BinaryGo.Binary.StructureModels
 
         internal static BinaryModelInfo GetBinaryModel(Type type, BaseOptionInfo option, Dictionary<Type, BinaryModelInfo> generatedModels)
         {
-            var getBinaryModel = typeof(BinaryModelInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
+            System.Reflection.MethodInfo getBinaryModel = typeof(BinaryModelInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
                 .FirstOrDefault(x => x.Name == nameof(BinaryModelInfo.GetBinaryModel)).MakeGenericMethod(type);
             return (BinaryModelInfo)getBinaryModel.Invoke(null, new object[] { GetTypeGo(type, option), option, generatedModels });
         }
 
         internal static BaseTypeGoInfo GetTypeGo(Type type, BaseOptionInfo option)
         {
-            var getBinaryModel = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
+            System.Reflection.MethodInfo getBinaryModel = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
                    .FirstOrDefault(x => x.Name == nameof(BaseTypeGoInfo.Generate)).MakeGenericMethod(type);
-            var typeGo = getBinaryModel.Invoke(null, new object[] { option });
+            object typeGo = getBinaryModel.Invoke(null, new object[] { option });
             return (BaseTypeGoInfo)typeGo;
         }
 

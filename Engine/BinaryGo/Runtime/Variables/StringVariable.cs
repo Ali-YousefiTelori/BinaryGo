@@ -61,8 +61,8 @@ namespace BinaryGo.Runtime.Variables
         public void JsonSerialize(ref JsonSerializeHandler handler, ref string value)
         {
             handler.TextWriter.Write(JsonConstantsString.Quotes);
-            var result = value.AsSpan();
-            var len = result.Length;
+            ReadOnlySpan<char> result = value.AsSpan();
+            int len = result.Length;
             //int hasBackSlashNIndex = -1;
             for (int i = 0; i < len; i++)
             {
@@ -118,7 +118,7 @@ namespace BinaryGo.Runtime.Variables
             }
             else
             {
-                var serialized = MemoryMarshal.Cast<char, byte>(value);
+                ReadOnlySpan<byte> serialized = MemoryMarshal.Cast<char, byte>(value);
                 int len = serialized.Length;
                 stream.Write(ref len);
                 //stream.Write(Encoding.GetBytes(value));
@@ -132,7 +132,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
             if (length == -1)
                 return null;
             return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));

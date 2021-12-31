@@ -81,7 +81,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public byte[] BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
             if (length == 0)
                 return null;
             return reader.Read(length).ToArray();

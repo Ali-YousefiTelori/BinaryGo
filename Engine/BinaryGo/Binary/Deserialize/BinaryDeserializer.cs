@@ -83,12 +83,12 @@ namespace BinaryGo.Binary.Deserialize
         {
             try
             {
-                var dataType = typeof(T);
+                Type dataType = typeof(T);
                 if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
                 {
                     typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
                 }
-                var binaryReader = new BinarySpanReader(reader);
+                BinarySpanReader binaryReader = new BinarySpanReader(reader);
                 return ((TypeGoInfo<T>)typeGoInfo).BinaryDeserialize(ref binaryReader);
             }
             finally
@@ -114,11 +114,11 @@ namespace BinaryGo.Binary.Deserialize
         /// <param name="newStructureModels"></param>
         public void BuildStructure(List<BinaryModelInfo> newStructureModels)
         {
-            foreach (var model in newStructureModels)
+            foreach (BinaryModelInfo model in newStructureModels)
             {
                 bool hasChanged = false;
                 (Type Type, BaseTypeGoInfo TypeGo) = FindType(model);
-                foreach (var property in TypeGo.InternalProperties)
+                foreach (KeyValuePair<string, BaseTypeGoInfo> property in TypeGo.InternalProperties)
                 {
                     if (!model.Properties.Any(x => x.Name == property.Key))
                     {
@@ -127,12 +127,12 @@ namespace BinaryGo.Binary.Deserialize
                     }
                 }
 
-                foreach (var property in model.Properties)
+                foreach (MemberBinaryModelInfo property in model.Properties)
                 {
                     if (!TypeGo.InternalProperties.Any(x => x.Key == property.Name))
                     {
                         hasChanged = true;
-                        var instance = Activator.CreateInstance(typeof(PropertyGoInfo<,>)
+                        object instance = Activator.CreateInstance(typeof(PropertyGoInfo<,>)
                             .MakeGenericType(TypeGo.Type, GetTypeOfProperty(property)), null, Options);
                         TypeGo.AddProperty(property.Name, instance);
                     }
@@ -158,8 +158,8 @@ namespace BinaryGo.Binary.Deserialize
 
         Type GetTypeOfProperty(MemberBinaryModelInfo memberBinaryModel)
         {
-            var fullName = memberBinaryModel.ResultType.GetFullName();
-            var find = ReflectionHelper.VariableTypes.FirstOrDefault(x => x.Value == fullName);
+            string fullName = memberBinaryModel.ResultType.GetFullName();
+            KeyValuePair<Type, string> find = ReflectionHelper.VariableTypes.FirstOrDefault(x => x.Value == fullName);
             if (find.Value == null)
             {
                 if (MovedTypes.TryGetValue(memberBinaryModel.ResultType.ToString(), out Type type))
@@ -173,9 +173,9 @@ namespace BinaryGo.Binary.Deserialize
         {
             string modelFullName = binaryModel.ToString();
             MovedTypes.TryGetValue(modelFullName, out Type type);
-            foreach (var item in Options.Types)
+            foreach (KeyValuePair<Type, object> item in Options.Types)
             {
-                var typeFullName = GetStrcutureModelName(item.Key);
+                string typeFullName = GetStrcutureModelName(item.Key);
                 if (typeFullName == modelFullName || item.Key == type)
                     return (item.Key, (BaseTypeGoInfo)item.Value);
             }

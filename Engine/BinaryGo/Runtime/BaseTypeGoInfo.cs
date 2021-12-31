@@ -79,7 +79,7 @@ namespace BinaryGo.Runtime
                 Type type = typeof(T);
                 if (options.TryGetValueOfTypeGo(type, out object find))
                     return (TypeGoInfo<T>)find;
-                var baseType = Nullable.GetUnderlyingType(type);
+                Type baseType = Nullable.GetUnderlyingType(type);
                 bool isNullable = false;
                 //when type is not nullable
                 if (baseType == null)
@@ -183,8 +183,8 @@ namespace BinaryGo.Runtime
                     //array data
                     else if (baseType.IsArray)
                     {
-                        var elementType = baseType.GetElementType();
-                        var method = typeof(BaseTypeGoInfo)
+                        Type elementType = baseType.GetElementType();
+                        System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo)
                             .GetMethod("InitializeVariable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                             .MakeGenericMethod(typeof(ArrayVariable<>).MakeGenericType(elementType));
                         method.Invoke(null, new object[] { typeGoInfo, options });
@@ -192,8 +192,8 @@ namespace BinaryGo.Runtime
                     //enumrable list data
                     else if (baseType.GetGenericArguments().Length > 0 && baseType.GetGenericTypeDefinition() == typeof(List<>))
                     {
-                        var elementType = baseType.GetGenericArguments()[0];
-                        var method = typeof(BaseTypeGoInfo)
+                        Type elementType = baseType.GetGenericArguments()[0];
+                        System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo)
                             .GetMethod("InitializeVariable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                             .MakeGenericMethod(typeof(GenericListVariable<>).MakeGenericType(elementType));
                         method.Invoke(null, new object[] { typeGoInfo, options });
@@ -214,11 +214,11 @@ namespace BinaryGo.Runtime
         public static void GenerateDefaultVariables(ITypeOptions options)
         {
 
-            foreach (var variableType in ReflectionHelper.VariableTypes)
+            foreach (KeyValuePair<Type, string> variableType in ReflectionHelper.VariableTypes)
             {
-                var method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+                System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
                      .FirstOrDefault(x => x.Name == "Generate" && x.GetGenericArguments().Length == 1);
-                var genericMethod = method.MakeGenericMethod(variableType.Key);
+                System.Reflection.MethodInfo genericMethod = method.MakeGenericMethod(variableType.Key);
                 genericMethod.Invoke(null, new object[] { options });
             }
         }

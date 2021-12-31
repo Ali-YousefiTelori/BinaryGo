@@ -59,8 +59,8 @@ namespace BinaryGo.Runtime.Variables
             TryGetValueOfTypeGo = options.TryGetValueOfTypeGo;
             HasGenerateRefrencedTypes = options.HasGenerateRefrencedTypes;
 
-            var thisType = this.GetType();
-            var findMethod = thisType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            Type thisType = GetType();
+            MethodInfo findMethod = thisType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
                 .Where(x => x.Name == "Initialize").FirstOrDefault();
             if (findMethod == null)
                 throw new Exception($"I tried to find method Initialize in type of {thisType.FullName} but not found this method pls add it");

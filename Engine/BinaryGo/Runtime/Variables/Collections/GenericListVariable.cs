@@ -72,7 +72,7 @@ namespace BinaryGo.Runtime.Variables.Collections
                 int count = value.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    var obj = value[i];
+                    T obj = value[i];
                     typeGoInfo.JsonSerialize(ref handler, ref obj);
                     handler.TextWriter.Write(JsonConstantsString.Comma);
                 }
@@ -152,10 +152,10 @@ namespace BinaryGo.Runtime.Variables.Collections
             if (value.Count > 0)
             {
                 stream.Write(BitConverter.GetBytes(value.Count));
-                var count = value.Count;
+                int count = value.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    var obj = value[i];
+                    T obj = value[i];
                     typeGoInfo.BinarySerialize(ref stream, ref obj);
                 }
             }
@@ -171,10 +171,10 @@ namespace BinaryGo.Runtime.Variables.Collections
         /// <param name="reader">Reader of binary</param>
         public List<T> BinaryDeserialize(ref BinarySpanReader reader)
         {
-            var length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+            int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
             if (length == 0)
                 return null;
-            var instance = new List<T>();
+            List<T> instance = new List<T>();
             for (int i = 0; i < length; i++)
             {
                 instance.Add(typeGoInfo.BinaryDeserialize(ref reader));

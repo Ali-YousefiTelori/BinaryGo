@@ -37,7 +37,7 @@ namespace BinaryGo.Runtime.Variables
         {
             TypeGoInfo = typeGoInfo;
             typeGoInfo.IsNoQuotesValueType = false;
-            var baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
+            Type baseType = Nullable.GetUnderlyingType(typeGoInfo.Type);
             if (baseType == null)
                 baseType = typeGoInfo.Type;
             baseType = ReflectionHelper.GenerateTypeFromInterface(baseType, options);
@@ -66,18 +66,18 @@ namespace BinaryGo.Runtime.Variables
 
         internal void GenerateProperties()
         {
-            var baseType = Nullable.GetUnderlyingType(TypeGoInfo.Type);
+            Type baseType = Nullable.GetUnderlyingType(TypeGoInfo.Type);
             if (baseType == null)
                 baseType = TypeGoInfo.Type;
             baseType = ReflectionHelper.GenerateTypeFromInterface(baseType, Options);
 
-            var properties = ReflectionHelper.GetListOfProperties(baseType).ToList();
+            List<System.Reflection.PropertyInfo> properties = ReflectionHelper.GetListOfProperties(baseType).ToList();
             Properties = new BasePropertyGoInfo<TObject>[properties.Count];
             PropertiesLength = properties.Count;
             for (int i = 0; i < properties.Count; i++)
             {
-                var property = properties[i];
-                var propertyInfo = (BasePropertyGoInfo<TObject>)Activator.CreateInstance(typeof(PropertyGoInfo<,>)
+                System.Reflection.PropertyInfo property = properties[i];
+                BasePropertyGoInfo<TObject> propertyInfo = (BasePropertyGoInfo<TObject>)Activator.CreateInstance(typeof(PropertyGoInfo<,>)
                    .MakeGenericType(typeof(TObject), property.PropertyType), property, Options);
                 TypeGoInfo.Properties[property.Name] = propertyInfo;
                 propertyInfo.Index = i;
@@ -88,7 +88,7 @@ namespace BinaryGo.Runtime.Variables
             }
             for (int i = 0; i < Properties.Length; i++)
             {
-                var property = Properties[i];
+                BasePropertyGoInfo<TObject> property = Properties[i];
                 property.NameSerialized = JsonConstantsString.Quotes.ToString();
                 property.NameSerialized += property.Name;
                 property.NameSerialized += JsonConstantsString.QuotesColon;
@@ -100,13 +100,13 @@ namespace BinaryGo.Runtime.Variables
             Properties = new BasePropertyGoInfo<TObject>[TypeGoInfo.Properties.Count];
             PropertiesLength = TypeGoInfo.Properties.Count;
             int i = 0;
-            foreach (var propertyKeyValue in TypeGoInfo.Properties)
+            foreach (KeyValuePair<string, BasePropertyGoInfo<TObject>> propertyKeyValue in TypeGoInfo.Properties)
             {
-                var property = propertyKeyValue.Value;
+                BasePropertyGoInfo<TObject> property = propertyKeyValue.Value;
                 property.Name = propertyKeyValue.Key;
                 property.NameBytes = Options.Encoding.GetBytes(property.Name);
                 Properties[i] = property;
-                var findProperty = properties.FirstOrDefault(x => x.Name == property.Name);
+                MemberBinaryModelInfo findProperty = properties.FirstOrDefault(x => x.Name == property.Name);
                 property.Index = findProperty.Index;
                 i++;
             }
@@ -116,7 +116,7 @@ namespace BinaryGo.Runtime.Variables
             Properties = Properties.OrderBy(x => x.Index).ToArray();
             for (i = 0; i < Properties.Length; i++)
             {
-                var property = Properties[i];
+                BasePropertyGoInfo<TObject> property = Properties[i];
                 property.NameSerialized = JsonConstantsString.Quotes.ToString();
                 property.NameSerialized += property.Name;
                 property.NameSerialized += JsonConstantsString.QuotesColon;
@@ -133,7 +133,7 @@ namespace BinaryGo.Runtime.Variables
             handler.TextWriter.Write(JsonConstantsString.OpenBraket);
             for (int i = 0; i < Properties.Length; i++)
             {
-                var property = Properties[i];
+                BasePropertyGoInfo<TObject> property = Properties[i];
                 property.TypedJsonSerialize(ref handler, ref value);
                 //object propertyValue = property.InternalGetValue(ref value);
                 //if (propertyValue == null || propertyValue.Equals(property.DefaultValue))
@@ -211,11 +211,11 @@ namespace BinaryGo.Runtime.Variables
         {
             if (reader.Read(1)[0] == 0)
                 return default;
-            var instance = TypeGoInfo.CreateInstance();
-            var len = Properties.Length;
+            TObject instance = TypeGoInfo.CreateInstance();
+            int len = Properties.Length;
             for (int i = 0; i < len; i++)
             {
-                var property = Properties[i];
+                BasePropertyGoInfo<TObject> property = Properties[i];
                 //var value = property.BinaryDeserialize(ref reader);
                 property.BinaryDeserialize(ref reader, ref instance);
                 //property.InternalSetValue(ref instance, ref value);

@@ -18,10 +18,10 @@ namespace BinaryGo.Json.Deserialize
         /// <returns>The deserialized value</returns>
         internal static T Extract(ref JsonDeserializer deserializer, TypeGoInfo<T> typeGo, ref JsonSpanReader json)
         {
-            var character = json.Read();
+            char character = json.Read();
             if (character == JsonConstantsString.Quotes)
             {
-                var extract = json.ExtractString();
+                ReadOnlySpan<char> extract = json.ExtractString();
                 return typeGo.JsonDeserialize(ref extract);
             }
             else if (character == JsonConstantsString.OpenBraket)
@@ -34,14 +34,14 @@ namespace BinaryGo.Json.Deserialize
             }
             else
             {
-                var value = json.ExtractValue();
+                ReadOnlySpan<char> value = json.ExtractValue();
                 return typeGo.JsonDeserialize(ref value);
             }
         }
 
         internal static void ExtractProperty(ref T instance, ref JsonDeserializer deserializer, BasePropertyGoInfo<T> basePropertyGo, ref JsonSpanReader json)
         {
-            var character = json.Read();
+            char character = json.Read();
             if (character == JsonConstantsString.Quotes)
             {
                 basePropertyGo.JsonDeserializeString(ref instance, ref json);
@@ -74,7 +74,7 @@ namespace BinaryGo.Json.Deserialize
             //var generic = typeGo.Generics.First();
             while (true)
             {
-                var character = json.Read();
+                char character = json.Read();
                 if (character == JsonConstantsString.OpenBraket)
                 {
                     //var obj = ExtractOject(ref deserializer, ref typeGo, ref json);
@@ -133,15 +133,15 @@ namespace BinaryGo.Json.Deserialize
             while (!jsonReader.IsFinished)
             {
                 //read tp uneascape char
-                var character = jsonReader.Read();
+                char character = jsonReader.Read();
                 if (character == JsonConstantsString.Comma)
                     continue;
                 else if (character == JsonConstantsString.CloseBracket)
                     break;
-                var key = jsonReader.ExtractKey();
+                ReadOnlySpan<char> key = jsonReader.ExtractKey();
                 //read to uneascape char
                 jsonReader.Read();
-                var propertyname = new string(key);
+                string propertyname = new string(key);
                 if (typeGo.Properties.TryGetValue(propertyname, out BasePropertyGoInfo<T> basePropertyGo))
                 {
                     if (instance == null)

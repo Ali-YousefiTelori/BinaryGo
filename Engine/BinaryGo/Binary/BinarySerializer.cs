@@ -134,7 +134,7 @@ namespace BinaryGo.Binary
             //    //AddSerializedObjects = serializedObjects.Add,
             //    //TryGetValueOfSerializedObjects = serializedObjects.TryGetValue
             //};
-            var binaryWriter = new BufferBuilder(typeGoInfo.Capacity);
+            BufferBuilder binaryWriter = new BufferBuilder(typeGoInfo.Capacity);
             //ReferencedIndex = 0;
             typeGoInfo.BinarySerialize(ref binaryWriter, ref data);
             typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, binaryWriter.Length);
@@ -152,9 +152,9 @@ namespace BinaryGo.Binary
                 option = DefaultOptions;
             List<BinaryModelInfo> result = new List<BinaryModelInfo>();
             Dictionary<Type, BinaryModelInfo> generatedModels = new Dictionary<Type, BinaryModelInfo>();
-            foreach (var type in option.Types)
+            foreach (KeyValuePair<Type, object> type in option.Types)
             {
-                var typeGoType = ((BaseTypeGoInfo)type.Value).Type;
+                Type typeGoType = ((BaseTypeGoInfo)type.Value).Type;
                 if (typeGoType.Assembly.FullName.StartsWith("System.Private.CoreLib"))
                     continue;
                 result.Add(BinaryModelInfo.GetBinaryModel(typeGoType, option, generatedModels));
