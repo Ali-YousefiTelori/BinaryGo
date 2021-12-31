@@ -4,7 +4,7 @@ BinaryGo is an easy to use and very fast JSON-BINARY serializer/deserializer
 Nuget:
 https://www.nuget.org/packages/BinaryGo/0.1.0-preview8
 
-![.NET](https://github.com/Ali-YousefiTelori/BinaryGo/workflows/.NET/badge.svg)
+![.NET](https://img.shields.io/appveyor/tests/Ali-YousefiTelori/BinaryGo?label=Tests&style=for-the-badge)
 
 ```csharp
     public class UserInfo
