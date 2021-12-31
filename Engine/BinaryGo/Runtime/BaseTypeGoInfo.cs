@@ -97,8 +97,6 @@ namespace BinaryGo.Runtime
                     Type = type,
                 };
 
-                options.AddTypes(type, typeGoInfo);
-
                 if (isNullable)
                 {
                     if (baseType == typeof(bool))
@@ -202,6 +200,8 @@ namespace BinaryGo.Runtime
                     else
                         InitializeVariable<ObjectVariable<T>>(typeGoInfo, options);
                 }
+
+                options.AddTypes(type, typeGoInfo);
 
                 return typeGoInfo;
             }
