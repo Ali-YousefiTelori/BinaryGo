@@ -20,7 +20,7 @@ stages:
           name: InstallDotNet6
           inputs:
             version: '6.x'
-        - script:
+        - script: |
             dotnet new globaljson --force --sdk-version=6.x
             dotnet --version
           
