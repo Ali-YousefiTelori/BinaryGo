@@ -45,7 +45,7 @@ stages:
         - script: |
             dotnet new globaljson --force --sdk-version=6.x
             dotnet --version
-          name: UseNet_6X
+          name: UseNet_5X
         - task: DotNetCoreCLI@2
           name: Restore_5X
           inputs:
