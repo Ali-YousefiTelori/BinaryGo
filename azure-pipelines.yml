@@ -1,5 +1,15 @@
 trigger:
 - master
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
+stages:
+  - stage: build
+    jobs:
+    - job: run_build
+          
+      pool:
+        vmImage: 'Ubuntu 16.04' 
+      variables:
+      - group: xxx
+      - ${{ if ne(variables['Build.SourceBranchName'], 'refs/heads/master') }}:
+        - template: var.yml
+      steps:      
+        - script: echo ${{ variables.test }}
