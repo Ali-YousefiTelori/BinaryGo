@@ -17,9 +17,6 @@ stages:
         - task: DotNetCoreCLI@2
           inputs:
             command: 'build'
-            arguments: '--configuration $(buildConfiguration)'
-          displayName: 'dotnet build $(buildConfiguration)'
-          
               
         - task: UseDotNet@2
           inputs:
@@ -33,7 +30,6 @@ stages:
         - task: DotNetCoreCLI@2
           inputs:
             command: test
-            arguments: '--configuration $(buildConfiguration)'
 
     - job: Build_Windows
       pool:
