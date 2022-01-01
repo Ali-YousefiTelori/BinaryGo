@@ -23,7 +23,7 @@ stages:
 - stage: build
   displayName: Build
   jobs:
-    - template: eng/common/templates/jobs/jobs.yml
+    - template: azure/jobs/jobs.yml
       parameters:
         enableMicrobuild: true
         enablePublishBuildArtifacts: true
