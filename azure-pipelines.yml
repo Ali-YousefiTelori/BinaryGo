@@ -23,8 +23,9 @@ stages:
         - task: DotNetCoreCLI@2
           name: Use_6X
           inputs:
-            command: custom
-            arguments: 'new globaljson --force --sdk-version=6.x'
+            command: 'custom'
+            custom: 'new'
+            arguments: 'globaljson --force --sdk-version=6.x'
           
         - task: DotNetCoreCLI@2
           name: Restore_6X
@@ -46,8 +47,9 @@ stages:
         - task: DotNetCoreCLI@2
           name: Use_5X
           inputs:
-            command: custom
-            arguments: 'new globaljson --force --sdk-version=5.x'
+            command: 'custom'
+            custom: 'new'
+            arguments: 'globaljson --force --sdk-version=5.x'
           
         - task: DotNetCoreCLI@2
           name: Restore_5X
@@ -70,8 +72,9 @@ stages:
         - task: DotNetCoreCLI@2
           name: Use_3X
           inputs:
-            command: custom
-            arguments: 'new globaljson --force --sdk-version=3.x'
+            command: 'custom'
+            custom: 'new'
+            arguments: 'globaljson --force --sdk-version=3.x'
           
         - task: DotNetCoreCLI@2
           name: Restore_3X
