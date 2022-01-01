@@ -8,34 +8,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-2022 ,windows-2019 ,windows-2016 , macos-10.15 ,macos-11 ,ubuntu-18.04 ,ubuntu-20.04]
     steps:
-    - uses: actions/checkout@v2
-      env:
+      - name: Azure Pipelines Action
+        uses: Azure/pipelines@v1.1
+        with:
+          azure-devops-project-url: https://dev.azure.com/organization/project-name
+          azure-pipeline-name: 'My Pipeline'
+          azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+      - uses: actions/checkout@v2
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-    - name: Setup .NET 5.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-    - name: Setup .NET 2.1.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.1.x
-    - name: Setup .NET 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1
-    - name: Setup .NET 3.1.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Setup .NET 5.0.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup .NET 2.1.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.1.x
+      - name: Setup .NET 3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1
+      - name: Setup .NET 3.1.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
