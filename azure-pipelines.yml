@@ -4,7 +4,7 @@ trigger:
 stages:
   - stage: build
     jobs:
-    - job: Build_Ubuntu
+    - job: BinaryGo
       strategy:
         matrix:
           linux:
@@ -16,12 +16,6 @@ stages:
       pool:
         vmImage: $(imageName)
       steps:
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'restore'
-            feedsToUse: 'select'
-            vstsFeed: 'my-vsts-feed' # A series of numbers and letters
-              
         - task: UseDotNet@2
           name: InstallDotNet5
           inputs:
@@ -33,6 +27,12 @@ stages:
             version: '3.0.x'
             packageType: runtime
 
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'restore'
+            feedsToUse: 'select'
+            vstsFeed: 'my-vsts-feed' # A series of numbers and letters
+              
         - task: DotNetCoreCLI@2
           name: Build
           inputs:
