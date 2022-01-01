@@ -34,7 +34,6 @@ stages:
         jobs:
           - job: Windows
             timeoutInMinutes: 90
-            enablePublishTestResults: true
             pool:
                 name: NetCore1ESPoolInternal
                 demands: ImageOverride -equals Build.Server.Amd64.VS2017
@@ -84,7 +83,6 @@ stages:
                   parallel: true
 
           - job: macOS
-            enablePublishTestResults: true
             pool:
               vmImage: macOS-11
             steps:
@@ -112,7 +110,6 @@ stages:
 
           - job: Linux
             timeoutInMinutes: 120
-            enablePublishTestResults: true
             pool:
               vmImage: ubuntu-18.04
             variables:
