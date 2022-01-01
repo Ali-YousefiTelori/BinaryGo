@@ -20,12 +20,9 @@ stages:
           name: InstallDotNet6
           inputs:
             version: '6.x'
-        - task: DotNetCoreCLI@2
-          name: Use_6X
-          inputs:
-            command: 'custom'
-            custom: 'new'
-            arguments: 'globaljson --force --sdk-version=6.x'
+        - script:
+            dotnet new globaljson --force --sdk-version=6.x
+            dotnet --version
           
         - task: DotNetCoreCLI@2
           name: Restore_6X
