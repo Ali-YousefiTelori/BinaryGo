@@ -7,12 +7,12 @@ stages:
     - job: BinaryGo
       strategy:
         matrix:
-          linux:
-            imageName: 'ubuntu-latest'
-          mac:
-            imageName: 'macOS-latest'
-          windows:
+          Windows:
             imageName: 'windows-latest'
+          Linux:
+            imageName: 'ubuntu-latest'
+          Mac:
+            imageName: 'macOS-latest'
       pool:
         vmImage: $(imageName)
       steps:
