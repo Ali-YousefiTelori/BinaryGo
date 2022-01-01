@@ -17,7 +17,7 @@ jobs:
         uses: Azure/pipelines@v1.1
         with:
           azure-devops-project-url: https://dev.azure.com/alivisualstudio/BinaryGo
-          azure-pipeline-name: 'My Pipeline'
+          azure-pipeline-name: 'Ali-YousefiTelori.BinaryGo'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
       - uses: actions/checkout@v2
         env:
