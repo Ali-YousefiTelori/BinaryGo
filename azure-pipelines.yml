@@ -34,17 +34,13 @@ stages:
         - task: DotNetCoreCLI@2
           inputs:
             command: 'restore'
-            feedsToUse: 'select'
-            vstsFeed: 'my-vsts-feed' # A series of numbers and letters
               
         - task: DotNetCoreCLI@2
           name: Build
           inputs:
             command: 'build'
-        - task: VSTest@2
+        - task: DotNetCoreCLI@2
           name: Test
           inputs:
-              platform: '$(buildPlatform)'
               configuration: '$(buildConfiguration)'
-              codeCoverageEnabled: true
-              runInParallel: true
+              command: test
