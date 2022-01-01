@@ -32,6 +32,7 @@ stages:
             packageType: runtime
 
         - task: DotNetCoreCLI@2
+          name: Restore
           inputs:
             command: 'restore'
               
@@ -42,5 +43,5 @@ stages:
         - task: DotNetCoreCLI@2
           name: Test
           inputs:
-              configuration: '$(buildConfiguration)'
-              command: test
+            command: 'test'
+            arguments: '--logger "console;verbosity=detailed"'
