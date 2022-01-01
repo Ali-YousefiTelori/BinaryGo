@@ -3,9 +3,9 @@ trigger:
 stages:
   - stage: build
     jobs:
-    - job: Build-Ubuntu
+    - job: Build_Ubuntu
       pool:
         vmImage: 'ubuntu-latest'
-    - job: Build-Windows
+    - job: Build_Windows
       pool:
         vmImage: 'windows-latest'
