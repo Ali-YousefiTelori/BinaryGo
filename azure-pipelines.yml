@@ -5,32 +5,39 @@ stages:
   - stage: build
     jobs:
     - job: Build_Ubuntu
+      strategy:
+        matrix:
+          linux:
+            imageName: 'ubuntu-latest'
+          mac:
+            imageName: 'macOS-latest'
+          windows:
+            imageName: 'windows-latest'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: $(imageName)
       steps:
         - task: DotNetCoreCLI@2
           inputs:
             command: 'restore'
             feedsToUse: 'select'
             vstsFeed: 'my-vsts-feed' # A series of numbers and letters
-
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'build'
               
         - task: UseDotNet@2
+          name: InstallDotNet5
           inputs:
             version: '5.0.x'
 
         - task: UseDotNet@2
+          name: InstallDotNet3
           inputs:
             version: '3.0.x'
             packageType: runtime
 
         - task: DotNetCoreCLI@2
+          name: Build
+          inputs:
+            command: 'build'
+        - task: DotNetCoreCLI@2
+          name: Test
           inputs:
             command: test
-
-    - job: Build_Windows
-      pool:
-        vmImage: 'windows-latest'
