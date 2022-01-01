@@ -4,12 +4,12 @@ BinaryGo is an easy to use and very fast JSON-BINARY serializer/deserializer
 Nuget:
 https://www.nuget.org/packages/BinaryGo/0.1.0-preview8
 
-<a href="https://github.com/Ali-YousefiTelori/BinaryGo/graphs/contributors" alt="Contributors">
-        <img src="https://img.shields.io/github/contributors/Ali-YousefiTelori/BinaryGo?style=for-the-badge" />
-</a>
-<a href="https://github.com/Ali-YousefiTelori/BinaryGo/tree/master">
-        <img src="https://img.shields.io/github/checks-status/Ali-YousefiTelori/BinaryGo/master?style=for-the-badge" alt="build status">
-</a>
+
+<img src="https://img.shields.io/azure-devops/build/alivisualstudio/BinaryGo/1" />
+<img src="https://img.shields.io/github/contributors/Ali-YousefiTelori/BinaryGo" />
+<img src="https://img.shields.io/github/checks-status/Ali-YousefiTelori/BinaryGo/master">
+<img src="https://img.shields.io/azure-devops/tests/alivisualstudio/BinaryGo/1/master?compact_message">
+<img src="https://img.shields.io/azure-devops/coverage/alivisualstudio/BinaryGo/1">
 
 ```csharp
     public class UserInfo
