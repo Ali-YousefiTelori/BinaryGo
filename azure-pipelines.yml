@@ -10,6 +10,6 @@ stages:
       variables:
       - group: xxx
       - ${{ if ne(variables['Build.SourceBranchName'], 'refs/heads/master') }}:
-        - template: var.yml
+        - template: azure-pipelines.yml
       steps:      
         - script: echo ${{ variables.test }}
