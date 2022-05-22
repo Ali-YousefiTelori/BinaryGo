@@ -88,6 +88,7 @@ namespace BinaryGo.Runtime.Variables.Enums
         {
             if (value.HasValue)
             {
+                stream.Write(1);
                 var data = value.Value;
                 stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, ushort>(ref data)));
             }

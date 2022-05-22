@@ -393,6 +393,37 @@ namespace BinaryGo.IO
         }
 
         /// <summary>
+        /// write a decimal struct
+        /// </summary>
+        /// <param name="data"></param>
+        public void Write(decimal data)
+        {
+            if (Length + 16 > _Buffer.Length)
+            {
+                _capacity += 16;
+                Resize();
+            }
+            var value = new DecimalStruct() { Value = data };
+            _Buffer[Length] = value.Byte0;
+            _Buffer[Length + 1] = value.Byte1;
+            _Buffer[Length + 2] = value.Byte2;
+            _Buffer[Length + 3] = value.Byte3;
+            _Buffer[Length + 4] = value.Byte4;
+            _Buffer[Length + 5] = value.Byte5;
+            _Buffer[Length + 6] = value.Byte6;
+            _Buffer[Length + 7] = value.Byte7;
+            _Buffer[Length + 8] = value.Byte8;
+            _Buffer[Length + 9] = value.Byte9;
+            _Buffer[Length + 10] = value.Byte10;
+            _Buffer[Length + 11] = value.Byte11;
+            _Buffer[Length + 12] = value.Byte12;
+            _Buffer[Length + 13] = value.Byte13;
+            _Buffer[Length + 14] = value.Byte14;
+            _Buffer[Length + 15] = value.Byte15;
+            Length += 16;
+        }
+
+        /// <summary>
         /// write a guid struct
         /// </summary>
         /// <param name="data"></param>

@@ -3,8 +3,6 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -23,7 +21,21 @@ namespace BinaryGo.Runtime.Variables
 
         }
 
-        Encoding Encoding;
+        Encoding _DefaultEncoding;
+        Encoding DefaultEncoding
+        {
+            get
+            {
+                return _DefaultEncoding;
+            }
+            set
+            {
+                EncodeFunc = value.GetBytes;
+                _DefaultEncoding = value;
+            }
+        }
+
+        Func<string, byte[]> EncodeFunc;
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
@@ -31,7 +43,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="options">Serializer or deserializer options</param>
         public void Initialize(TypeGoInfo<string> typeGoInfo, ITypeOptions options)
         {
-            Encoding = options.Encoding;
+            DefaultEncoding = options.Encoding;
             typeGoInfo.IsNoQuotesValueType = false;
 
             //set the default value of variable
@@ -79,7 +91,7 @@ namespace BinaryGo.Runtime.Variables
                     //if (hasBackSlashNIndex != i - 1 && IsUnixNewLine)
                     //    handler.TextWriter.Write(JsonConstantsString.BackSlashRN);
                     //else
-                        handler.TextWriter.Write(JsonConstantsString.BackSlashN);
+                    handler.TextWriter.Write(JsonConstantsString.BackSlashN);
                 }
                 else if (result[i] == JsonConstantsString.RSpace)
                 {
@@ -118,7 +130,8 @@ namespace BinaryGo.Runtime.Variables
             }
             else
             {
-                ReadOnlySpan<byte> serialized = MemoryMarshal.Cast<char, byte>(value);
+                //ReadOnlySpan<byte> serialized = MemoryMarshal.Cast<char, byte>(value);
+                ReadOnlySpan<byte> serialized = EncodeFunc(value);
                 int len = serialized.Length;
                 stream.Write(ref len);
                 //stream.Write(Encoding.GetBytes(value));
@@ -135,7 +148,8 @@ namespace BinaryGo.Runtime.Variables
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
             if (length == -1)
                 return null;
-            return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));
+            return _DefaultEncoding.GetString(reader.Read(length));
+            //return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));
         }
     }
 }

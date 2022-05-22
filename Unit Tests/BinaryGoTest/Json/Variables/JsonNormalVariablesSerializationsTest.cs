@@ -192,17 +192,15 @@ namespace BinaryGoTest.Json.Variables
             return (result, value);
         }
 
-        [Fact]
-        public (string Result, int[] Value) IntArrayValueReferenceTestSerialize()
-        {
-            //TODO fix
-            return default;
-            int[] value = new int[] { 5, 10, 95, 32 };
-            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
-            var result = serializer.Serialize(value);
-            Assert.True(result == "{\"$id\":1,\"$values\":[5,10,95,32]}", $"Your Value: {value} Serialize Value: {result}");
-            return (result, value);
-        }
+        //[Fact]
+        //public (string Result, int[] Value) IntArrayValueReferenceTestSerialize()
+        //{
+        //    int[] value = new int[] { 5, 10, 95, 32 };
+        //    BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+        //    var result = serializer.Serialize(value);
+        //    Assert.True(result == "{\"$id\":1,\"$values\":[5,10,95,32]}", $"Your Value: {value} Serialize Value: {result}");
+        //    return (result, value);
+        //}
 
         [Fact]
         public (string Result, string[] Value) StringArrayTestSerialize()
@@ -213,17 +211,15 @@ namespace BinaryGoTest.Json.Variables
             return (result, value);
         }
 
-        [Fact]
-        public (string Result, string[] Value) StringArrayReferenceTestSerialize()
-        {  
-            //TODO fix
-            return default;
-            string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
-            BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
-            var result = serializer.Serialize(value);
-            Assert.True(result == "{\"$id\":1,\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}", $"Your Value: {value} Serialize Value: {result}");
-            return (result, value);
-        }
+        //[Fact]
+        //public (string Result, string[] Value) StringArrayReferenceTestSerialize()
+        //{  
+        //    string[] value = new string[] { "5", "1ss0", "9fg5", "25dd" };
+        //    BinaryGo.Json.Serializer serializer = new BinaryGo.Json.Serializer(new BinaryGo.Helpers.BaseOptionInfo() { HasGenerateRefrencedTypes = true });
+        //    var result = serializer.Serialize(value);
+        //    Assert.True(result == "{\"$id\":1,\"$values\":[\"5\",\"1ss0\",\"9fg5\",\"25dd\"]}", $"Your Value: {value} Serialize Value: {result}");
+        //    return (result, value);
+        //}
 
         [Fact]
         public (string Result, string Value) StringQuatsTestSerialize()

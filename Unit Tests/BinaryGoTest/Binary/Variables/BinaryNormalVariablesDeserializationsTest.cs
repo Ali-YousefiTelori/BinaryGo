@@ -150,8 +150,6 @@ namespace BinaryGoTest.Binary.Variables
         [Fact]
         public void IntArrayTestDeserialize()
         {
-            //TODO fix
-            return;
             var (Result, Value) = IntArrayTestSerialize();
             Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<int[]>(Result).SequenceEqual(Value));
         }
@@ -159,8 +157,6 @@ namespace BinaryGoTest.Binary.Variables
         [Fact]
         public void StringArrayTestDeserialize()
         {
-            //TODO fix
-            return;
             var (Result, Value) = StringArrayTestSerialize();
             Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<string[]>(Result).SequenceEqual(Value));
         }

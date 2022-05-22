@@ -80,6 +80,8 @@ namespace BinaryGo.Runtime.Variables.Nullables
                 stream.Write(1);
                 stream.Write(value.Value);
             }
+            else
+                stream.Write(0);
         }
 
         /// <summary>

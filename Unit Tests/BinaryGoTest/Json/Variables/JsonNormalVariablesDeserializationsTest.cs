@@ -141,50 +141,41 @@ namespace BinaryGoTest.Json.Variables
             Assert.True(BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<byte[]>(Result).SequenceEqual(Value));
         }
 
-        [Fact]
-        public void IntArrayTestDeserialize()
-        {
+        //[Fact]
+        //public void IntArrayTestDeserialize()
+        //{
+        //    var (Result, Value) = IntArrayTestSerialize();
+        //    Assert.True(BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<int[]>(Result).SequenceEqual(Value));
+        //}
 
-            //TODO fix
-            return;
-            var (Result, Value) = IntArrayTestSerialize();
-            Assert.True(BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<int[]>(Result).SequenceEqual(Value));
-        }
+        //[Fact]
+        //public void IntArrayValueReferenceTestDeserialize()
+        //{
+        //    var (Result, Value) = IntArrayValueReferenceTestSerialize();
+        //    BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
+        //    {
+        //        HasGenerateRefrencedTypes = true
+        //    };
+        //    Assert.True(deserializer.Deserialize<int[]>(Result).SequenceEqual(Value));
+        //}
 
-        [Fact]
-        public void IntArrayValueReferenceTestDeserialize()
-        {
-            //TODO fix
-            return;
-            var (Result, Value) = IntArrayValueReferenceTestSerialize();
-            BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
-            {
-                HasGenerateRefrencedTypes = true
-            };
-            Assert.True(deserializer.Deserialize<int[]>(Result).SequenceEqual(Value));
-        }
+        //[Fact]
+        //public void StringArrayTestDeserialize()
+        //{
+        //    var (Result, Value) = StringArrayTestSerialize();
+        //    Assert.True(BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<string[]>(Result).SequenceEqual(Value));
+        //}
 
-        [Fact]
-        public void StringArrayTestDeserialize()
-        {
-            //TODO fix
-            return;
-            var (Result, Value) = StringArrayTestSerialize();
-            Assert.True(BinaryGo.Json.Deserialize.JsonDeserializer.NormalInstance.Deserialize<string[]>(Result).SequenceEqual(Value));
-        }
-
-        [Fact]
-        public void StringArrayReferenceTestDeserialize()
-        {  
-            //TODO fix
-            return;
-            var (Result, Value) = StringArrayReferenceTestSerialize();
-            BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
-            {
-                HasGenerateRefrencedTypes = true
-            };
-            Assert.True(deserializer.Deserialize<string[]>(Result).SequenceEqual(Value));
-        }
+        //[Fact]
+        //public void StringArrayReferenceTestDeserialize()
+        //{  
+        //    var (Result, Value) = StringArrayReferenceTestSerialize();
+        //    BinaryGo.Json.Deserialize.JsonDeserializer deserializer = new BinaryGo.Json.Deserialize.JsonDeserializer()
+        //    {
+        //        HasGenerateRefrencedTypes = true
+        //    };
+        //    Assert.True(deserializer.Deserialize<string[]>(Result).SequenceEqual(Value));
+        //}
 
         [Fact]
         public void StringQuatsTestDeserialize()

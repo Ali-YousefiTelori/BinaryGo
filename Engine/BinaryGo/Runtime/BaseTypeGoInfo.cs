@@ -103,6 +103,14 @@ namespace BinaryGo.Runtime
                         InitializeVariable<BoolNullableVariable>(typeGoInfo, options);
                     else if (baseType == typeof(DateTime))
                         InitializeVariable<DateTimeNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(TimeSpan))
+                        InitializeVariable<TimeSpanNullableVariable>(typeGoInfo, options);
+#if (NET6_0)
+                    else if (baseType == typeof(DateOnly))
+                        InitializeVariable<DateOnlyNullableVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(TimeOnly))
+                        InitializeVariable<TimeOnlyNullableVariable>(typeGoInfo, options);
+#endif
                     else if (baseType == typeof(uint))
                         InitializeVariable<UIntNullableVariable>(typeGoInfo, options);
                     else if (baseType == typeof(long))

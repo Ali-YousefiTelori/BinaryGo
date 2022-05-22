@@ -3,33 +3,27 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace BinaryGo.Runtime.Variables.Enums
+namespace BinaryGo.Runtime.Variables.Nullables
 {
     /// <summary>
-    /// Enum that inheritance short
+    /// TimeSpan serializer and deserializer
     /// </summary>
-    public class EnumNullableShortVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum?>
-         where TEnum : struct, Enum
+    public class TimeSpanNullableVariable : BaseVariable, ISerializationVariable<TimeSpan?>
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumNullableShortVariable() : base(typeof(TEnum?))
+        public TimeSpanNullableVariable() : base(typeof(TimeSpan?))
         {
 
         }
-
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum?> typeGoInfo, ITypeOptions options)
+        public void Initialize(TypeGoInfo<TimeSpan?> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -53,17 +47,17 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum? value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref TimeSpan? value)
         {
             if (value.HasValue)
             {
-                var data = value.Value;
-                handler.TextWriter.Write(Unsafe.As<TEnum, short>(ref data).ToString(CurrentCulture));
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+                handler.TextWriter.Write(value.Value.ToString());
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
             }
             else
-            {
                 handler.TextWriter.Write(JsonConstantsString.Null);
-            }
+
         }
 
         /// <summary>
@@ -71,10 +65,10 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
+        public TimeSpan? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (short.TryParse(text, out short value))
-                return Unsafe.As<short, TEnum>(ref value);
+            if (TimeSpan.TryParse(text, out TimeSpan value))
+                return value;
             return default;
         }
 
@@ -83,31 +77,25 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder stream, ref TEnum? value)
+        public void BinarySerialize(ref BufferBuilder stream, ref TimeSpan? value)
         {
             if (value.HasValue)
             {
                 stream.Write(1);
-                var data = value.Value;
-                stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, short>(ref data)));
+                stream.Write(BitConverter.GetBytes(value.Value.Ticks).AsSpan());
             }
             else
-            {
                 stream.Write(0);
-            }
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public TEnum? BinaryDeserialize(ref BinarySpanReader reader)
+        public TimeSpan? BinaryDeserialize(ref BinarySpanReader reader)
         {
             if (reader.Read() == 1)
-            {
-                var value = BitConverter.ToInt16(reader.Read(sizeof(short)));
-                return Unsafe.As<short, TEnum>(ref value);
-            }
+                return new TimeSpan(BitConverter.ToInt64(reader.Read(sizeof(long))));
             return default;
         }
     }

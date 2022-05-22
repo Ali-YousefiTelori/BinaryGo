@@ -3,13 +3,12 @@ using BinaryGo.Helpers;
 using BinaryGoTest.Models.Inheritance;
 using BinaryGoTest.Models.Normal;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Objects
 {
-    public class BinaryNormalObjectsSerializationsTest
+    public class BinaryNormalObjectsSerializationsTest : BaseTests
     {
         #region SimpleUser
         public SimpleUserInfo GetSimpleUser()

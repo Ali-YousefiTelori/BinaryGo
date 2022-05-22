@@ -85,6 +85,8 @@ namespace BinaryGo.Runtime.Variables.Nullables
                 stream.Write(1);
                 stream.Write(BitConverter.GetBytes(value.Value));
             }
+            else
+                stream.Write(0);
         }
 
         /// <summary>

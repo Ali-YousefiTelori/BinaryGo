@@ -1,35 +1,30 @@
-﻿using BinaryGo.Binary.Deserialize;
+﻿#if (NET6_0)
+using BinaryGo.Binary.Deserialize;
 using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace BinaryGo.Runtime.Variables.Enums
+namespace BinaryGo.Runtime.Variables.Nullables
 {
     /// <summary>
-    /// Enum that inheritance short
+    /// TimeOnly of dotnet 6.x serializer and deserializer
     /// </summary>
-    public class EnumNullableShortVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum?>
-         where TEnum : struct, Enum
+    public class TimeOnlyNullableVariable : BaseVariable, ISerializationVariable<TimeOnly?>
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumNullableShortVariable() : base(typeof(TEnum?))
+        public TimeOnlyNullableVariable() : base(typeof(TimeOnly?))
         {
 
         }
-
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum?> typeGoInfo, ITypeOptions options)
+        public void Initialize(TypeGoInfo<TimeOnly?> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -53,17 +48,17 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum? value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref TimeOnly? value)
         {
             if (value.HasValue)
             {
-                var data = value.Value;
-                handler.TextWriter.Write(Unsafe.As<TEnum, short>(ref data).ToString(CurrentCulture));
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+                handler.TextWriter.Write(value.Value.ToString());
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
             }
             else
-            {
                 handler.TextWriter.Write(JsonConstantsString.Null);
-            }
+
         }
 
         /// <summary>
@@ -71,10 +66,10 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
+        public TimeOnly? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-            if (short.TryParse(text, out short value))
-                return Unsafe.As<short, TEnum>(ref value);
+            if (TimeOnly.TryParse(text, out TimeOnly value))
+                return value;
             return default;
         }
 
@@ -83,32 +78,27 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder stream, ref TEnum? value)
+        public void BinarySerialize(ref BufferBuilder stream, ref TimeOnly? value)
         {
             if (value.HasValue)
             {
                 stream.Write(1);
-                var data = value.Value;
-                stream.Write(BitConverter.GetBytes(Unsafe.As<TEnum, short>(ref data)));
+                stream.Write(BitConverter.GetBytes(value.Value.ToTimeSpan().Ticks).AsSpan());
             }
             else
-            {
                 stream.Write(0);
-            }
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public TEnum? BinaryDeserialize(ref BinarySpanReader reader)
+        public TimeOnly? BinaryDeserialize(ref BinarySpanReader reader)
         {
             if (reader.Read() == 1)
-            {
-                var value = BitConverter.ToInt16(reader.Read(sizeof(short)));
-                return Unsafe.As<short, TEnum>(ref value);
-            }
+                return TimeOnly.FromTimeSpan(new TimeSpan(BitConverter.ToInt64(reader.Read(sizeof(long)))));
             return default;
         }
     }
 }
+#endif

@@ -1,9 +1,6 @@
 ﻿using BinaryGo.Helpers;
 using BinaryGoTest.Models.Inheritance;
 using BinaryGoTest.Models.Normal;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Objects
@@ -17,7 +14,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleUserTestSerialize();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
 
         [Fact]
@@ -25,7 +22,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleUserTestSerialize2();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
 
         [Fact]
@@ -33,7 +30,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleUserTestSerialize3();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
 
         #endregion
@@ -45,7 +42,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
 
         [Fact]
@@ -53,7 +50,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize2();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
 
         [Fact]
@@ -61,7 +58,7 @@ namespace BinaryGoTest.Binary.Objects
         {
             (byte[] Result, SimpleParentUserInfo Value, BaseOptionInfo SerializerOptions) = SimpleParentUserTestSerialize3();
             var result = BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<SimpleParentUserInfo>(Result);
-            Assert.True(result.IsEquals(Value));
+            ObjectEqual(result, Value);
         }
         #endregion
     }

@@ -2,6 +2,7 @@
 using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
+using BinaryGo.Runtime.Variables.Structures;
 using System;
 
 namespace BinaryGo.Runtime.Variables.Nullables
@@ -77,7 +78,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
             if (value.HasValue)
             {
                 stream.Write(1);
-                stream.Write(BitConverter.GetBytes(Convert.ToDouble(value)).AsSpan());
+                stream.Write(value.Value);
             }
             else
                 stream.Write(0);
@@ -90,7 +91,29 @@ namespace BinaryGo.Runtime.Variables.Nullables
         public decimal? BinaryDeserialize(ref BinarySpanReader reader)
         {
             if (reader.Read() == 1)
-                return (decimal)BitConverter.ToDouble(reader.Read(sizeof(double)));
+            {
+                var data = reader.Read(16);
+                return new DecimalStruct()
+                {
+                    Byte0 = data[0],
+                    Byte1 = data[1],
+                    Byte2 = data[2],
+                    Byte3 = data[3],
+                    Byte4 = data[4],
+                    Byte5 = data[5],
+                    Byte6 = data[6],
+                    Byte7 = data[7],
+                    Byte8 = data[8],
+                    Byte9 = data[9],
+                    Byte10 = data[10],
+                    Byte11 = data[11],
+                    Byte12 = data[12],
+                    Byte13 = data[13],
+                    Byte14 = data[14],
+                    Byte15 = data[15]
+
+                }.Value;
+            }
             return default;
         }
 

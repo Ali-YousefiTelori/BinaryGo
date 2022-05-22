@@ -13,13 +13,13 @@ namespace BinaryGo.Runtime.Variables.Enums
     /// <summary>
     /// Enum that inheritance sbyte
     /// </summary>
-    public class EnumNullableSByteVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum>
-        where TEnum : struct, Enum
+    public class EnumNullableSByteVariable<TEnum> : BaseVariable, ISerializationVariable<TEnum?>
+         where TEnum : struct, Enum
     {
         /// <summary>
         /// default constructor to initialize
         /// </summary>
-        public EnumNullableSByteVariable() : base(typeof(TEnum))
+        public EnumNullableSByteVariable() : base(typeof(TEnum?))
         {
 
         }
@@ -29,7 +29,7 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="typeGoInfo">TypeGo variable to initialize</param>
         /// <param name="options">Serializer or deserializer options</param>
-        public void Initialize(TypeGoInfo<TEnum> typeGoInfo, ITypeOptions options)
+        public void Initialize(TypeGoInfo<TEnum?> typeGoInfo, ITypeOptions options)
         {
             typeGoInfo.IsNoQuotesValueType = false;
             //set the default value of variable
@@ -53,9 +53,17 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="value"></param>
-        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
+        public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum? value)
         {
-            handler.TextWriter.Write(((sbyte)(object)value).ToString(CurrentCulture));
+            if (value.HasValue)
+            {
+                var data = value.Value;
+                handler.TextWriter.Write(Unsafe.As<TEnum, sbyte>(ref data).ToString(CurrentCulture));
+            }
+            else
+            {
+                handler.TextWriter.Write(JsonConstantsString.Null);
+            }
         }
 
         /// <summary>
@@ -63,10 +71,10 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="text">json text</param>
         /// <returns>convert text to type</returns>
-        public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
+        public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
             if (sbyte.TryParse(text, out sbyte value))
-                return (TEnum)(object)value;
+                return (TEnum?)(object)value;
             return default;
         }
 
@@ -75,18 +83,30 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// </summary>
         /// <param name="stream">stream to write</param>
         /// <param name="value">value to serialize</param>
-        public void BinarySerialize(ref BufferBuilder stream, ref TEnum value)
+        public void BinarySerialize(ref BufferBuilder stream, ref TEnum? value)
         {
-            stream.Write(new byte[] { (byte)(object)value });
+            if (value.HasValue)
+            {
+                stream.Write(1);
+                stream.Write(new byte[] { (byte)(object)value });
+            }
+            else
+            {
+                stream.Write(0);
+            }
         }
 
         /// <summary>
         /// Binary deserialize
         /// </summary>
         /// <param name="reader">Reader of binary</param>
-        public TEnum BinaryDeserialize(ref BinarySpanReader reader)
+        public TEnum? BinaryDeserialize(ref BinarySpanReader reader)
         {
-            return (TEnum)(object)reader.Read(sizeof(sbyte))[0];
+            if (reader.Read() == 1)
+            {
+                return (TEnum)(object)reader.Read(sizeof(sbyte))[0];
+            }
+            return default;
         }
     }
 }
