@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{DDB4CF29-7569-482F-B8FD-5752D43BF102}"
 EndProject
@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryGo", "Engine\BinaryGo\BinaryGo.csproj", "{5A357600-FAF3-40FE-AD59-5196E471041B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryGoConsoleTest", "Performance\BinaryGoConsoleTest\BinaryGoConsoleTest.csproj", "{FD0A70E3-031D-416B-B793-EA46F8545DE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryGoConsoleTest", "Performance\BinaryGoConsoleTest\BinaryGoConsoleTest.csproj", "{FD0A70E3-031D-416B-B793-EA46F8545DE7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryGoCoreConsoleTest", "Performance\BinaryGoCoreConsoleTest\BinaryGoCoreConsoleTest.csproj", "{1E36604E-8C39-4547-A8C4-14E971054B9B}"
 EndProject

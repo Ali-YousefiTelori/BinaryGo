@@ -1,7 +1,5 @@
 ﻿using BinaryGo.Runtime.Variables.Structures;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BinaryGo.IO
 {
@@ -158,10 +156,56 @@ namespace BinaryGo.IO
         }
 
         /// <summary>
+        /// write a datetime struct
+        /// </summary>
+        /// <param name="data"></param>
+        public void Write(ref TimeSpan data)
+        {
+            if (Length + 8 > _Buffer.Length)
+            {
+                _capacity += 8;
+                Resize();
+            }
+            var value = new LongStruct() { Value = data.Ticks };
+            _Buffer[Length] = value.Byte0;
+            _Buffer[Length + 1] = value.Byte1;
+            _Buffer[Length + 2] = value.Byte2;
+            _Buffer[Length + 3] = value.Byte3;
+            _Buffer[Length + 4] = value.Byte4;
+            _Buffer[Length + 5] = value.Byte5;
+            _Buffer[Length + 6] = value.Byte6;
+            _Buffer[Length + 7] = value.Byte7;
+            Length += 8;
+        }
+
+        /// <summary>
         /// write a long struct
         /// </summary>
         /// <param name="data"></param>
         public void Write(ref long data)
+        {
+            if (Length + 8 > _Buffer.Length)
+            {
+                _capacity += 8;
+                Resize();
+            }
+            var value = new LongStruct() { Value = data };
+            _Buffer[Length] = value.Byte0;
+            _Buffer[Length + 1] = value.Byte1;
+            _Buffer[Length + 2] = value.Byte2;
+            _Buffer[Length + 3] = value.Byte3;
+            _Buffer[Length + 4] = value.Byte4;
+            _Buffer[Length + 5] = value.Byte5;
+            _Buffer[Length + 6] = value.Byte6;
+            _Buffer[Length + 7] = value.Byte7;
+            Length += 8;
+        }
+
+        /// <summary>
+        /// write a long struct
+        /// </summary>
+        /// <param name="data"></param>
+        public void Write(long data)
         {
             if (Length + 8 > _Buffer.Length)
             {

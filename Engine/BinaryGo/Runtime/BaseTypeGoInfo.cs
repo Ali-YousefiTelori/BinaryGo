@@ -143,6 +143,14 @@ namespace BinaryGo.Runtime
                         InitializeVariable<BoolVariable>(typeGoInfo, options);
                     else if (baseType == typeof(DateTime))
                         InitializeVariable<DateTimeVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(TimeSpan))
+                        InitializeVariable<TimeSpanVariable>(typeGoInfo, options);
+#if (NET6_0)
+                    else if (baseType == typeof(DateOnly))
+                        InitializeVariable<DateOnlyVariable>(typeGoInfo, options);
+                    else if (baseType == typeof(TimeOnly))
+                        InitializeVariable<TimeOnlyVariable>(typeGoInfo, options);
+#endif
                     else if (baseType == typeof(uint))
                         InitializeVariable<UIntVariable>(typeGoInfo, options);
                     else if (baseType == typeof(long))

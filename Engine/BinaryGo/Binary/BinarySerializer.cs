@@ -138,7 +138,7 @@ namespace BinaryGo.Binary
             //ReferencedIndex = 0;
             typeGoInfo.BinarySerialize(ref binaryWriter, ref data);
             typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, binaryWriter.Length);
-            return binaryWriter.ToSpan().Slice(0, binaryWriter.Length);
+            return binaryWriter.ToSpan()[..binaryWriter.Length];
         }
 
         /// <summary>

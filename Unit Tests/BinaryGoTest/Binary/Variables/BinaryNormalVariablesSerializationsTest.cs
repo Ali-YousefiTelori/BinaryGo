@@ -164,6 +164,15 @@ namespace BinaryGoTest.Binary.Variables
         }
 
         [Fact]
+        public (byte[] Result, TimeSpan Value) TimeSpanTestSerialize()
+        {
+            TimeSpan value = TimeSpan.Parse("10:20");
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new TimeSpan(BitConverter.ToInt64(result))}");
+            return (result, value);
+        }
+
+        [Fact]
         public (byte[] Result, TestEnum Value) EnumTestSerialize1()
         {
             TestEnum value = TestEnum.None;
@@ -257,6 +266,24 @@ namespace BinaryGoTest.Binary.Variables
             Guid value = Guid.NewGuid();
             var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
             Assert.True(result.SequenceEqual(value.ToByteArray()), $"Your Value: {value} Serialize Value: {result}");
+            return (result, value);
+        }
+
+        [Fact]
+        public (byte[] Result, TimeOnly Value) TimeOnlyTestSerialize()
+        {
+            TimeOnly value = TimeOnly.Parse("10:20");
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new TimeOnly(BitConverter.ToInt64(result))}");
+            return (result, value);
+        }
+
+        [Fact]
+        public (byte[] Result, DateOnly Value) DateOnlyTestSerialize()
+        {
+            DateOnly value = DateOnly.Parse("2022-05-22");
+            var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.ToDateTime(TimeOnly.MinValue).Ticks)), $"Your Value: {value} Serialize Value: {DateOnly.FromDateTime(new DateTime(BitConverter.ToInt64(result)))}");
             return (result, value);
         }
     }

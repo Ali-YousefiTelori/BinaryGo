@@ -1,8 +1,6 @@
 ﻿using BinaryGoTest.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Variables
@@ -115,6 +113,13 @@ namespace BinaryGoTest.Binary.Variables
         }
 
         [Fact]
+        public void TimeSpanTestDeserialize()
+        {
+            var (Result, Value) = TimeSpanTestSerialize();
+            Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<TimeSpan>(Result) == Value);
+        }
+
+        [Fact]
         public void EnumTestDeserialize1()
         {
             var (Result, Value) = EnumTestSerialize1();
@@ -179,6 +184,20 @@ namespace BinaryGoTest.Binary.Variables
         {
             var (Result, Value) = GuidTestSerialize();
             Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<Guid>(Result) == Value);
+        }
+
+        [Fact]
+        public void TimeOnlyTestDeserialize()
+        {
+            var (Result, Value) = TimeOnlyTestSerialize();
+            Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<TimeOnly>(Result) == Value);
+        }
+
+        [Fact]
+        public void DateOnlyTestDeserialize()
+        {
+            var (Result, Value) = DateOnlyTestSerialize();
+            Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<DateOnly>(Result) == Value);
         }
     }
 }
