@@ -31,10 +31,6 @@ stages:
             dotnet --list-sdks
           name: UseNet_6X
         - task: DotNetCoreCLI@2
-          name: Restore_6X
-          inputs:
-            command: 'restore'
-        - task: DotNetCoreCLI@2
           name: Build_6X
           inputs:
             command: 'build'
