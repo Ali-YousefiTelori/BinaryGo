@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace BinaryGo.Binary.Deserialize
 {
@@ -53,10 +52,7 @@ namespace BinaryGo.Binary.Deserialize
                 TryGetValueOfTypeGo = _Options.Types.TryGetValue;
             }
         }
-        /// <summary>
-        /// Save deserialized objects for referenced type
-        /// </summary>
-        internal Dictionary<int, object> DeSerializedObjects { get; set; } = new Dictionary<int, object>();
+
         /// <summary>
         /// With serializer's static single instance there's no need to new it manually every time: faster usage
         /// </summary>
@@ -81,20 +77,13 @@ namespace BinaryGo.Binary.Deserialize
         /// <returns>deserialized type</returns>
         public T Deserialize<T>(ReadOnlySpan<byte> reader)
         {
-            try
+            Type dataType = typeof(T);
+            if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
             {
-                Type dataType = typeof(T);
-                if (!TryGetValueOfTypeGo(dataType, out object typeGoInfo))
-                {
-                    typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
-                }
-                BinarySpanReader binaryReader = new BinarySpanReader(reader);
-                return ((TypeGoInfo<T>)typeGoInfo).BinaryDeserialize(ref binaryReader);
+                typeGoInfo = BaseTypeGoInfo.Generate<T>(Options);
             }
-            finally
-            {
-                DeSerializedObjects.Clear();
-            }
+            BinarySpanReader binaryReader = new BinarySpanReader(reader);
+            return ((TypeGoInfo<T>)typeGoInfo).BinaryDeserialize(ref binaryReader);
         }
 
         Dictionary<string, Type> MovedTypes { get; set; } = new Dictionary<string, Type>();

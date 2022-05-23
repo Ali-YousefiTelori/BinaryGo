@@ -18,6 +18,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         {
 
         }
+
         /// <summary>
         /// Initalizes TypeGo variable
         /// </summary>

@@ -1,18 +1,13 @@
 ﻿using BinaryGo.Binary;
 using BinaryGo.Helpers;
 using BinaryGoTest.Models.Complex;
-using BinaryGoTest.Models.Inheritance;
-using BinaryGoTest.Models.Normal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Objects
 {
-    public class BinaryComplexObjectsSerializationsTest
+    public class BinaryComplexObjectsSerializationsTest : BaseTests
     {
         public BinarySerializer GetSerializer
         {
