@@ -32,7 +32,7 @@ stages:
           name: Build_6X
           inputs:
             command: 'build'
-        - task: DotNetCoreCLI@2
+        - task: VSTest@2
           name: Test_6X
           inputs:
             command: 'test'
