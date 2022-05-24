@@ -2,8 +2,6 @@
 using BinaryGoTest.Models;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using Xunit;
 
 namespace BinaryGoTest.Binary.Variables
@@ -159,7 +157,7 @@ namespace BinaryGoTest.Binary.Variables
         {
             DateTime value = DateTime.Now;
             var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new DateTime(BitConverter.ToInt64(result))}");
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new DateTime(BitConverter.ToInt64(result, 0))}");
             return (result, value);
         }
 
@@ -168,7 +166,7 @@ namespace BinaryGoTest.Binary.Variables
         {
             TimeSpan value = TimeSpan.Parse("10:20");
             var result = BinaryGo.Binary.BinarySerializer.NormalInstance.Serialize(value).ToArray();
-            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new TimeSpan(BitConverter.ToInt64(result))}");
+            Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.Ticks)), $"Your Value: {value} Serialize Value: {new TimeSpan(BitConverter.ToInt64(result, 0))}");
             return (result, value);
         }
 
@@ -266,7 +264,7 @@ namespace BinaryGoTest.Binary.Variables
             Assert.True(result.SequenceEqual(value.ToByteArray()), $"Your Value: {value} Serialize Value: {result}");
             return (result, value);
         }
-
+#if (NET6_0)
         [Fact]
         public (byte[] Result, TimeOnly Value) TimeOnlyTestSerialize()
         {
@@ -284,5 +282,6 @@ namespace BinaryGoTest.Binary.Variables
             Assert.True(result.SequenceEqual(BitConverter.GetBytes(value.ToDateTime(TimeOnly.MinValue).Ticks)), $"Your Value: {value} Serialize Value: {DateOnly.FromDateTime(new DateTime(BitConverter.ToInt64(result)))}");
             return (result, value);
         }
+#endif
     }
 }

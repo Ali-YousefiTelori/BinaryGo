@@ -6,9 +6,6 @@ using BinaryGo.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BinaryGo.Binary
 {
@@ -138,7 +135,7 @@ namespace BinaryGo.Binary
             //ReferencedIndex = 0;
             typeGoInfo.BinarySerialize(ref binaryWriter, ref data);
             typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, binaryWriter.Length);
-            return binaryWriter.ToSpan()[..binaryWriter.Length];
+            return binaryWriter.ToSpan().Slice(0, binaryWriter.Length);
         }
 
         /// <summary>

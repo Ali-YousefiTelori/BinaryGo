@@ -181,7 +181,7 @@ namespace BinaryGoTest.Binary.Variables
             var (Result, Value) = GuidTestSerialize();
             Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<Guid>(Result) == Value);
         }
-
+#if (NET6_0)
         [Fact]
         public void TimeOnlyTestDeserialize()
         {
@@ -195,5 +195,6 @@ namespace BinaryGoTest.Binary.Variables
             var (Result, Value) = DateOnlyTestSerialize();
             Assert.True(BinaryGo.Binary.Deserialize.BinaryDeserializer.NormalInstance.Deserialize<DateOnly>(Result) == Value);
         }
+#endif
     }
 }

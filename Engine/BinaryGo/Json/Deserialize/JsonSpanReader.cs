@@ -122,41 +122,65 @@ namespace BinaryGo.Json.Deserialize
                 if (readOnlySpan[i] == JsonConstantsString.Quotes && readOnlySpan[i - 1] != JsonConstantsString.BackSlash)
                 {
                     _Index += i + 1;
+#if (NETSTANDARD2_0)
+                    stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                     return stringBuilder.ToString().AsSpan();
                 }
                 else if (readOnlySpan[i] == JsonConstantsString.BackSlash)
                 {
                     if (readOnlySpan[i + 1] == JsonConstantsString.Quotes)
                     {
+#if (NETSTANDARD2_0)
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                         i++;
                         index = i;
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.BackSlash)
                     {
+#if (NETSTANDARD2_0)
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                         stringBuilder.Append(JsonConstantsString.BackSlash);
                         i++;
                         index = i + 1;
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
                     {
+#if (NETSTANDARD2_0)
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                         stringBuilder.Append(JsonConstantsString.RSpace);
                         i++;
                         index = i + 1;
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
                     {
+#if (NETSTANDARD2_0)
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                         stringBuilder.Append(JsonConstantsString.NSpace);
                         i++;
                         index = i + 1;
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.TTabLine)
                     {
+#if (NETSTANDARD2_0)
+                        stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
+#else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
+#endif
                         stringBuilder.Append(JsonConstantsString.TSpace);
                         i++;
                         index = i + 1;
@@ -165,9 +189,17 @@ namespace BinaryGo.Json.Deserialize
             }
             _Index = _Length;
             if (readOnlySpan[readOnlySpan.Length - 1] == JsonConstantsString.Quotes)
+#if (NETSTANDARD2_0)
+                stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - index - 1).ToArray());
+#else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - index - 1));
+#endif
             else
+#if (NETSTANDARD2_0)
+                stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length).ToArray());
+#else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length));
+#endif
             return stringBuilder.ToString().AsSpan();
         }
         /// <summary>

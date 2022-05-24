@@ -3,7 +3,6 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace BinaryGo.Runtime.Variables
@@ -78,6 +77,32 @@ namespace BinaryGo.Runtime.Variables
             //int hasBackSlashNIndex = -1;
             for (int i = 0; i < len; i++)
             {
+#if (NETSTANDARD2_0)
+                if (result[i] == JsonConstantsString.Quotes)
+                {
+                    handler.TextWriter.Write(JsonConstantsString.BackSlashQuotes.AsSpan());
+                }
+                else if (result[i] == JsonConstantsString.BackSlash)
+                {
+                    handler.TextWriter.Write(JsonConstantsString.DoubleBackSlash.AsSpan());
+                }
+                else if (result[i] == JsonConstantsString.NSpace)
+                {
+                    //if (hasBackSlashNIndex != i - 1 && IsUnixNewLine)
+                    //    handler.TextWriter.Write(JsonConstantsString.BackSlashRN);
+                    //else
+                    handler.TextWriter.Write(JsonConstantsString.BackSlashN.AsSpan());
+                }
+                else if (result[i] == JsonConstantsString.RSpace)
+                {
+                    //hasBackSlashNIndex = i;
+                    handler.TextWriter.Write(JsonConstantsString.BackSlashR.AsSpan());
+                }
+                else if (result[i] == JsonConstantsString.TSpace)
+                    handler.TextWriter.Write(JsonConstantsString.BackSlashT.AsSpan());
+                else
+                    handler.TextWriter.Write(result[i]);
+#else
                 if (result[i] == JsonConstantsString.Quotes)
                 {
                     handler.TextWriter.Write(JsonConstantsString.BackSlashQuotes);
@@ -102,6 +127,7 @@ namespace BinaryGo.Runtime.Variables
                     handler.TextWriter.Write(JsonConstantsString.BackSlashT);
                 else
                     handler.TextWriter.Write(result[i]);
+#endif
             }
             handler.TextWriter.Write(JsonConstantsString.Quotes);
         }
@@ -113,7 +139,11 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public string JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            return new string(text.ToArray());
+#else
             return new string(text);
+#endif
         }
 
         /// <summary>
@@ -145,10 +175,17 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            int length = BitConverter.ToInt32(reader.Read(sizeof(int)).ToArray(), 0);
+            if (length == -1)
+                return null;
+            return _DefaultEncoding.GetString(reader.Read(length).ToArray());
+#else
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
             if (length == -1)
                 return null;
             return _DefaultEncoding.GetString(reader.Read(length));
+#endif
             //return new string(MemoryMarshal.Cast<byte, char>(reader.Read(length)));
         }
     }

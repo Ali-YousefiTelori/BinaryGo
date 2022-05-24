@@ -55,7 +55,11 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref TEnum value)
         {
+#if (NETSTANDARD2_0)
+            handler.TextWriter.Write(Unsafe.As<TEnum, byte>(ref value).ToString(CurrentCulture).AsSpan());
+#else
             handler.TextWriter.Write(Unsafe.As<TEnum, byte>(ref value).ToString(CurrentCulture));
+#endif
         }
 
         /// <summary>
@@ -65,8 +69,13 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// <returns>convert text to type</returns>
         public TEnum JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (byte.TryParse(new string(text.ToArray()), out byte value))
+                return Unsafe.As<byte, TEnum>(ref value);
+#else
             if (byte.TryParse(text, out byte value))
                 return Unsafe.As<byte, TEnum>(ref value);
+#endif
             return default;
         }
 

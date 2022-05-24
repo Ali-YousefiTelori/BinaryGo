@@ -49,10 +49,17 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref double? value)
         {
+#if (NETSTANDARD2_0)
+            if (value.HasValue)
+                handler.TextWriter.Write(value.Value.ToString(CurrentCulture).AsSpan());
+            else
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
             if (value.HasValue)
                 handler.TextWriter.Write(value.Value.ToString(CurrentCulture));
             else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
         }
 
         /// <summary>
@@ -62,8 +69,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public double? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (double.TryParse(new string(text.ToArray()), out double value))
+                return value;
+#else
             if (double.TryParse(text, out double value))
                 return value;
+#endif
             return default;
         }
 
@@ -89,8 +101,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="reader">Reader of binary</param>
         public double? BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            if (reader.Read() == 1)
+                return BitConverter.ToDouble(reader.Read(sizeof(double)).ToArray(), 0);
+#else
             if (reader.Read() == 1)
                 return BitConverter.ToDouble(reader.Read(sizeof(double)));
+#endif
             return default;
         }
     }

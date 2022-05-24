@@ -50,6 +50,16 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref Guid? value)
         {
+#if (NETSTANDARD2_0)
+            if (value.HasValue)
+            {
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+                handler.TextWriter.Write(value.ToString().AsSpan());
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+            }
+            else
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
             if (value.HasValue)
             {
                 handler.TextWriter.Write(JsonConstantsString.Quotes);
@@ -58,6 +68,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
             }
             else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
         }
 
         /// <summary>
@@ -67,8 +78,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public Guid? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (Guid.TryParse(new string(text.ToArray()), out Guid value))
+                return value;
+#else
             if (Guid.TryParse(text, out Guid value))
                 return value;
+#endif
             return default;
         }
 
@@ -94,8 +110,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="reader">Reader of binary</param>
         public Guid? BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            if (reader.Read() == 1)
+                return new Guid(reader.Read(16).ToArray());
+#else
             if (reader.Read() == 1)
                 return new Guid(reader.Read(16));
+#endif
             return default;
         }
     }

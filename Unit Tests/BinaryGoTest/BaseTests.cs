@@ -1,6 +1,7 @@
 ﻿using BinaryGo.Binary;
 using BinaryGo.Binary.Deserialize;
 using BinaryGo.Helpers;
+using BinaryGo.Runtime;
 using System;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,7 @@ namespace BinaryGoTest
             #region VersionChangedControl
             //generate type
             myDeserializer.Options.GenerateType<TClientModelOld>();
+            BaseTypeGoInfo.GenerateDefaultVariables(myDeserializer.Options);
             //add model renamed
             myDeserializer.AddMovedType(myDeserializer.GetStrcutureModelName(typeof(TServerModel)), typeof(TClientModelOld));
             if (MovedTypes?.Length > 0)

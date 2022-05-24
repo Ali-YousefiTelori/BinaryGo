@@ -54,6 +54,16 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref DateTime? value)
         {
+#if (NETSTANDARD2_0)
+            if (value.HasValue)
+            {
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+                handler.TextWriter.Write(value.Value.ToString(Format, CurrentCulture).AsSpan());
+                handler.TextWriter.Write(JsonConstantsString.Quotes);
+            }
+            else
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
             if (value.HasValue)
             {
                 handler.TextWriter.Write(JsonConstantsString.Quotes);
@@ -62,7 +72,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
             }
             else
                 handler.TextWriter.Write(JsonConstantsString.Null);
-
+#endif
         }
 
         /// <summary>
@@ -72,8 +82,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public DateTime? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (DateTime.TryParse(new string(text.ToArray()), out DateTime value))
+                return value;
+#else
             if (DateTime.TryParse(text, out DateTime value))
                 return value;
+#endif
             return default;
         }
 
@@ -99,8 +114,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="reader">Reader of binary</param>
         public DateTime? BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            if (reader.Read() == 1)
+                return new DateTime(BitConverter.ToInt64(reader.Read(sizeof(long)).ToArray(), 0));
+#else
             if (reader.Read() == 1)
                 return new DateTime(BitConverter.ToInt64(reader.Read(sizeof(long))));
+#endif
             return default;
         }
     }

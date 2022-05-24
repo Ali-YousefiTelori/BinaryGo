@@ -58,11 +58,19 @@ namespace BinaryGo.Runtime.Variables.Enums
             if (value.HasValue)
             {
                 var data = value.Value;
+#if (NETSTANDARD2_0)
+                handler.TextWriter.Write(Unsafe.As<TEnum, byte>(ref data).ToString(CurrentCulture).AsSpan());
+#else
                 handler.TextWriter.Write(Unsafe.As<TEnum, byte>(ref data).ToString(CurrentCulture));
+#endif
             }
             else
             {
+#if (NETSTANDARD2_0)
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
             }
         }
         /// <summary>
@@ -72,8 +80,13 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// <returns>convert text to type</returns>
         public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (byte.TryParse(new string(text.ToArray()), out byte value))
+                return Unsafe.As<byte, TEnum>(ref value);
+#else
             if (byte.TryParse(text, out byte value))
                 return Unsafe.As<byte, TEnum>(ref value);
+#endif
             return default;
         }
 

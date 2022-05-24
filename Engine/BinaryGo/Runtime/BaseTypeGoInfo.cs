@@ -229,7 +229,6 @@ namespace BinaryGo.Runtime
         /// <param name="options"></param>
         public static void GenerateDefaultVariables(ITypeOptions options)
         {
-
             foreach (KeyValuePair<Type, string> variableType in ReflectionHelper.VariableTypes)
             {
                 System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)

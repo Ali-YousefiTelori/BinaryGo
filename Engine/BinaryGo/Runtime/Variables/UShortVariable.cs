@@ -3,9 +3,6 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace BinaryGo.Runtime.Variables
 {
@@ -53,7 +50,11 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref ushort value)
         {
+#if (NETSTANDARD2_0)
+            handler.TextWriter.Write(value.ToString(CurrentCulture).AsSpan());
+#else
             handler.TextWriter.Write(value.ToString(CurrentCulture));
+#endif
         }
 
         /// <summary>
@@ -63,8 +64,13 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public ushort JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (ushort.TryParse(new string(text.ToArray()), out ushort value))
+                return value;
+#else
             if (ushort.TryParse(text, out ushort value))
                 return value;
+#endif
             return default;
         }
 
@@ -84,7 +90,11 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public ushort BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            return BitConverter.ToUInt16(reader.Read(sizeof(ushort)).ToArray(), 0);
+#else
             return BitConverter.ToUInt16(reader.Read(sizeof(ushort)));
+#endif
         }
     }
 }

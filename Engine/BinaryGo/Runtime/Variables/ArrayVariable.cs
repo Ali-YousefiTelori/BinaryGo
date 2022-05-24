@@ -3,12 +3,6 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace BinaryGo.Runtime.Variables
 {
@@ -56,7 +50,7 @@ namespace BinaryGo.Runtime.Variables
             //arrayTypeGoInfo.CreateInstance = ReflectionHelper.GetActivator<TObject>(baseType);
 
             CastToArray = arrayTypeGoInfo.Cast;
-            arrayTypeGoInfo.CreateInstance = () => new T[0]; 
+            arrayTypeGoInfo.CreateInstance = () => new T[0];
         }
 
         Func<T[], object> CastToArray;
@@ -86,7 +80,11 @@ namespace BinaryGo.Runtime.Variables
             }
             else
             {
+#if (NETSTANDARD2_0)
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
             }
         }
 
@@ -181,9 +179,13 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public T[] BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            int length = BitConverter.ToInt32(reader.Read(sizeof(int)).ToArray(), 0);
+#else
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
+#endif
             if (length == -1)
-                return null; 
+                return null;
             else if (length == 0)
                 return new T[0];
             T[] instance = new T[length];

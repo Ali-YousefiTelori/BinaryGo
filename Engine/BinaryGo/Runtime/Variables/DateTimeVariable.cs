@@ -3,9 +3,6 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace BinaryGo.Runtime.Variables
 {
@@ -57,7 +54,11 @@ namespace BinaryGo.Runtime.Variables
         public void JsonSerialize(ref JsonSerializeHandler handler, ref DateTime value)
         {
             handler.TextWriter.Write(JsonConstantsString.Quotes);
+#if (NETSTANDARD2_0)
+            handler.TextWriter.Write(value.ToString(Format, CurrentCulture).AsSpan());
+#else
             handler.TextWriter.Write(value.ToString(Format, CurrentCulture));
+#endif
             handler.TextWriter.Write(JsonConstantsString.Quotes);
         }
 
@@ -68,8 +69,13 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public DateTime JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (DateTime.TryParse(new string(text.ToArray()), out DateTime value))
+                return value;
+#else
             if (DateTime.TryParse(text, out DateTime value))
                 return value;
+#endif
             return default;
         }
 
@@ -89,7 +95,11 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public DateTime BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            return new DateTime(BitConverter.ToInt64(reader.Read(sizeof(long)).ToArray(), 0));
+#else
             return new DateTime(BitConverter.ToInt64(reader.Read(sizeof(long))));
+#endif
         }
     }
 }

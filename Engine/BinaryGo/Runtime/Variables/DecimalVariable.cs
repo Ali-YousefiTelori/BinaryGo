@@ -50,7 +50,11 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref decimal value)
         {
+#if (NETSTANDARD2_0)
+            handler.TextWriter.Write(value.ToString(CurrentCulture).AsSpan());
+#else
             handler.TextWriter.Write(value.ToString(CurrentCulture));
+#endif
         }
 
         /// <summary>
@@ -60,8 +64,13 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public decimal JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (decimal.TryParse(new string(text.ToArray()), out decimal value))
+                return value;
+#else
             if (decimal.TryParse(text, out decimal value))
                 return value;
+#endif
             return default;
         }
 

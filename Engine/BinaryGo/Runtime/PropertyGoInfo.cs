@@ -114,7 +114,11 @@ namespace BinaryGo.Runtime
             TPropertyType propertyValue = GetValue(ref value);
             if (propertyValue == null || propertyValue.Equals(DefaultValue))
                 return;
+#if (NETSTANDARD2_0)
+            handler.TextWriter.Write(NameSerialized.AsSpan());
+#else
             handler.TextWriter.Write(NameSerialized);
+#endif
             TypeGoInfo.JsonSerialize(ref handler, ref propertyValue);
             handler.TextWriter.Write(JsonConstantsString.Comma);
         }

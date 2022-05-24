@@ -50,10 +50,17 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref ushort? value)
         {
+#if (NETSTANDARD2_0)
+            if (value.HasValue)
+                handler.TextWriter.Write(value.Value.ToString(CurrentCulture).AsSpan());
+            else
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
             if (value.HasValue)
                 handler.TextWriter.Write(value.Value.ToString(CurrentCulture));
             else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
         }
 
         /// <summary>
@@ -63,8 +70,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public ushort? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (ushort.TryParse(new string(text.ToArray()), out ushort value))
+                return value;
+#else
             if (ushort.TryParse(text, out ushort value))
                 return value;
+#endif
             return default;
         }
 
@@ -90,8 +102,13 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="reader">Reader of binary</param>
         public ushort? BinaryDeserialize(ref BinarySpanReader reader)
         {
+#if (NETSTANDARD2_0)
+            if (reader.Read() == 1)
+                return BitConverter.ToUInt16(reader.Read(sizeof(ushort)).ToArray(), 0);
+#else
             if (reader.Read() == 1)
                 return BitConverter.ToUInt16(reader.Read(sizeof(ushort)));
+#endif
             return default;
         }
     }

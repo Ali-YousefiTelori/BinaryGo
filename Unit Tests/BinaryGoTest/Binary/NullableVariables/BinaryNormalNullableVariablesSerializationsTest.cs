@@ -273,7 +273,7 @@ namespace BinaryGoTest.Binary.NullableVariables
             NullTestSerialize<Guid>();
             return (result, value);
         }
-
+#if (NET6_0)     
         [Fact]
         public (byte[] Result, TimeOnly? Value) TimeOnlyTestSerialize()
         {
@@ -293,5 +293,6 @@ namespace BinaryGoTest.Binary.NullableVariables
             NullTestSerialize<TimeOnly>();
             return (result, value);
         }
+#endif
     }
 }

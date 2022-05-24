@@ -3,10 +3,7 @@ using BinaryGo.Interfaces;
 using BinaryGo.IO;
 using BinaryGo.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace BinaryGo.Runtime.Variables.Enums
 {
@@ -58,11 +55,19 @@ namespace BinaryGo.Runtime.Variables.Enums
             if (value.HasValue)
             {
                 var data = value.Value;
+#if (NETSTANDARD2_0)
+                handler.TextWriter.Write(Unsafe.As<TEnum, ulong>(ref data).ToString(CurrentCulture).AsSpan());
+#else
                 handler.TextWriter.Write(Unsafe.As<TEnum, ulong>(ref data).ToString(CurrentCulture));
+#endif
             }
             else
             {
+#if (NETSTANDARD2_0)
+                handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
+#else
                 handler.TextWriter.Write(JsonConstantsString.Null);
+#endif
             }
         }
 
@@ -73,8 +78,13 @@ namespace BinaryGo.Runtime.Variables.Enums
         /// <returns>convert text to type</returns>
         public TEnum? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
+#if (NETSTANDARD2_0)
+            if (ulong.TryParse(new string(text.ToArray()), out ulong value))
+                return Unsafe.As<ulong, TEnum>(ref value);
+#else
             if (ulong.TryParse(text, out ulong value))
                 return Unsafe.As<ulong, TEnum>(ref value);
+#endif
             return default;
         }
 
@@ -105,7 +115,11 @@ namespace BinaryGo.Runtime.Variables.Enums
         {
             if (reader.Read() == 1)
             {
+#if (NETSTANDARD2_0)
+                var value = BitConverter.ToUInt64(reader.Read(sizeof(ulong)).ToArray(), 0);
+#else
                 var value = BitConverter.ToUInt64(reader.Read(sizeof(ulong)));
+#endif
                 return Unsafe.As<ulong, TEnum>(ref value);
             }
             return default;

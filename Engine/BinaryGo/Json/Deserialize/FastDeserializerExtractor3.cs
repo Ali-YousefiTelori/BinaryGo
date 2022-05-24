@@ -141,7 +141,11 @@ namespace BinaryGo.Json.Deserialize
                 ReadOnlySpan<char> key = jsonReader.ExtractKey();
                 //read to uneascape char
                 jsonReader.Read();
+#if (NETSTANDARD2_0)
+                string propertyname = new string(key.ToArray());
+#else
                 string propertyname = new string(key);
+#endif
                 if (typeGo.Properties.TryGetValue(propertyname, out BasePropertyGoInfo<T> basePropertyGo))
                 {
                     if (instance == null)
