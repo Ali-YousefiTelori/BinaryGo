@@ -46,5 +46,11 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
+      - name: TestNet6
+        run: dotnet test -f net6.0 --no-build --verbosity normal
+      - name: TestNet5
+        run: dotnet test -f net5.0 --no-build --verbosity normal
+      - name: TestNet3.1
+        run: dotnet test -f netcoreapp3.1 --no-build --verbosity normal
+      - name: TestNet2.2
+        run: dotnet test -f netcoreapp2.2 --no-build --verbosity normal
