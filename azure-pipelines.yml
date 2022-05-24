@@ -9,10 +9,6 @@ stages:
         matrix:
           Windows:
             imageName: 'windows-latest'
-          Linux:
-            imageName: 'ubuntu-latest'
-          Mac:
-            imageName: 'macOS-latest'
       pool:
         vmImage: $(imageName)
       steps:
