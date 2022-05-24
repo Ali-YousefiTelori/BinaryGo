@@ -25,6 +25,10 @@ stages:
           inputs:
             version: '2.x'
         - task: UseDotNet@2
+          name: InstallDotNet5
+          inputs:
+            version: '5.x'
+        - task: UseDotNet@2
           name: InstallDotNet6
           inputs:
             version: '6.x'
@@ -36,12 +40,12 @@ stages:
           name: Test_6X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed;" /Framework:net6.0'
+            arguments: '--logger "console;verbosity=detailed;" /Framework:Microsoft.NETCore.App;Version=v6.0.300'
         - task: DotNetCoreCLI@2
           name: Test_5X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed"  /Framework:net5.0'
+            arguments: '--logger "console;verbosity=detailed"  /Framework:Microsoft.NETCore.App;Version=v5'
         - task: DotNetCoreCLI@2
           name: Test_3X
           inputs:
