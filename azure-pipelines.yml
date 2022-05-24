@@ -32,18 +32,16 @@ stages:
           name: Build_6X
           inputs:
             command: 'build'
-        - task: VSTest@2
+        - task: DotNetCoreCLI@2
           name: Test_6X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed"'
-            otherConsoleOptions: '/Framework:net6.0'
+            arguments: '--logger "console;verbosity=detailed;" /Framework:net6.0'
         - task: DotNetCoreCLI@2
           name: Test_5X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed"'
-            otherConsoleOptions: '/Framework:net5.0'
+            arguments: '--logger "console;verbosity=detailed"  /Framework:net5.0'
         - task: DotNetCoreCLI@2
           name: Test_3X
           inputs:
