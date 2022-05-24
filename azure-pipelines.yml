@@ -40,22 +40,5 @@ stages:
           name: Test_6X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed;" /Framework:Microsoft.NETCore.App;Version=v6.0.300'
-        - task: DotNetCoreCLI@2
-          name: Test_5X
-          inputs:
-            command: 'test'
-            arguments: '--logger "console;verbosity=detailed"  /Framework:Microsoft.NETCore.App;Version=v5'
-        - task: DotNetCoreCLI@2
-          name: Test_3X
-          inputs:
-            command: 'test'
-            arguments: '--logger "console;verbosity=detailed"'
-            otherConsoleOptions: '/Framework:netcoreapp3.1'
-        - task: DotNetCoreCLI@2
-          name: Test_2X
-          inputs:
-            command: 'test'
-            arguments: '--logger "console;verbosity=detailed"'
-            otherConsoleOptions: '/Framework:netcoreapp2.2'
+            arguments: '--logger "console;verbosity=detailed;"'
             
