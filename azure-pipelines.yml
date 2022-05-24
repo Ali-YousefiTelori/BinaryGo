@@ -19,7 +19,7 @@ stages:
         - task: UseDotNet@2
           name: InstallDotNet48
           inputs:
-            version: '4.8'
+            version: '48'
         - task: UseDotNet@2
           name: InstallDotNet3
           inputs:
