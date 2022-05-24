@@ -17,6 +17,18 @@ stages:
         vmImage: $(imageName)
       steps:
         - task: UseDotNet@2
+          name: InstallDotNet48
+          inputs:
+            version: '4.8'
+        - task: UseDotNet@2
+          name: InstallDotNet3
+          inputs:
+            version: '3.x'
+        - task: UseDotNet@2
+          name: InstallDotNet2
+          inputs:
+            version: '2.x'
+        - task: UseDotNet@2
           name: InstallDotNet6
           inputs:
             version: '6.x'
