@@ -179,7 +179,7 @@ namespace BinaryGo.Json
             SerializeObject(typeGoInfo, ref serializeHandler, ref data);
             typeGoInfo.Capacity = Math.Max(typeGoInfo.Capacity, serializeHandler.TextWriter.Length);
             Span<byte> bytes = new Span<byte>(new byte[serializeHandler.TextWriter.Length]);
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             bytes = Encoding.GetBytes(serializeHandler.TextWriter.ToSpan().Slice(0, serializeHandler.TextWriter.Length).ToArray());
 #else
             Encoding.GetBytes(serializeHandler.TextWriter.ToSpan().Slice(0, serializeHandler.TextWriter.Length), bytes);

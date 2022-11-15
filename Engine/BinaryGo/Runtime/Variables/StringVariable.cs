@@ -77,7 +77,7 @@ namespace BinaryGo.Runtime.Variables
             //int hasBackSlashNIndex = -1;
             for (int i = 0; i < len; i++)
             {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                 if (result[i] == JsonConstantsString.Quotes)
                 {
                     handler.TextWriter.Write(JsonConstantsString.BackSlashQuotes.AsSpan());
@@ -139,7 +139,7 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public string JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             return new string(text.ToArray());
 #else
             return new string(text);
@@ -175,7 +175,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public string BinaryDeserialize(ref BinarySpanReader reader)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)).ToArray(), 0);
             if (length == -1)
                 return null;

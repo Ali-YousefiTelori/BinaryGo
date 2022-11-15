@@ -49,7 +49,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref ulong? value)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (value.HasValue)
                 handler.TextWriter.Write(value.Value.ToString(CurrentCulture).AsSpan());
             else
@@ -69,7 +69,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public ulong? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (ulong.TryParse(new string(text.ToArray()), out ulong value))
                 return value;
 #else
@@ -101,7 +101,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="reader">Reader of binary</param>
         public ulong? BinaryDeserialize(ref BinarySpanReader reader)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (reader.Read() == 1)
                 return BitConverter.ToUInt64(reader.Read(sizeof(ulong)).ToArray(), 0);
 #else

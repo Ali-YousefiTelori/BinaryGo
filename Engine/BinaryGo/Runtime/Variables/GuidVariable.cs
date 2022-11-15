@@ -51,7 +51,7 @@ namespace BinaryGo.Runtime.Variables
         public void JsonSerialize(ref JsonSerializeHandler handler, ref Guid value)
         {
             handler.TextWriter.Write(JsonConstantsString.Quotes);
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             handler.TextWriter.Write(value.ToString().AsSpan());
 #else
             handler.TextWriter.Write(value.ToString());
@@ -66,7 +66,7 @@ namespace BinaryGo.Runtime.Variables
         /// <returns>convert text to type</returns>
         public Guid JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (Guid.TryParse(new string(text.ToArray()), out Guid value))
                 return value;
 #else
@@ -92,7 +92,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public Guid BinaryDeserialize(ref BinarySpanReader reader)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             return new Guid(reader.Read(16).ToArray());
 #else
             return new Guid(reader.Read(16));

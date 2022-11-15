@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net45</TargetFrameworks>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Authors>Ali Yousefi Telori</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.1</Version>
+    <Version>0.1.0.2</Version>
     <Description>Very fast binary and json serializer</Description>
     <Copyright>ali.visual.studio@gmail.com</Copyright>
     <PackageTags>grpc,binary,json,serializer</PackageTags>
@@ -80,7 +80,11 @@
     <Compile Remove="Json\Deserialize\FastDeserializerExtractor2.cs" />
     <Compile Remove="Json\Deserialize\JsonSpanReader2.cs" />
   </ItemGroup>
-
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Text.Encoding" Version="4.3.0" />

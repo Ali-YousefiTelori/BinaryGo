@@ -114,7 +114,7 @@ namespace BinaryGo.Runtime
             TPropertyType propertyValue = GetValue(ref value);
             if (propertyValue == null || propertyValue.Equals(DefaultValue))
                 return;
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             handler.TextWriter.Write(NameSerialized.AsSpan());
 #else
             handler.TextWriter.Write(NameSerialized);

@@ -51,7 +51,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <param name="value"></param>
         public void JsonSerialize(ref JsonSerializeHandler handler, ref sbyte? value)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (value.HasValue)
                 handler.TextWriter.Write(value.Value.ToString(CurrentCulture).AsSpan());
             else
@@ -71,7 +71,7 @@ namespace BinaryGo.Runtime.Variables.Nullables
         /// <returns>convert text to type</returns>
         public sbyte? JsonDeserialize(ref ReadOnlySpan<char> text)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             if (sbyte.TryParse(new string(text.ToArray()), out sbyte value))
                 return value;
 #else

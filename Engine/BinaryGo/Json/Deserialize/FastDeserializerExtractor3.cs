@@ -141,7 +141,7 @@ namespace BinaryGo.Json.Deserialize
                 ReadOnlySpan<char> key = jsonReader.ExtractKey();
                 //read to uneascape char
                 jsonReader.Read();
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                 string propertyname = new string(key.ToArray());
 #else
                 string propertyname = new string(key);

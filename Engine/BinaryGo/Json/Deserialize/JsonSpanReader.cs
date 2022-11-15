@@ -122,7 +122,7 @@ namespace BinaryGo.Json.Deserialize
                 if (readOnlySpan[i] == JsonConstantsString.Quotes && readOnlySpan[i - 1] != JsonConstantsString.BackSlash)
                 {
                     _Index += i + 1;
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                     stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -133,7 +133,7 @@ namespace BinaryGo.Json.Deserialize
                 {
                     if (readOnlySpan[i + 1] == JsonConstantsString.Quotes)
                     {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -143,7 +143,7 @@ namespace BinaryGo.Json.Deserialize
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.BackSlash)
                     {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -154,7 +154,7 @@ namespace BinaryGo.Json.Deserialize
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.RNewLine)
                     {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -165,7 +165,7 @@ namespace BinaryGo.Json.Deserialize
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.NNewLine)
                     {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -176,7 +176,7 @@ namespace BinaryGo.Json.Deserialize
                     }
                     else if (readOnlySpan[i + 1] == JsonConstantsString.TTabLine)
                     {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index).ToArray());
 #else
                         stringBuilder.Append(readOnlySpan.Slice(index, i - index));
@@ -189,13 +189,13 @@ namespace BinaryGo.Json.Deserialize
             }
             _Index = _Length;
             if (readOnlySpan[readOnlySpan.Length - 1] == JsonConstantsString.Quotes)
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - index - 1).ToArray());
 #else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length - index - 1));
 #endif
             else
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length).ToArray());
 #else
                 stringBuilder.Append(readOnlySpan.Slice(index, readOnlySpan.Length));

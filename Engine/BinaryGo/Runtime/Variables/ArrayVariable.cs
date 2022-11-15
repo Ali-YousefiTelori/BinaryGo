@@ -80,7 +80,7 @@ namespace BinaryGo.Runtime.Variables
             }
             else
             {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
                 handler.TextWriter.Write(JsonConstantsString.Null.AsSpan());
 #else
                 handler.TextWriter.Write(JsonConstantsString.Null);
@@ -179,7 +179,7 @@ namespace BinaryGo.Runtime.Variables
         /// <param name="reader">Reader of binary</param>
         public T[] BinaryDeserialize(ref BinarySpanReader reader)
         {
-#if (NETSTANDARD2_0)
+#if (NETSTANDARD2_0 || NET45)
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)).ToArray(), 0);
 #else
             int length = BitConverter.ToInt32(reader.Read(sizeof(int)));
