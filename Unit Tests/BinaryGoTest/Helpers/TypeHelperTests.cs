@@ -54,8 +54,9 @@ namespace BinaryGoTest.Helpers
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(Test5)));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(Test5)));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(TestLoop)));
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(List<Test5>)));
             items = items.Distinct().ToList();
-            Assert.True(items.Count == 6);
+            Assert.True(items.Count == 7);
         }
     }
 }

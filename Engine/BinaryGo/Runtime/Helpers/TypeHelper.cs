@@ -39,6 +39,10 @@ namespace BinaryGo.Runtime.Helpers
                 stringBuilder.Append(':');
                 stringBuilder.AppendLine(GetTypeUniqueHash(property.PropertyType, caculatedHash));
             }
+            foreach (var genericType in type.GetGenericArguments())
+            {
+                stringBuilder.AppendLine(GetTypeUniqueHash(genericType, caculatedHash));
+            }
             return AddToHash(type, stringBuilder.ToString());
         }
 
