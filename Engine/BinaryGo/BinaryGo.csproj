@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Authors>Ali Yousefi Telori</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.2</Version>
+    <Version>0.1.0.3</Version>
     <Description>Very fast binary and json serializer</Description>
     <Copyright>ali.visual.studio@gmail.com</Copyright>
     <PackageTags>grpc,binary,json,serializer</PackageTags>
