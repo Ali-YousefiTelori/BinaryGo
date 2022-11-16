@@ -36,7 +36,7 @@ stages:
           name: Test_6X
           inputs:
             command: 'test'
-            arguments: '--logger "console;verbosity=detailed;"'
+            arguments: '--logger "console;verbosity=detailed;" --collect "Code coverage"'
         - task: PublishCodeCoverageResults@1
           inputs:
             codeCoverageTool: 'JaCoCo'
