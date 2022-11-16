@@ -37,7 +37,7 @@ stages:
           inputs:
             command: 'test'
             arguments: '--logger "console;verbosity=detailed;"'
-        - task: PublishCodeCoverageResults@2
+        - task: PublishCodeCoverageResults@1
           inputs:
             codeCoverageTool: 'JaCoCo'
             
