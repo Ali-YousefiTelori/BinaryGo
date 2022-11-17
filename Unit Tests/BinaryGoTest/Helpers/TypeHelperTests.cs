@@ -1,8 +1,6 @@
 ﻿using BinaryGo.Runtime.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace BinaryGoTest.Helpers
@@ -55,8 +53,12 @@ namespace BinaryGoTest.Helpers
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(Test5)));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(TestLoop)));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(List<Test5>)));
-            items = items.Distinct().ToList();
-            Assert.True(items.Count == 7);
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(List<>)));
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(int)));
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(int[])));
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(TestLoop[])));
+            items = items.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+            Assert.True(items.Count == 11);
         }
     }
 }

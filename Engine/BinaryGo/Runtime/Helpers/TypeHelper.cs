@@ -30,6 +30,8 @@ namespace BinaryGo.Runtime.Helpers
             //skip the stackoverflow exception whn you have loop reference
             else if (caculatedHash.Contains(type))
                 return "calculating...";
+            else if (string.IsNullOrEmpty(type.FullName))
+                return "EmptyFullName";// generic argument T
             caculatedHash.Add(type);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(type.FullName);
@@ -39,10 +41,15 @@ namespace BinaryGo.Runtime.Helpers
                 stringBuilder.Append(':');
                 stringBuilder.AppendLine(GetTypeUniqueHash(property.PropertyType, caculatedHash));
             }
+            
             foreach (var genericType in type.GetGenericArguments())
             {
                 stringBuilder.AppendLine(GetTypeUniqueHash(genericType, caculatedHash));
             }
+
+            if (type.HasElementType)
+                stringBuilder.AppendLine(GetTypeUniqueHash(type.GetElementType(), caculatedHash));
+
             return AddToHash(type, stringBuilder.ToString());
         }
 
