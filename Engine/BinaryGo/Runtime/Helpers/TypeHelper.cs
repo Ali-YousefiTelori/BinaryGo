@@ -55,12 +55,17 @@ namespace BinaryGo.Runtime.Helpers
 
         string AddToHash(Type type, string fullName)
         {
-            var hash = GetHash(fullName);
+            var hash = GetSHA1Hash(fullName);
             HashedTypes[type] = hash;
             return hash;
         }
 
-        string GetHash(string input)
+        /// <summary>
+        /// Get SHA1 hash of string
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public string GetSHA1Hash(string input)
         {
             using (var sha1 = SHA1.Create())
             {
