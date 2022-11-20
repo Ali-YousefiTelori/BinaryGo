@@ -36,6 +36,12 @@ namespace BinaryGoTest.Helpers
         public TestLoop Age { get; set; }
     }
 
+    public class TestGeneric<T1, T2>
+    {
+        public T1 First { get; set; }
+        public T2 Second { get; set; }
+    }
+
     public class TypeHelperTests
     {
         [Fact]
@@ -57,8 +63,33 @@ namespace BinaryGoTest.Helpers
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(int)));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(int[])));
             items.Add(new TypeHelper().GetTypeUniqueHash(typeof(TestLoop[])));
+            items.Add(new TypeHelper().GetTypeUniqueHash(typeof(TestGeneric<List<int>, string>)));
             items = items.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
-            Assert.True(items.Count == 11);
+            Assert.True(items.Count == 12);
+        }
+
+        [Fact]
+        public void TestDisplayName()
+        {
+            List<string> items = new List<string>();
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test1)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test1)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test1)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test2)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test3)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test4)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test5)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test5)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(Test5)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(TestLoop)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(List<Test5>)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(List<>)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(int)));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(int[])));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(TestLoop[])));
+            items.Add(new TypeHelper().GetUniqueCompressedHash(typeof(TestGeneric<List<int>, string>)));
+            items = items.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+            Assert.True(items.Count == 12);
         }
     }
 }

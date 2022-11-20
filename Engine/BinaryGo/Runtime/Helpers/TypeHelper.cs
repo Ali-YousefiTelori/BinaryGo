@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -41,7 +43,7 @@ namespace BinaryGo.Runtime.Helpers
                 stringBuilder.Append(':');
                 stringBuilder.AppendLine(GetTypeUniqueHash(property.PropertyType, caculatedHash));
             }
-            
+
             foreach (var genericType in type.GetGenericArguments())
             {
                 stringBuilder.AppendLine(GetTypeUniqueHash(genericType, caculatedHash));
@@ -58,6 +60,67 @@ namespace BinaryGo.Runtime.Helpers
             var hash = GetSHA1Hash(fullName);
             HashedTypes[type] = hash;
             return hash;
+        }
+
+        /// <summary>
+        /// Get unique full name of a type and compress to hash
+        /// it's unique of each type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string GetUniqueCompressedHash(Type type)
+        {
+
+            StringBuilder builder = new StringBuilder();
+            string fileName = Path.GetFileName(type.Assembly.GetName().Name);
+            builder.Append(fileName);
+            builder.Append('-');
+            builder.Append(GetTypeName(type));
+            var generics = type.GetGenericArguments();
+            if (generics.Length > 0)
+            {
+                builder.Append("<");
+                for (int i = 0; i < generics.Length; i++)
+                {
+                    builder.Append(GetUniqueCompressedHash(generics[i]));
+                    if (i < generics.Length - 1)
+                        builder.Append(",");
+                }
+                builder.Append(">");
+            }
+
+            return GetSHA1Hash(builder.ToString());
+        }
+
+        string GetTypeName(Type type)
+        {
+            return $"{type.Namespace}.{type.Name.Split('`').First()}";
+        }
+
+        string CompressNameWithIndex(string name, TypeHelperOption typeHelperOption)
+        {
+            StringBuilder builder = new StringBuilder();
+            var splitNames = name.Split('.');
+            for (int i = 0; i < splitNames.Length; i++)
+            {
+                builder.Append(GetNameWithIndex(splitNames[i], typeHelperOption));
+                if (i < splitNames.Length - 1)
+                    builder.Append(".");
+
+            }
+            return builder.ToString();
+        }
+
+        string GetNameWithIndex(string name, TypeHelperOption typeHelperOption)
+        {
+            if (typeHelperOption.NameIndexes.TryGetValue(name, out int index))
+                return index.ToString();
+            else
+            {
+                typeHelperOption.Index++;
+                typeHelperOption.NameIndexes.Add(name, typeHelperOption.Index);
+                return name + typeHelperOption.Index;
+            }
         }
 
         /// <summary>
@@ -81,5 +144,20 @@ namespace BinaryGo.Runtime.Helpers
                 return sb.ToString();
             }
         }
+    }
+
+    /// <summary>
+    /// options of data save in memoery
+    /// </summary>
+    public class TypeHelperOption
+    {
+        /// <summary>
+        /// indexed names
+        /// </summary>
+        public Dictionary<string, int> NameIndexes { get; private set; } = new Dictionary<string, int>();
+        /// <summary>
+        /// current index number
+        /// </summary>
+        public int Index { get; set; } = 0;
     }
 }
