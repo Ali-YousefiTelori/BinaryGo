@@ -63,12 +63,14 @@ namespace BinaryGo.Runtime
 
         #region Structure Changes
 
-        internal override Dictionary<string, BaseTypeGoInfo> InternalProperties
+        internal override Dictionary<string, BaseTypeGoInfo> GetInternalProperties(ITypeOptions typeOptions)
         {
-            get
+            foreach (var item in Properties.Values)
             {
-                return Properties.ToDictionary(x => x.Key, x => x.Value.BaseTypeGoInfo);
+                if (item.BaseTypeGoInfo == null)
+                    item.BaseTypeGoInfo = GenerateDefaultVariables(item.Type, typeOptions);
             }
+            return Properties.ToDictionary(x => x.Key, x => x.Value.BaseTypeGoInfo);
         }
 
         internal override void AddProperty(string propertyName, object propertyGoInfo)

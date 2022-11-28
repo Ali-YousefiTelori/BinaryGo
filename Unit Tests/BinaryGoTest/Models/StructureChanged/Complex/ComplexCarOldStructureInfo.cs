@@ -12,6 +12,9 @@ namespace BinaryGoTest.Models.StructureChanged.Complex
         public DateTime CreationDateTime { get; set; }
         public byte[] Data { get; set; }
         public int Height { get; set; }
+        public int Age { get; set; } = 500;
+        public string AgeInt { get; set; } = "A600";
+        public ComplexCarDetailsOldStructureInfo ObjectType { get; set; } = new ComplexCarDetailsOldStructureInfo() { Color = "Red" };
         public bool IsEquals(ComplexCarInfo complexCarInfo)
         {
             Assert.True(complexCarInfo.Name == Name

@@ -4,11 +4,8 @@ using BinaryGo.Runtime.Variables.Collections;
 using BinaryGo.Runtime.Variables.Enums;
 using BinaryGo.Runtime.Variables.Nullables;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace BinaryGo.Runtime
 {
@@ -37,7 +34,7 @@ namespace BinaryGo.Runtime
         /// <summary>
         /// list of properties
         /// </summary>
-        internal abstract Dictionary<string, BaseTypeGoInfo> InternalProperties { get; }
+        internal abstract Dictionary<string, BaseTypeGoInfo> GetInternalProperties(ITypeOptions typeOptions);
         /// <summary>
         /// remove property from list of type properties
         /// </summary>
@@ -231,11 +228,22 @@ namespace BinaryGo.Runtime
         {
             foreach (KeyValuePair<Type, string> variableType in ReflectionHelper.VariableTypes)
             {
-                System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
-                     .FirstOrDefault(x => x.Name == "Generate" && x.GetGenericArguments().Length == 1);
-                System.Reflection.MethodInfo genericMethod = method.MakeGenericMethod(variableType.Key);
-                genericMethod.Invoke(null, new object[] { options });
+                GenerateDefaultVariables(variableType.Key, options);
             }
+        }
+
+        /// <summary>
+        /// generate base type go by type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static BaseTypeGoInfo GenerateDefaultVariables(Type type, ITypeOptions options)
+        {
+            System.Reflection.MethodInfo method = typeof(BaseTypeGoInfo).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+                 .FirstOrDefault(x => x.Name == "Generate" && x.GetGenericArguments().Length == 1);
+            System.Reflection.MethodInfo genericMethod = method.MakeGenericMethod(type);
+            return (BaseTypeGoInfo)genericMethod.Invoke(null, new object[] { options });
         }
     }
 }

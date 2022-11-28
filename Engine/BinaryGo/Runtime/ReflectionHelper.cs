@@ -206,6 +206,10 @@ namespace BinaryGo.Runtime
             { typeof(byte[]),"System.Byte[]"},
             { typeof(string[]),"System.Int32[]"},
             { typeof(int[]),"System.String[]"},
+#if (NET6_0)
+            { typeof(DateOnly),"System.DateOnly"},
+            { typeof(TimeOnly),"System.TimeOnly"},
+#endif
         };
     }
 }

@@ -107,8 +107,10 @@ namespace BinaryGo.Binary.Deserialize
             {
                 bool hasChanged = false;
                 (Type Type, BaseTypeGoInfo TypeGo) = FindType(model);
-                foreach (KeyValuePair<string, BaseTypeGoInfo> property in TypeGo.InternalProperties)
+                var properties = TypeGo.GetInternalProperties(Options);
+                foreach (KeyValuePair<string, BaseTypeGoInfo> property in properties)
                 {
+                    //property removes
                     if (!model.Properties.Any(x => x.Name == property.Key))
                     {
                         hasChanged = true;
@@ -118,11 +120,21 @@ namespace BinaryGo.Binary.Deserialize
 
                 foreach (MemberBinaryModelInfo property in model.Properties)
                 {
-                    if (!TypeGo.InternalProperties.Any(x => x.Key == property.Name))
+                    //property adds
+                    if (!properties.Any(x => x.Key == property.Name))
                     {
                         hasChanged = true;
                         object instance = Activator.CreateInstance(typeof(PropertyGoInfo<,>)
                             .MakeGenericType(TypeGo.Type, GetTypeOfProperty(property)), null, Options);
+                        TypeGo.AddProperty(property.Name, instance);
+                    }
+                    //Property type has change
+                    else if (properties.Any(x => (ReflectionHelper.VariableTypes.ContainsKey(x.Value.Type) || ReflectionHelper.VariableTypes.ContainsValue(property.ResultType.GetFullName())) && x.Key == property.Name && GetStrcutureModelName(x.Value.Type) != property.ResultType.ToString()))
+                    {
+                        hasChanged = true;
+                        object instance = Activator.CreateInstance(typeof(PropertyGoInfo<,>)
+                            .MakeGenericType(TypeGo.Type, GetTypeOfProperty(property)), null, Options);
+                        TypeGo.RemoveProperty(property.Name);
                         TypeGo.AddProperty(property.Name, instance);
                     }
                 }
@@ -140,7 +152,7 @@ namespace BinaryGo.Binary.Deserialize
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public string GetStrcutureModelName(Type type)
+        public static string GetStrcutureModelName(Type type)
         {
             return $"{Path.GetFileName(type.Assembly.Location)} {type.Namespace}.{type.Name}";
         }

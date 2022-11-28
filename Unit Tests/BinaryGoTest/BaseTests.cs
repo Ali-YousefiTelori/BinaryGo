@@ -29,7 +29,13 @@ namespace BinaryGoTest
             Assert.True((bool)method.Invoke(obj1, new object[] { obj2 }), $"Objects are not equal '{Newtonsoft.Json.JsonConvert.SerializeObject(obj1)}' \r\n != \r\n '{Newtonsoft.Json.JsonConvert.SerializeObject(obj2)}'");
         }
 
-        public void ServerModelTestDeserializeBase<TServerModel, TClientModelOld>(byte[] Result, TServerModel Value, BaseOptionInfo SerializerOptions, Action<TClientModelOld> intializeClientTest, params (Type ServerType,Type ClientType)[] MovedTypes)
+        public void ServerModelTestDeserializeBase<TServerModel, TClientModelOld>(byte[] Result, TServerModel Value, BaseOptionInfo SerializerOptions, Action<TClientModelOld> intializeClientTest, params (Type ServerType, Type ClientType)[] MovedTypes)
+        {
+            var myDeserializer = new BinaryDeserializer();
+            ServerModelTestDeserializeBase(Result, BinaryDeserializer.GetStrcutureModelName(typeof(TServerModel)), Value, SerializerOptions, intializeClientTest, MovedTypes);
+        }
+
+        public TClientModelOld ServerModelTestDeserializeBase<TClientModelOld>(byte[] Result, string serviceModelFullName, object value, BaseOptionInfo SerializerOptions, Action<TClientModelOld> intializeClientTest, params (Type ServerType, Type ClientType)[] MovedTypes)
         {
             //in this example server side has TServerModel
             //server side has Id, Name, Family
@@ -48,13 +54,13 @@ namespace BinaryGoTest
             myDeserializer.Options.GenerateType<TClientModelOld>();
             BaseTypeGoInfo.GenerateDefaultVariables(myDeserializer.Options);
             //add model renamed
-            myDeserializer.AddMovedType(myDeserializer.GetStrcutureModelName(typeof(TServerModel)), typeof(TClientModelOld));
+            myDeserializer.AddMovedType(serviceModelFullName, typeof(TClientModelOld));
             if (MovedTypes?.Length > 0)
             {
                 foreach (var movedType in MovedTypes)
                 {
                     //add model renamed
-                    myDeserializer.AddMovedType(myDeserializer.GetStrcutureModelName(movedType.ServerType), movedType.ClientType);
+                    myDeserializer.AddMovedType(BinaryDeserializer.GetStrcutureModelName(movedType.ServerType), movedType.ClientType);
                 }
             }
             //build new structure to old structure
@@ -62,13 +68,14 @@ namespace BinaryGoTest
             #endregion
 
             var result = myDeserializer.Deserialize<TClientModelOld>(Result);
-            ObjectEqual(result, Value);
+            ObjectEqual(result, value);
             //now serialize from client side and deserialize from server side happen
             intializeClientTest(result);
             BinarySerializer binarySerializer = new BinarySerializer(myDeserializer.Options);
             var resultSerialized = binarySerializer.Serialize(result);
             var resultDeserialized = myDeserializer.Deserialize<TClientModelOld>(resultSerialized);
-            ObjectEqual(resultDeserialized, Value);
+            ObjectEqual(resultDeserialized, value);
+            return resultDeserialized;
         }
     }
 }

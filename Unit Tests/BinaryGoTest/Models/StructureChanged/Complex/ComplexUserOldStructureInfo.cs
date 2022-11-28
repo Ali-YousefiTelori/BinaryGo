@@ -25,5 +25,10 @@ namespace BinaryGoTest.Models.StructureChanged.Complex
             }
             return true;
         }
+
+        public bool IsEquals(ComplexUserOldStructureInfo complexUser)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this) == Newtonsoft.Json.JsonConvert.SerializeObject(complexUser) ;
+        }
     }
 }
